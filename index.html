@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Metro Cash - VIP Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Firebase Libraries (v8 Compat for pure HTML projects) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <style>
+        :root { 
+            --bg: #f5f7fa; --card: #ffffff; --primary: #2575fc; 
+            --primary-grad: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --reg-grad: linear-gradient(135deg, #f77062 0%, #fe5196 100%); 
+            --text: #333333; --text-muted: #888888; --border: #eeeeee; --input-bg: #f4f5f8;
+            --w-green: #18b660; --w-red: #fb4e4e; --w-violet: #eb43dd; --w-blue: #4095f6; --w-orange: #fb9337;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        
+        body { background: #000; display: flex; justify-content: center; height: 100dvh; overflow: hidden; user-select: none; margin: 0; }
+        .mobile-wrapper { width: 100%; max-width: 500px; height: 100dvh; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background: var(--bg); z-index: 10; overflow: hidden; }
+        .screen.active { display: block; }
+        
+        .fixed-header { position: absolute; top: 0; left: 0; width: 100%; height: 60px; background: var(--primary-grad); color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .fixed-header h2, .fixed-header h3 { font-size: 20px; margin: 0; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .fixed-header i { font-size: 20px; cursor: pointer; padding: 5px; }
+
+        .app-tab-pane { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 65px); overflow: hidden; display: none; }
+        
+        .scroll-body { position: absolute; top: 60px; bottom: 0; left: 0; width: 100%; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        .scroll-body::-webkit-scrollbar { display: none; }
+        .overlay-scroll { bottom: 0; } 
+
+        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 65px; background: #ffffff; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -4px 15px rgba(0,0,0,0.08); z-index: 9999; border-top: 1px solid var(--border); }
+        .nav-item { text-align: center; color: var(--text-muted); cursor: pointer; font-size: 12px; transition: 0.3s; width: 33%; -webkit-tap-highlight-color: transparent; }
+        .nav-item i { font-size: 22px; margin-bottom: 4px; display: block; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); font-weight: 600; }
+        .nav-item.active i { transform: translateY(-3px) scale(1.1); }
+
+        .auth-header-top { background: var(--primary-grad); color: white; padding: 20px 20px 40px 20px; margin-top: -60px; padding-top: 80px; }
+        .auth-tabs { display: flex; background: var(--card); border-bottom: 1px solid var(--border); }
+        .tab { flex: 1; text-align: center; padding: 15px; font-weight: 500; color: var(--text-muted); cursor: pointer; }
+        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+        .auth-body { padding: 20px; background: var(--card); min-height: calc(100vh - 160px); }
+        .input-label { font-size: 15px; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .phone-input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .country-code { background: var(--input-bg); border-radius: 8px; padding: 14px 15px; font-weight: 600; color: var(--text); display: flex; align-items: center; width: 80px; justify-content: center; }
+        .input-box-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
+        .input-box { width: 100%; padding: 14px 15px; border-radius: 8px; border: none; background: var(--input-bg); color: var(--text); outline: none; font-size: 15px; }
+        .input-box-wrapper i.eye-icon { position: absolute; right: 15px; top: 15px; color: var(--text-muted); cursor: pointer; }
+        
+        .btn-pill { width: 100%; padding: 14px; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; margin-bottom: 15px; }
+        .btn-pill:active { transform: scale(0.97); }
+        .btn-main { background: var(--primary-grad); color: white; box-shadow: 0 4px 10px rgba(37, 117, 252, 0.3); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        
+        .btn-loading { color: transparent !important; pointer-events: none; position: relative; }
+        .btn-loading::after { content: ""; position: absolute; width: 20px; height: 20px; top: calc(50% - 10px); left: calc(50% - 10px); border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .section-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 15px 5px 15px; font-weight: bold; font-size: 16px; }
+        .section-header span:last-child { font-size: 12px; color: var(--text-muted); font-weight: normal; background: var(--border); padding: 3px 8px; border-radius: 10px; }
+        .game-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 10px 15px; }
+        .g-card { background: var(--card); border-radius: 12px; text-align: center; padding: 15px 5px; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.04); border: 1px solid var(--border); transition: 0.2s; }
+        .g-card:active { transform: scale(0.93); }
+        .g-card p { font-size: 12px; margin-top: 8px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .red-theme { background: linear-gradient(135deg, #ff7b7b, #f95959); color: white; border: none; }
+        
+        /* BET MODAL */
+        .bet-modal-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99999; display:none; flex-direction:column; justify-content:flex-end; backdrop-filter: blur(2px); }
+        .bet-modal-overlay.active { display:flex; }
+        .bet-modal { background:var(--bg); border-top-left-radius:25px; border-top-right-radius:25px; overflow:hidden; animation: slideUp 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); }
+        @keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+        
+        .bet-modal-header { padding:20px; text-align:center; color:white; background:var(--w-red); border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 2;}
+        .bet-modal-header h3 { margin:0; font-size:20px; font-weight:bold; }
+        .bet-modal-header .choice-pill { background:white; color:black; display:inline-block; padding:8px 30px; border-radius:30px; margin-top:15px; font-weight:bold; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .bet-modal-body { padding:20px; background:white; position: relative; z-index: 1;}
+        .bet-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+        .bet-row > span { font-size: 15px; color: var(--text-muted); flex-shrink: 0; margin-right: 15px; }
+        .bet-options { display:flex; gap:8px; flex: 1; justify-content: flex-end; }
+        .bet-opt { background:#f4f5f8; padding:8px 10px; border-radius:5px; cursor:pointer; color:var(--text); font-weight:600; font-size:14px; text-align:center; transition: 0.2s; min-width: 45px; }
+        .bet-opt.active { background:var(--w-red); color:white; box-shadow: 0 2px 5px rgba(251, 78, 78, 0.4); }
+        
+        .qty-control { display:flex; align-items:center; gap:8px; }
+        .qty-control button { width:40px; height:35px; border:none; background:var(--w-red); color:white; font-size:22px; line-height: 1; cursor:pointer; border-radius:5px; transition:0.2s;}
+        .qty-control button:active { transform: scale(0.9); }
+        .qty-control input { width:60px; height:35px; text-align:center; border:1px solid #ddd; outline:none; font-weight:bold; font-size:16px; border-radius:5px;}
+        
+        .bet-terms { display:flex; align-items:center; gap:8px; margin-top: 25px; padding-bottom: 5px; color: var(--text-muted); font-size: 13px; justify-content: flex-start;}
+        .bet-terms i { color: var(--w-red); font-size: 16px; }
+        
+        .bet-modal-footer { display:flex; }
+        .bet-modal-footer button { padding:18px; border:none; font-size:16px; font-weight:bold; cursor:pointer; transition:0.2s;}
+        .bet-modal-footer button:active { opacity: 0.8; }
+        .btn-cancel { background:#2b3270; color:white; flex: 1; }
+        .btn-confirm { background:var(--w-red); color:white; flex: 2; }
+
+        /* WINGO LAYOUT */
+        .w-time-tabs { display: flex; margin: 10px 15px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .w-tab { flex: 1; text-align: center; padding: 10px; font-size: 12px; color: var(--text-muted); cursor: pointer; border-right: 1px solid var(--border); }
+        .w-tab.active { background: var(--primary-grad); color: white; font-weight: bold; }
+        .w-timer-digits { display: flex; gap: 5px; }
+        .w-digit { background: var(--primary); color: white; padding: 5px 8px; border-radius: 5px; font-size: 20px; font-weight: bold; }
+        .bet-container-wrapper { position: relative; margin: 15px; border-radius: 10px; }
+        .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 50; border-radius: 10px; display: none; justify-content: center; align-items: center; gap: 15px; backdrop-filter: blur(2px); }
+        .bet-lock-overlay.active { display: flex; }
+        .lock-digit { background: #fb4e4e; color: white; font-size: 100px; font-weight: bold; padding: 10px 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); line-height: 1; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); animation: popScale 0.3s ease-out; }
+        @keyframes popScale { 0% { transform: scale(0.5); opacity: 0; } 80% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+        .w-bet-area { background: white; border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .w-num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 15px; }
+        .btn-3d-green, .btn-3d-red, .btn-3d-violet, .btn-3d-orange, .btn-3d-blue { position: relative; transition: all 0.2s ease; box-shadow: 0 3px 6px rgba(0,0,0,0.1) !important; border: none !important; }
+        .btn-3d-green:active, .btn-3d-red:active, .btn-3d-violet:active, .btn-3d-orange:active, .btn-3d-blue:active { transform: scale(0.96); box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important; }
+        .w-ball { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; color: white; cursor: pointer; margin: 0 auto; box-shadow: 0 2px 5px rgba(0,0,0,0.15) !important; border: none; transition: all 0.1s ease; }
+        .w-ball:active { transform: scale(0.92); box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important; }
+        .b-green { background: var(--w-green); } .b-red { background: var(--w-red); } .b-violet { background: var(--w-violet); }
+        .b-split-0 { background: linear-gradient(135deg, var(--w-red) 50%, var(--w-violet) 50%); }
+        .b-split-5 { background: linear-gradient(135deg, var(--w-green) 50%, var(--w-violet) 50%); }
+
+        /* TOAST NOTIFICATION CSS */
+        #toastContainer { position: absolute; top: 25px; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 9999999; pointer-events: none; }
+        .custom-toast { background: rgba(33, 33, 33, 0.95); color: #ffffff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; margin-bottom: 10px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.25); animation: toastFade var(--duration) ease-in-out forwards; max-width: 85%; word-wrap: break-word; white-space: pre-wrap; backdrop-filter: blur(4px); }
+        @keyframes toastFade { 0% { opacity: 0; transform: translateY(-20px) scale(0.9); } 10% { opacity: 1; transform: translateY(0) scale(1); } 90% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-20px) scale(0.9); } }
+
+        /* WIN/LOSE RESULT MODAL */
+        .result-modal-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999999; display:none; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(3px); }
+        .result-modal-overlay.active { display:flex; animation: fadeIn 0.3s ease; }
+        .result-card { background: linear-gradient(180deg, #ff7b7b 0%, #f95959 100%); width: 80%; border-radius: 20px; padding: 30px 20px 20px 20px; text-align: center; color: white; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .result-card.lose-theme { background: linear-gradient(180deg, #607d8b 0%, #455a64 100%); }
+        .result-badge { position: absolute; top: -30px; left: calc(50% - 35px); width: 70px; height: 70px; background: linear-gradient(135deg, #ffc107, #ff9800); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 35px; color: white; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .lose-theme .result-badge { background: linear-gradient(135deg, #9e9e9e, #757575); }
+        .result-card h2 { margin-top: 15px; font-size: 24px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .result-info { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px; margin: 15px 0; }
+        .result-info p { font-size: 13px; margin-bottom: 10px; opacity: 0.9; }
+        .res-boxes { display: flex; justify-content: center; gap: 8px; }
+        .res-box { padding: 4px 10px; border-radius: 5px; font-weight: bold; font-size: 14px; background: white; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .result-bonus-slip { background: white; color: #f95959; border-radius: 10px; padding: 15px; margin: 15px 0; position: relative; }
+        .lose-theme .result-bonus-slip { color: #455a64; }
+        .result-bonus-slip::before { content: ""; position: absolute; top: -8px; left: 10%; width: 80%; height: 10px; background: rgba(0,0,0,0.1); border-radius: 50%; filter: blur(2px); }
+        .result-bonus-slip h3 { font-size: 26px; margin: 5px 0; }
+        .res-period { font-size: 11px; color: #888; }
+        .res-auto-close { font-size: 12px; opacity: 0.8; margin-top: 10px; }
+        .res-close-btn { margin-top: 25px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; color: white; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .res-close-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+        @keyframes popUp { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="mobile-wrapper">
+    <!-- Toast Notification Container -->
+    <div id="toastContainer"></div>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="loginScreen" class="screen">
+        <div class="fixed-header"><h2><i class="fa-solid fa-sack-dollar"></i> Metro Cash</h2></div>
+        <div class="scroll-body overlay-scroll" style="padding:0;">
+            <div class="auth-header-top">
+                <h2 style="font-size:28px;">Log in</h2><p>Please log in with your phone number</p>
+            </div>
+            <div class="auth-tabs">
+                <div class="tab active" id="tabPhone" onclick="setAuthMode('phone')"><i class="fa-solid fa-mobile-screen"></i> Log in with phone</div>
+                <div class="tab" id="tabEmail" onclick="setAuthMode('email')"><i class="fa-solid fa-envelope"></i> Email login</div>
+            </div>
+            <div class="auth-body">
+                <div class="input-label" id="lblUsername"><i class="fa-solid fa-mobile-screen"></i> Phone number</div>
+                <div class="phone-input-row" id="phoneRowBlock">
+                    <div class="country-code">+91</div>
+                    <input type="number" class="input-box" id="logUsername" placeholder="Enter phone number">
+                </div>
+                <div class="input-label"><i class="fa-solid fa-lock"></i> Password</div>
+                <div class="input-box-wrapper">
+                    <input type="password" class="input-box" id="logPass" placeholder="Password">
+                    <i class="fa-solid fa-eye-slash eye-icon" id="eyeLog" onclick="togglePass('logPass', 'eyeLog')"></i>
+                </div>
+                <button class="btn-pill btn-main" onclick="doLogin(this)">Log in</button>
+                <button class="btn-pill btn-outline" onclick="pushNav('registerScreen')">Register</button>
+                <p style="text-align:center; margin-top:30px; font-size:12px; color:var(--text-muted); cursor:pointer;" onclick="pushNav('adminLoginScreen')">Admin Panel Access</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. REGISTER SCREEN -->
+    <div id="registerScreen" class="screen">
+        <div class="fixed-header bg-login">
+            <h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> Register</h2>
+        </div>
+        <div class="scroll-body overlay-scroll" style="background:var(--card);">
+            <div class="auth-body" style="padding-top:20px;">
+                <div class="input-label">Phone / Email</div>
+                <div class="input-box-wrapper"><input type="text" class="input-box" id="regId" placeholder="Enter ID"></div>
+                <div class="input-label">Set password</div>
+                <div class="input-box-wrapper">
+                    <input type="password" class="input-box" id="regPass" placeholder="Please enter password">
+                    <i class="fa-solid fa-eye-slash eye-icon" id="eyeReg1" onclick="togglePass('regPass', 'eyeReg1')"></i>
+                </div>
+                <div class="input-label">Confirm password</div>
+                <div class="input-box-wrapper">
+                    <input type="password" class="input-box" id="regPassConf" placeholder="Please enter password again">
+                    <i class="fa-solid fa-eye-slash eye-icon" id="eyeReg2" onclick="togglePass('regPassConf', 'eyeReg2')"></i>
+                </div>
+                <div class="input-label">Invite code</div>
+                <div class="input-box-wrapper"><input type="text" class="input-box" id="regInvite" placeholder="Invitation code (optional)"></div>
+                <button class="btn-pill btn-main" style="background:var(--reg-grad);" onclick="doRegister(this)">Register</button>
+                <button class="btn-pill btn-outline" style="border-color:#fe5196; color:#fe5196;" onclick="history.back()">I have an account Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="appScreens" class="screen" style="padding:0;">
+        <div class="bottom-nav">
+            <div class="nav-item active" id="navHome" onclick="switchTab('homeApp')"><i class="fa-solid fa-house"></i>Home</div>
+            <div class="nav-item" id="navRefer" onclick="switchTab('referApp')"><i class="fa-solid fa-users"></i>Refer</div>
+            <div class="nav-item" id="navAcc" onclick="switchTab('accountApp')"><i class="fa-solid fa-user"></i>Account</div>
+        </div>
+
+        <!-- HOME APP SCREEN -->
+        <div id="homeApp" class="app-tab-pane" style="display:block;">
+            <div class="fixed-header">
+                <h2><i class="fa-solid fa-sack-dollar"></i> Metro Cash</h2>
+                <!-- New Envelope Icon with Notification Badge -->
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <span style="background:rgba(255,255,255,0.2); padding:5px 12px; border-radius:15px; font-weight:bold; font-size:14px;">₹ <span id="homeBal">0.00</span></span>
+                    <div style="position:relative; cursor:pointer;" onclick="openNotifications()">
+                        <i class="fa-solid fa-envelope" style="font-size:22px;"></i>
+                        <span id="mailBadge" style="display:none; position:absolute; top:-5px; right:-5px; background:#ff4d4d; color:white; font-size:10px; border-radius:50%; padding:2px 5px;">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-body">
+                <div style="margin: 15px; border-radius: 12px; background: var(--primary-grad); color: white; padding: 20px; text-align: center;">
+                    <h2>Welcome to VIP!</h2><p style="font-size:12px; margin-top:5px;">Play games and win big rewards daily.</p>
+                </div>
+                <div class="section-header"><span><i class="fa-solid fa-bowling-ball" style="color:#ff4d4d;"></i> Lottery</span> <span>All ></span></div>
+                <div class="game-grid-4">
+                    <div class="g-card red-theme" onclick="pushNav('wingoScreen')"><i class="fa-solid fa-clock" style="font-size:34px; margin-bottom:5px; display:block;"></i><p>Win Go</p></div>
+                    <div class="g-card red-theme" onclick="showToast('Coming soon!')"><i class="fa-solid fa-dice" style="font-size:34px; margin-bottom:5px; display:block;"></i><p>K3</p></div>
+                    <div class="g-card red-theme" onclick="showToast('Coming soon!')"><i class="fa-solid fa-car-side" style="font-size:34px; margin-bottom:5px; display:block;"></i><p>Racing</p></div>
+                    <div class="g-card red-theme" onclick="showToast('Coming soon!')"><i class="fa-solid fa-gem" style="font-size:34px; margin-bottom:5px; display:block;"></i><p>5D</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REFER APP SCREEN -->
+        <div id="referApp" class="app-tab-pane">
+            <div class="fixed-header"><h2 style="margin:0 auto;">Refer & Earn</h2></div>
+            <div class="scroll-body">
+                <div style="padding:20px; text-align:center;">
+                    <i class="fa-solid fa-users" style="font-size:60px; color:var(--primary); margin-bottom:15px;"></i>
+                    <h2>Invite Friends</h2>
+                    <div style="background:var(--card); padding:15px; border-radius:10px; border:2px dashed var(--primary); font-size:24px; font-weight:bold; color:var(--primary); margin:15px 0;" id="myInviteCode">00000000</div>
+                    <button class="btn-pill btn-main" onclick="copyInviteLink()">Copy Invite Link</button>
+                    <div style="background: white; border-radius: 10px; padding: 15px; margin-top: 20px; border: 1px solid var(--border);">
+                        <h3 style="text-align:left; margin-bottom:10px; color:var(--primary);">My Referrals</h3>
+                        <div id="myReferralsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW ACCOUNT APP SCREEN (4 Boxes Grid + Wallet + Notifications) -->
+        <div id="accountApp" class="app-tab-pane">
+            <div class="fixed-header"><h2 style="margin:0 auto;">My Account</h2></div>
+            <div class="scroll-body">
+                <div style="background:var(--primary-grad); color:white; padding: 20px 20px 40px 20px; display:flex; gap:15px; align-items:center; border-bottom-left-radius:30px; border-bottom-right-radius:30px;">
+                    <div style="width:60px; height:60px; background:white; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:30px; color:var(--primary);"><i class="fa-solid fa-user"></i></div>
+                    <div><h2 id="accUser" style="margin:0; font-size:18px;">User</h2><span style="background:rgba(255,255,255,0.2); padding:3px 10px; border-radius:15px; font-size:12px;">UID: <span id="accUid">12345678</span></span></div>
+                </div>
+                
+                <div style="background:var(--card); margin:-20px 15px 15px 15px; padding:20px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05); position:relative; z-index:5;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px;">
+                        <div><p style="color:var(--text-muted); font-size:13px;">Total Balance</p><h3 style="font-size:24px;">₹ <span id="accBal">0.00</span></h3></div>
+                        <div style="text-align:right;"><p style="color:var(--text-muted); font-size:13px;">VIP Level</p><h3 style="color:#10ac84;"><i class="fa-solid fa-medal"></i> VIP 1</h3></div>
+                    </div>
+                    
+                    <!-- New Top Menu: Wallet, Deposit, Withdraw, VIP -->
+                    <div style="display: flex; justify-content: space-around;">
+                        <div style="text-align:center; cursor:pointer;" onclick="showToast('Your personal Wallet is ready!')"><i class="fa-solid fa-wallet" style="color:#e84393; font-size:26px; margin-bottom:8px; display:block;"></i>Wallet</div>
+                        <div style="text-align:center; cursor:pointer;" onclick="pushNav('depositScreen')"><i class="fa-solid fa-money-bill-wave" style="color:#00b894; font-size:26px; margin-bottom:8px; display:block;"></i>Deposit</div>
+                        <div style="text-align:center; cursor:pointer;" onclick="pushNav('withdrawScreen')"><i class="fa-solid fa-building-columns" style="color:#0984e3; font-size:26px; margin-bottom:8px; display:block;"></i>Withdraw</div>
+                        <div style="text-align:center; cursor:pointer;" onclick="showToast('More VIP Privileges coming soon!')"><i class="fa-solid fa-gem" style="color:#10ac84; font-size:26px; margin-bottom:8px; display:block;"></i>VIP</div>
+                    </div>
+                </div>
+                
+                <!-- NEW 4-BOX GRID FOR HISTORIES -->
+                <div style="margin:0 15px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div style="background:var(--card); padding:15px; border-radius:10px; border:1px solid var(--border); display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="openHistory('game')">
+                        <i class="fa-solid fa-gamepad" style="color:var(--primary); font-size:24px;"></i>
+                        <div><b style="font-size:13px;">Game History</b><br><small style="color:var(--text-muted); font-size:10px;">My game history</small></div>
+                    </div>
+                    <div style="background:var(--card); padding:15px; border-radius:10px; border:1px solid var(--border); display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="openHistory('tx')">
+                        <i class="fa-solid fa-money-bill-transfer" style="color:#00b894; font-size:24px;"></i>
+                        <div><b style="font-size:13px;">Transaction</b><br><small style="color:var(--text-muted); font-size:10px;">My tx history</small></div>
+                    </div>
+                    <div style="background:var(--card); padding:15px; border-radius:10px; border:1px solid var(--border); display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="openHistory('dep')">
+                        <i class="fa-solid fa-file-invoice-dollar" style="color:#e84393; font-size:24px;"></i>
+                        <div><b style="font-size:13px;">Deposit</b><br><small style="color:var(--text-muted); font-size:10px;">My deposit history</small></div>
+                    </div>
+                    <div style="background:var(--card); padding:15px; border-radius:10px; border:1px solid var(--border); display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="openHistory('wth')">
+                        <i class="fa-solid fa-building-columns" style="color:#fdcb6e; font-size:24px;"></i>
+                        <div><b style="font-size:13px;">Withdraw</b><br><small style="color:var(--text-muted); font-size:10px;">My withdraw history</small></div>
+                    </div>
+                </div>
+
+                <!-- NEW BOTTOM LIST (Notification, Gift, Logout) -->
+                <div style="margin:15px; background:var(--card); border-radius:12px; overflow:hidden; border:1px solid var(--border);">
+                    <div style="padding:15px; border-bottom:1px solid var(--border); cursor:pointer; position:relative;" onclick="openNotifications()">
+                        <span><i class="fa-solid fa-bell" style="color:#ff7675; width:25px;"></i> Notification</span>
+                        <span id="accNotiBadge" style="display:none; position:absolute; right:40px; top:15px; background:#ff4d4d; color:white; font-size:10px; font-weight:bold; border-radius:50%; padding:2px 6px;">0</span>
+                        <i class="fa-solid fa-chevron-right" style="float:right; color:var(--text-muted);"></i>
+                    </div>
+                    <div style="padding:15px; border-bottom:1px solid var(--border); cursor:pointer;" onclick="pushNav('giftScreen')">
+                        <span><i class="fa-solid fa-gift" style="color:#e84393; width:25px;"></i> Gifts</span>
+                        <i class="fa-solid fa-chevron-right" style="float:right; color:var(--text-muted);"></i>
+                    </div>
+                    <div style="padding:15px; cursor:pointer;" onclick="doLogout()">
+                        <span><i class="fa-solid fa-right-from-bracket" style="color:var(--text-muted); width:25px;"></i> Logout</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINGO GAME -->
+    <div id="wingoScreen" class="screen">
+        <div class="fixed-header"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> Win Go</h2></div>
+        <div class="scroll-body overlay-scroll">
+            <div style="background:white; margin:15px; border-radius:15px; padding:20px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                <h2 style="font-size:26px;">₹ <span id="wingoBal">0.00</span></h2>
+                <p style="color:var(--text-muted); font-size:14px;"><i class="fa-solid fa-wallet" style="color:#fb4e4e;"></i> Wallet balance</p>
+                <div style="display:flex; justify-content:space-around; margin-top:15px; padding-bottom: 5px;">
+                    <button class="btn-3d-red" style="background:#fb4e4e; color:white; padding:10px 30px; border-radius:20px; border:none; font-weight:bold; cursor:pointer;" onclick="pushNav('withdrawScreen')">Withdraw</button>
+                    <button class="btn-3d-green" style="background:#18b660; color:white; padding:10px 30px; border-radius:20px; border:none; font-weight:bold; cursor:pointer;" onclick="pushNav('depositScreen')">Deposit</button>
+                </div>
+            </div>
+
+            <div style="display:flex; margin:10px 15px; background:white; border-radius:10px; overflow:hidden; border:1px solid var(--border);">
+                <div class="w-tab active" id="tab1min" onclick="switchWingoTab('1min')"><i class="fa-regular fa-clock" style="font-size:20px; margin-bottom:5px; display:block;"></i>Win Go<br>1Min</div>
+                <div class="w-tab" id="tab3min" onclick="switchWingoTab('3min')"><i class="fa-regular fa-clock" style="font-size:20px; margin-bottom:5px; display:block;"></i>Win Go<br>3Min</div>
+                <div class="w-tab" id="tab5min" onclick="switchWingoTab('5min')" style="border-right:none;"><i class="fa-regular fa-clock" style="font-size:20px; margin-bottom:5px; display:block;"></i>Win Go<br>5Min</div>
+            </div>
+
+            <div style="background:white; margin:15px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; padding:15px; border-left:4px solid var(--primary); box-shadow:0 2px 5px rgba(0,0,0,0.02);">
+                <div><p style="font-size:12px; color:var(--text-muted);">Period</p><h3 id="wingoPeriod" style="font-size:18px;">20261003001</h3></div>
+                <div style="text-align:right;">
+                    <p style="font-size:12px; color:var(--text-muted);">Time remaining</p>
+                    <div style="display:flex; gap:5px;">
+                        <div class="w-digit" id="t-min-1">0</div><div class="w-digit" id="t-min-2">0</div>
+                        <span style="font-weight:bold; font-size:20px; color:var(--primary);">:</span>
+                        <div class="w-digit" id="t-sec-1">0</div><div class="w-digit" id="t-sec-2">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bet-container-wrapper">
+                <div class="bet-lock-overlay" id="betLockOverlay"><div class="lock-digit">0</div><div class="lock-digit" id="lockDigitSec">5</div></div>
+                <div class="w-bet-area">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding-bottom: 5px;">
+                        <button class="btn-3d-green" style="flex:1; margin:0 5px; padding:12px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:#18b660; cursor:pointer;" onclick="wingoBetPrompt('Green', 2)">Green</button>
+                        <button class="btn-3d-violet" style="flex:1; margin:0 5px; padding:12px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:#eb43dd; cursor:pointer;" onclick="wingoBetPrompt('Violet', 4.5)">Violet</button>
+                        <button class="btn-3d-red" style="flex:1; margin:0 5px; padding:12px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:#fb4e4e; cursor:pointer;" onclick="wingoBetPrompt('Red', 2)">Red</button>
+                    </div>
+                    <div class="w-num-grid">
+                        <div class="w-ball b-split-0" onclick="wingoBetPrompt('0', 9)">0</div>
+                        <div class="w-ball b-green" onclick="wingoBetPrompt('1', 9)">1</div>
+                        <div class="w-ball b-red" onclick="wingoBetPrompt('2', 9)">2</div>
+                        <div class="w-ball b-green" onclick="wingoBetPrompt('3', 9)">3</div>
+                        <div class="w-ball b-red" onclick="wingoBetPrompt('4', 9)">4</div>
+                        <div class="w-ball b-split-5" onclick="wingoBetPrompt('5', 9)">5</div>
+                        <div class="w-ball b-red" onclick="wingoBetPrompt('6', 9)">6</div>
+                        <div class="w-ball b-green" onclick="wingoBetPrompt('7', 9)">7</div>
+                        <div class="w-ball b-red" onclick="wingoBetPrompt('8', 9)">8</div>
+                        <div class="w-ball b-green" onclick="wingoBetPrompt('9', 9)">9</div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; gap:10px; margin-top:15px; padding-bottom: 5px;">
+                        <button class="btn-3d-orange" style="flex:1; padding:12px; border-radius:8px; color:white; border:none; font-weight:bold; background:#fb9337; cursor:pointer;" onclick="wingoBetPrompt('Big', 2)">Big</button>
+                        <button class="btn-3d-blue" style="flex:1; padding:12px; border-radius:8px; color:white; border:none; font-weight:bold; background:#4095f6; cursor:pointer;" onclick="wingoBetPrompt('Small', 2)">Small</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background:white; margin:15px; border-radius:10px; overflow:hidden;">
+                <div style="display:flex; background:var(--primary); color:white; padding:10px; font-size:13px; font-weight:bold;"><div style="flex:2;">Period</div><div style="flex:1; text-align:center;">Number</div><div style="flex:1; text-align:center;">Size</div><div style="flex:1; text-align:center;">Color</div></div>
+                <div id="wingoHistoryList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM BET MODAL -->
+    <div class="bet-modal-overlay" id="betModalOverlay">
+        <div class="bet-modal">
+            <div class="bet-modal-header" id="betModalHeader">
+                <h3 id="betModalTitle">WinGo 1 minute</h3>
+                <div class="choice-pill" id="betModalChoice">Select 2</div>
+            </div>
+            <div class="bet-modal-body">
+                <div class="bet-row"><span>Balance</span><div class="bet-options" id="baseOptions"><div class="bet-opt active" onclick="setBetBase(1)">1</div><div class="bet-opt" onclick="setBetBase(10)">10</div><div class="bet-opt" onclick="setBetBase(100)">100</div><div class="bet-opt" onclick="setBetBase(1000)">1000</div></div></div>
+                <div class="bet-row"><span>Quantity</span><div class="qty-control"><button onclick="changeBetQty(-1)">-</button><input type="number" id="betQtyInput" value="1" readonly><button onclick="changeBetQty(1)">+</button></div></div>
+                <div class="bet-row" style="margin-top: 20px;"><div class="bet-options" id="multiOptions" style="flex-wrap:wrap; justify-content:flex-end; width:100%;"><div class="bet-opt active" onclick="setBetMulti(1)">X1</div><div class="bet-opt" onclick="setBetMulti(5)">X5</div><div class="bet-opt" onclick="setBetMulti(10)">X10</div><div class="bet-opt" onclick="setBetMulti(20)">X20</div><div class="bet-opt" onclick="setBetMulti(50)">X50</div><div class="bet-opt" onclick="setBetMulti(100)">X100</div></div></div>
+                <div class="bet-terms"><i class="fa-solid fa-circle-check"></i> I agree 《Pre-sale rules》</div>
+            </div>
+            <div class="bet-modal-footer"><button class="btn-cancel" onclick="closeBetModal()">Cancel</button><button class="btn-confirm" id="btnConfirmBet" onclick="confirmBet()">Total amount ₹1.00</button></div>
+        </div>
+    </div>
+
+    <!-- WIN/LOSE RESULT MODAL -->
+    <div class="result-modal-overlay" id="resultModalOverlay">
+        <div class="result-card" id="resultCard">
+            <div class="result-badge" id="resultBadge"><i class="fa-solid fa-trophy"></i></div>
+            <h2 id="resultTitle">Congratulations</h2>
+            <div class="result-info">
+                <p>Lottery results</p>
+                <div class="res-boxes">
+                    <span id="resColorBox" class="res-box">Green</span>
+                    <span id="resNumBox" class="res-box">7</span>
+                    <span id="resSizeBox" class="res-box">Big</span>
+                </div>
+            </div>
+            <div class="result-bonus-slip">
+                <p id="resultBonusLabel">Bonus</p>
+                <h3 id="resultBonusAmt">₹0.00</h3>
+                <p class="res-period" id="resultPeriodText">Period: WinGo 1 Minute 2025...</p>
+            </div>
+            <p class="res-auto-close">3 seconds auto close</p>
+        </div>
+        <div class="res-close-btn" onclick="closeResultModal()"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+
+    <!-- Additional Screens -->
+    <div id="depositScreen" class="screen"><div class="fixed-header"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> Deposit</h2></div><div class="scroll-body overlay-scroll" style="padding:20px;"><div style="background:white; padding:20px; border-radius:12px; text-align:center; margin-bottom:20px;"><img id="showAdminQr" src="" style="width:200px; border-radius:10px; display:none; border:2px solid #00b894; margin:0 auto 15px auto;"><p>Admin UPI ID:</p><h3 id="showAdminUpi" style="color:#00b894;">Not Set</h3></div><div class="input-box-wrapper"><input type="number" class="input-box" id="depAmt" placeholder="Amount (Min ₹10)"></div><div class="input-box-wrapper"><input type="text" class="input-box" id="depUtr" placeholder="12-Digit UTR Number"></div><button class="btn-pill" style="background:#00b894; color:white;" onclick="submitDeposit(this)">Submit Deposit</button></div></div>
+    <div id="withdrawScreen" class="screen"><div class="fixed-header"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> Withdraw</h2></div><div class="scroll-body overlay-scroll" style="padding:20px;"><div style="background:white; padding:20px; border-radius:12px; text-align:center; margin-bottom:20px;"><p>Available Balance</p><h3 style="color:#fdcb6e; font-size:24px;">₹ <span id="wthBalDisplay">0.00</span></h3></div><div class="input-label">Withdraw Amount</div><div class="input-box-wrapper"><input type="number" class="input-box" id="wthAmt" placeholder="Min ₹100"></div><div class="input-label">Your UPI ID</div><div class="input-box-wrapper"><input type="text" class="input-box" id="wthUpi" placeholder="Enter your UPI address"></div><button class="btn-pill" style="background:#fdcb6e; color:black;" onclick="submitWithdraw(this)">Submit Withdrawal</button></div></div>
+    <div id="giftScreen" class="screen"><div class="fixed-header"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> Gift Code</h2></div><div class="scroll-body overlay-scroll" style="padding:20px; text-align:center;"><i class="fa-solid fa-gift" style="font-size:60px; color:#e84393; margin:20px 0;"></i><div class="input-box-wrapper"><input type="text" class="input-box" id="giftCodeInput" placeholder="Enter Gift Code"></div><button class="btn-pill" style="background:#e84393; color:white;" onclick="redeemGiftCode(this)">Redeem</button></div></div>
+    <div id="historyScreen" class="screen"><div class="fixed-header"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> <span id="historyTitle">History</span></h2></div><div class="scroll-body overlay-scroll" style="padding:15px;" id="historyContent"></div></div>
+    
+    <!-- NEW NOTIFICATION SCREEN -->
+    <div id="notificationScreen" class="screen">
+        <div class="fixed-header"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> Notifications</h2></div>
+        <div class="scroll-body overlay-scroll" style="padding:15px;" id="notificationList"></div>
+    </div>
+    
+    <div id="adminLoginScreen" class="screen"><div class="fixed-header" style="background:#2d3436;"><h2 style="margin:auto;">Admin Access</h2></div><div class="scroll-body overlay-scroll" style="padding:20px; margin-top:20px;"><div class="input-box-wrapper"><input type="text" class="input-box" id="adminId" placeholder="Admin Number (9142816706)"></div><div class="input-box-wrapper"><input type="password" class="input-box" id="adminPass" placeholder="Password (admin123)"></div><button class="btn-pill" style="background:#d63031; color:white;" onclick="loginAdmin(this)">Login Admin</button><button class="btn-pill btn-outline" onclick="history.back()">Back to App</button></div></div>
+    
+    <div id="adminScreen" class="screen">
+        <div class="fixed-header" style="background:#2d3436;"><h2 style="margin:auto;">Admin Panel</h2></div>
+        <div class="scroll-body overlay-scroll" style="padding:15px; margin-top:15px;">
+            <div style="display:flex; background:white; border-radius:8px; overflow:hidden; margin-bottom:15px;">
+                <div id="btnDepTab" style="flex:1; padding:12px; text-align:center; font-weight:bold; cursor:pointer; background:#00b894; color:white;" onclick="showAdminTab('depTab')">Deposits</div>
+                <div id="btnWthTab" style="flex:1; padding:12px; text-align:center; font-weight:bold; cursor:pointer; background:#f5f6f8; color:black;" onclick="showAdminTab('wthTab')">Withdraw</div>
+                <div id="btnUsersTab" style="flex:1; padding:12px; text-align:center; font-weight:bold; cursor:pointer; background:#f5f6f8; color:black;" onclick="showAdminTab('usersTab')">Users</div>
+            </div>
+            
+            <div style="background:white; padding:15px; border-radius:8px; margin-bottom:15px;">
+                <h3>Payment Settings</h3>
+                <input type="text" class="input-box" id="adminUpiInput" placeholder="Your UPI ID" style="margin:10px 0; background:var(--bg);">
+                <p style="font-size:12px; color:var(--text-muted);">Upload QR Photo:</p>
+                <input type="file" id="adminQrFile" accept="image/*" style="width:100%; padding:10px; background:var(--bg); border-radius:8px; margin-bottom:10px;">
+                <button class="btn-pill" style="background:#00b894; color:white; margin:0;" onclick="saveAdminSettings(this)">Save Settings</button>
+            </div>
+            
+            <div id="depTab" style="display:block;"><h3 style="margin-bottom:10px;">Pending Deposits</h3><div id="pendingDepositsList"></div></div>
+            <div id="wthTab" style="display:none;"><h3 style="margin-bottom:10px;">Pending Withdrawals</h3><div id="pendingWithdrawsList"></div></div>
+            
+            <div id="usersTab" style="display:none;">
+                <h3 style="margin-bottom:10px;">Registered Users</h3>
+                <input type="text" class="input-box" id="searchUserInput" placeholder="Search by Number or Email..." onkeyup="searchAdminUsers()" style="margin-bottom:15px; background:white; border: 1px solid var(--border);">
+                <div id="adminUsersList"></div>
+            </div>
+            <button class="btn-pill" style="background:#d63031; color:white; margin-top:30px;" onclick="history.back()">Logout Admin</button>
+        </div>
+    </div>
+
+</div>
+
+    <script>
+        // --- CUSTOM TOAST NOTIFICATION ENGINE ---
+        function showToast(msg, duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            if(!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.innerText = msg;
+            toast.style.setProperty('--duration', duration + 'ms');
+            container.appendChild(toast);
+            setTimeout(() => { if(toast.parentElement) toast.remove(); }, duration);
+        }
+
+        // --- FIREBASE INITIALIZATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmisC43blfkZS0VwuyzduEPT11mFl_Nkk",
+            authDomain: "metro-cash-1fc92.firebaseapp.com",
+            databaseURL: "https://metro-cash-1fc92-default-rtdb.firebaseio.com",
+            projectId: "metro-cash-1fc92",
+            storageBucket: "metro-cash-1fc92.firebasestorage.app",
+            messagingSenderId: "255202003635",
+            appId: "1:255202003635:web:030bd81838b19ad283bec6",
+            measurementId: "G-MH5LJ9501N"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // --- GLOBAL VARIABLES ---
+        let usersDB = {};
+        let pendingDeps = [];
+        let pendingWth = [];
+        let adminUpi = 'Not Set';
+        let adminQr = '';
+        let currentUser = null;
+        let isFirstLoad = true;
+
+        // --- FIREBASE REALTIME LISTENERS ---
+        db.ref('users').on('value', (snap) => {
+            usersDB = snap.val() || {};
+            
+            if(isFirstLoad) {
+                isFirstLoad = false;
+                let storedId = null;
+                try { storedId = localStorage.getItem('metroCurrentUserId'); } catch(e){}
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('invite')) {
+                    document.getElementById('regInvite').value = urlParams.get('invite');
+                    pushNav('registerScreen');
+                } else if(storedId && usersDB[storedId]) {
+                    currentUser = usersDB[storedId];
+                    initAppUI();
+                } else {
+                    pushNav('loginScreen');
+                }
+            } else if (currentUser && usersDB[currentUser.id]) {
+                currentUser = usersDB[currentUser.id];
+                updateBalDisplay();
+                updateMailBadge();
+            }
+
+            if (document.getElementById('adminScreen').classList.contains('active')) renderAdminUsers();
+        });
+
+        db.ref('deposits').on('value', (snap) => {
+            let data = snap.val() || {};
+            pendingDeps = Object.keys(data).map(k => ({ dbKey: k, ...data[k] }));
+            if (document.getElementById('adminScreen').classList.contains('active')) renderAdminLists();
+        });
+
+        db.ref('withdrawals').on('value', (snap) => {
+            let data = snap.val() || {};
+            pendingWth = Object.keys(data).map(k => ({ dbKey: k, ...data[k] }));
+            if (document.getElementById('adminScreen').classList.contains('active')) renderAdminLists();
+        });
+
+        db.ref('admin').on('value', (snap) => {
+            let data = snap.val() || { upi: 'Not Set', qr: '' };
+            adminUpi = data.upi;
+            adminQr = data.qr;
+            if(document.getElementById('depositScreen').classList.contains('active')) {
+                document.getElementById('showAdminUpi').innerText = adminUpi;
+                document.getElementById('showAdminQr').src = adminQr;
+                document.getElementById('showAdminQr').style.display = adminQr ? 'block' : 'none';
+            }
+        });
+
+        // --- CORE FUNCTIONS ---
+        function saveUserToDB(userObj) { db.ref('users/' + userObj.id).set(userObj); }
+
+        function updateBalDisplay() {
+            if(!currentUser) return;
+            let bal = parseFloat(currentUser.balance) || 0;
+            document.getElementById('homeBal').innerText = bal.toFixed(2);
+            document.getElementById('accBal').innerText = bal.toFixed(2);
+            document.getElementById('wingoBal').innerText = bal.toFixed(2);
+            if (document.getElementById('withdrawScreen').classList.contains('active')) {
+                document.getElementById('wthBalDisplay').innerText = bal.toFixed(2);
+            }
+        }
+
+        function updateMailBadge() {
+            if(!currentUser) return;
+            let unreadCount = (currentUser.notifications || []).filter(n => !n.read).length;
+            let badge = document.getElementById('mailBadge');
+            let accBadge = document.getElementById('accNotiBadge');
+            if(unreadCount > 0) {
+                if(badge) { badge.style.display = 'block'; badge.innerText = unreadCount; }
+                if(accBadge) { accBadge.style.display = 'block'; accBadge.innerText = unreadCount; }
+            } else {
+                if(badge) badge.style.display = 'none';
+                if(accBadge) accBadge.style.display = 'none';
+            }
+        }
+
+        function initAppUI() {
+            updateBalDisplay();
+            updateMailBadge();
+            document.getElementById('myInviteCode').innerText = currentUser.uid || '00000000';
+            document.getElementById('accUser').innerText = currentUser.id || 'User';
+            document.getElementById('accUid').innerText = currentUser.uid || '00000000';
+            renderReferrals();
+            
+            let savedScreen = 'appScreens';
+            let savedAppTab = 'homeApp';
+            try {
+                let s = localStorage.getItem('activeScreen');
+                if (s && s !== 'loginScreen' && s !== 'registerScreen' && s !== 'adminLoginScreen') { savedScreen = s; }
+                savedAppTab = localStorage.getItem('activeAppTab') || 'homeApp';
+            } catch(e) {}
+            
+            if(savedScreen === 'appScreens') pushNav('appScreens', savedAppTab);
+            else pushNav(savedScreen);
+        }
+
+        // --- AUDIO ENGINE ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
+        document.addEventListener('click', initAudio, { once: true }); document.addEventListener('touchstart', initAudio, { once: true });
+        function playTickSound() { if (!audioCtx) return; const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05); gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.connect(gainNode); gainNode.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.05); }
+
+        // --- NAVIGATION ---
+        function pushNav(screenId, tabId = null) { try { history.pushState({ screen: screenId, tab: tabId }, "", "#" + (tabId || screenId)); } catch(e){} renderNav(screenId, tabId); }
+        function renderNav(screenId, tabId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            if(screenId === 'appScreens' && tabId) {
+                let appScreen = document.getElementById('appScreens'); if(appScreen) appScreen.classList.add('active');
+                document.querySelectorAll('.app-tab-pane').forEach(p => p.style.display = 'none'); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                let targetTab = document.getElementById(tabId); if(targetTab) targetTab.style.display = 'block';
+                if(tabId === 'homeApp' && document.getElementById('navHome')) document.getElementById('navHome').classList.add('active');
+                if(tabId === 'referApp' && document.getElementById('navRefer')) document.getElementById('navRefer').classList.add('active');
+                if(tabId === 'accountApp' && document.getElementById('navAcc')) document.getElementById('navAcc').classList.add('active');
+                try { localStorage.setItem('activeAppTab', tabId); localStorage.setItem('activeScreen', 'appScreens'); } catch(e){}
+            } else {
+                let el = document.getElementById(screenId); if(el) el.classList.add('active'); else document.getElementById('loginScreen').classList.add('active');
+                if(screenId === 'depositScreen') { document.getElementById('showAdminUpi').innerText = adminUpi; document.getElementById('showAdminQr').src = adminQr; document.getElementById('showAdminQr').style.display = adminQr ? 'block' : 'none'; }
+                if(screenId === 'withdrawScreen' && currentUser) document.getElementById('wthBalDisplay').innerText = (parseFloat(currentUser.balance) || 0).toFixed(2);
+                if(screenId === 'wingoScreen') switchWingoTab(activeWingoTab);
+                try { localStorage.setItem('activeScreen', screenId); } catch(e){}
+            }
+        }
+        window.addEventListener('popstate', function(e) { if(e.state && e.state.screen) renderNav(e.state.screen, e.state.tab); else if(currentUser) renderNav('appScreens', 'homeApp'); else renderNav('loginScreen'); });
+        window.onload = function() { startGlobalWingoTimers(); }
+        function switchTab(tabId) { pushNav('appScreens', tabId); }
+        
+        let authMode = 'phone';
+        function setAuthMode(mode) { authMode = mode; document.getElementById('tabPhone').classList.remove('active'); document.getElementById('tabEmail').classList.remove('active'); let lbl = document.getElementById('lblUsername'), input = document.getElementById('logUsername'), phoneBlock = document.getElementById('phoneRowBlock'); if(mode === 'phone') { document.getElementById('tabPhone').classList.add('active'); lbl.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> Phone number'; input.placeholder = "Enter phone number"; phoneBlock.style.display = "flex"; phoneBlock.classList.replace('input-box-wrapper', 'phone-input-row'); document.querySelector('.country-code').style.display = "flex"; } else { document.getElementById('tabEmail').classList.add('active'); lbl.innerHTML = '<i class="fa-solid fa-envelope"></i> Email login'; input.placeholder = "Enter email address"; phoneBlock.classList.replace('phone-input-row', 'input-box-wrapper'); document.querySelector('.country-code').style.display = "none"; } }
+        function togglePass(inId, icId) { let i=document.getElementById(inId), c=document.getElementById(icId); if(i.type==="password"){ i.type="text"; c.classList.replace('fa-eye-slash','fa-eye'); c.style.color="var(--primary)"; } else { i.type="password"; c.classList.replace('fa-eye','fa-eye-slash'); c.style.color="var(--text-muted)"; } }
+        
+        function doRegister(btn) { 
+            let id = document.getElementById('regId').value.trim().toLowerCase(); 
+            let p1 = document.getElementById('regPass').value;
+            let p2 = document.getElementById('regPassConf').value;
+            let inv = document.getElementById('regInvite').value.trim(); 
+            
+            if(id.length < 5 || p1.length < 4) return showToast("Invalid inputs! ID 5+ chars, Pass 4+ chars."); 
+            if(p1 !== p2) return showToast("Passwords do not match"); 
+            if(usersDB[id]) return showToast("Account already exists with this Number/Email!"); 
+            
+            btn.classList.add('btn-loading'); 
+            let newUid = Math.floor(10000000 + Math.random() * 90000000).toString(); 
+            
+            if(inv) { 
+                for(let key in usersDB) { 
+                    if(usersDB[key].uid === inv) { 
+                        let refUser = usersDB[key];
+                        if(!refUser.referrals) refUser.referrals = []; 
+                        refUser.referrals.push({ id: id, date: new Date().toLocaleDateString() }); 
+                        saveUserToDB(refUser); 
+                        break; 
+                    } 
+                } 
+            } 
+            
+            let newUser = { id: id, password: p1, uid: newUid, balance: 0.0, txHistory: [], gameHistory: [], referrals: [], notifications: [] };
+            saveUserToDB(newUser);
+            
+            setTimeout(() => { btn.classList.remove('btn-loading'); showToast(`Registered successfully! Your UID: ${newUid}`); history.back(); }, 800); 
+        }
+
+        function doLogin(btn) { 
+            let id = document.getElementById('logUsername').value.trim().toLowerCase(); 
+            let pass = document.getElementById('logPass').value; 
+            
+            if(!usersDB[id] || usersDB[id].password !== pass) {
+                return showToast("Wrong credentials! Please check your ID and Password."); 
+            }
+            
+            btn.classList.add('btn-loading'); 
+            setTimeout(() => { 
+                try {
+                    currentUser = usersDB[id]; 
+                    currentUser.balance = parseFloat(currentUser.balance) || 0;
+                    if(!currentUser.referrals) currentUser.referrals = []; 
+                    if(!currentUser.txHistory) currentUser.txHistory = []; 
+                    if(!currentUser.gameHistory) currentUser.gameHistory = []; 
+                    if(!currentUser.notifications) currentUser.notifications = []; 
+
+                    try { localStorage.setItem('metroCurrentUserId', id); } catch(e){}
+                    
+                    updateBalDisplay();
+                    updateMailBadge();
+                    document.getElementById('myInviteCode').innerText = currentUser.uid || '00000000';
+                    document.getElementById('accUser').innerText = currentUser.id || 'User';
+                    document.getElementById('accUid').innerText = currentUser.uid || '00000000';
+                    renderReferrals();
+                    
+                    btn.classList.remove('btn-loading'); 
+                    showToast("Login Successful!");
+                    pushNav('appScreens', 'homeApp'); 
+                } catch(error) {
+                    btn.classList.remove('btn-loading'); 
+                    showToast("System Error: " + error.message);
+                }
+            }, 800); 
+        }
+
+        function doLogout() { currentUser = null; try{localStorage.removeItem('metroCurrentUserId'); localStorage.removeItem('activeScreen');}catch(e){} document.getElementById('logUsername').value = ''; document.getElementById('logPass').value = ''; showToast("Logged Out Successfully"); pushNav('loginScreen'); }
+        function copyInviteLink() { let link = "https://metrocash.vercel.app/?invite=" + currentUser.uid; navigator.clipboard.writeText(link).then(() => { showToast("Invite Link Copied!"); }).catch(err => { showToast("Failed to copy link"); }); }
+        function renderReferrals() { let list = document.getElementById('myReferralsList'); list.innerHTML = ""; if(!currentUser.referrals || currentUser.referrals.length === 0) list.innerHTML = "<p style='color:gray; font-size:13px;'>No referrals yet.</p>"; else currentUser.referrals.forEach(r => list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:14px;"><span><i class="fa-solid fa-user"></i> ${r.id}</span> <span style="color:var(--text-muted);">${r.date}</span></div>`); }
+        function addTxRecord(type, amt, status) { if(!currentUser.txHistory) currentUser.txHistory = []; currentUser.txHistory.unshift({ type: type, amount: amt, status: status, date: new Date().toLocaleString() }); saveUserToDB(currentUser); }
+        
+        function submitDeposit(btn) { 
+            let amt = parseFloat(document.getElementById('depAmt').value), utr = document.getElementById('depUtr').value; 
+            if(isNaN(amt) || amt < 10 || utr.length < 5) return showToast("Invalid inputs"); 
+            btn.classList.add('btn-loading'); 
+            
+            db.ref('deposits').push({ userId: currentUser.id, amt: amt, utr: utr, date: new Date().toLocaleString() });
+            addTxRecord('Deposit', amt, 'Pending'); 
+            
+            setTimeout(() => { btn.classList.remove('btn-loading'); showToast("Deposit Request Sent!"); history.back(); }, 800); 
+        }
+        
+        function submitWithdraw(btn) { 
+            let amt = parseFloat(document.getElementById('wthAmt').value), upi = document.getElementById('wthUpi').value; 
+            if(isNaN(amt) || amt < 100) return showToast("Min withdraw ₹100"); 
+            if(amt > (parseFloat(currentUser.balance) || 0)) return showToast("Insufficient balance"); 
+            if(upi.length < 5) return showToast("Enter valid UPI"); 
+            
+            btn.classList.add('btn-loading'); 
+            currentUser.balance = (parseFloat(currentUser.balance) || 0) - amt; 
+            db.ref('withdrawals').push({ userId: currentUser.id, amt: amt, upi: upi, date: new Date().toLocaleString() });
+            addTxRecord('Withdraw', amt, 'Pending');
+            
+            setTimeout(() => { btn.classList.remove('btn-loading'); showToast("Withdraw Request Sent!"); history.back(); }, 800); 
+        }
+        
+        function redeemGiftCode(btn) { let code = document.getElementById('giftCodeInput').value.trim().toUpperCase(); btn.classList.add('btn-loading'); setTimeout(() => { btn.classList.remove('btn-loading'); if(code === 'VIP100') { currentUser.balance = (parseFloat(currentUser.balance) || 0) + 100; addTxRecord('Gift Code', 100, 'Credited'); showToast('₹100 Gift added!'); history.back(); } else showToast('Invalid Code!'); }, 800); }
+        
+        function openHistory(type) { 
+            let title = "History";
+            let data = [];
+            
+            if(type === 'tx') { title = "Transaction History"; data = currentUser.txHistory || []; }
+            else if(type === 'game') { title = "Game History"; data = currentUser.gameHistory || []; }
+            else if(type === 'dep') { title = "Deposit History"; data = (currentUser.txHistory || []).filter(t => t.type === 'Deposit'); }
+            else if(type === 'wth') { title = "Withdraw History"; data = (currentUser.txHistory || []).filter(t => t.type === 'Withdraw'); }
+
+            document.getElementById('historyTitle').innerText = title; 
+            let content = document.getElementById('historyContent'); 
+            content.innerHTML = ""; 
+            
+            if(!data || data.length === 0) {
+                content.innerHTML = `<p style="text-align:center; color:gray;">No records found.</p>`; 
+            } else { 
+                data.forEach(item => { 
+                    if(type === 'game') { 
+                        let color = item.isWin ? 'green' : 'red'; let sign = item.isWin ? '+' : '-'; 
+                        content.innerHTML += `<div style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid var(--border); box-shadow:0 2px 5px rgba(0,0,0,0.02);"><b style="float:right; color:${color}">${sign}₹${item.result}</b><b>${item.game}</b><br><small style="color:gray;">${item.date} | Bet: ₹${item.bet}</small></div>`; 
+                    } else { 
+                        let color = item.status === 'Pending' ? 'gray' : (item.status === 'Rejected' ? 'red' : 'green'); 
+                        content.innerHTML += `<div style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid var(--border); box-shadow:0 2px 5px rgba(0,0,0,0.02);"><b style="float:right; color:${color}">₹${item.amount}</b><b>${item.type}</b><br><small style="color:gray;">${item.date} | ${item.status}</small></div>`; 
+                    } 
+                }); 
+            }
+            pushNav('historyScreen'); 
+        }
+
+        function openNotifications() {
+            if(!currentUser.notifications) currentUser.notifications = [];
+            let list = document.getElementById('notificationList');
+            list.innerHTML = '';
+            
+            if(currentUser.notifications.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:gray; margin-top:20px;">No notifications yet.</p>';
+            } else {
+                currentUser.notifications.forEach(n => {
+                    let dot = n.read ? '' : '<div style="width:10px; height:10px; background:#ff4d4d; border-radius:50%; margin-top:5px; flex-shrink:0;"></div>';
+                    list.innerHTML += `<div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid var(--border); display:flex; justify-content:space-between; box-shadow:0 2px 5px rgba(0,0,0,0.02);">
+                        <div><h4 style="margin:0 0 5px 0; color:var(--text);">${n.title}</h4><p style="margin:0 0 5px 0; font-size:13px; color:var(--text-muted);">${n.msg}</p><small style="color:#aaa; font-size:11px;">${n.date}</small></div>
+                        ${dot}
+                    </div>`;
+                    n.read = true; 
+                });
+                saveUserToDB(currentUser);
+            }
+            updateMailBadge();
+            pushNav('notificationScreen');
+        }
+
+        // --- WINGO ENGINE ---
+        let wingoState = { '1min': { time: 60, period: 20261003001, history: [], bets: [] }, '3min': { time: 180, period: 20261003001, history: [], bets: [] }, '5min': { time: 300, period: 20261003001, history: [], bets: [] } };
+        try { let ws = JSON.parse(localStorage.getItem('metroWingoState')); if(ws) wingoState = ws; } catch(e){}
+        let activeWingoTab = '1min';
+
+        function switchWingoTab(tab) { activeWingoTab = tab; document.getElementById('tab1min').classList.remove('active'); document.getElementById('tab3min').classList.remove('active'); document.getElementById('tab5min').classList.remove('active'); document.getElementById('tab' + tab).classList.add('active'); updateWingoUI(); }
+
+        function startGlobalWingoTimers() {
+            setInterval(() => {
+                ['1min', '3min', '5min'].forEach(type => {
+                    wingoState[type].time--;
+                    if (type === activeWingoTab && wingoState[type].time <= 5 && wingoState[type].time >= 0) { let wingoEl = document.getElementById('wingoScreen'); if (wingoEl && wingoEl.classList.contains('active')) { playTickSound(); } }
+                    if(wingoState[type].time <= 0) { resolveWingo(type); if(type === '1min') wingoState[type].time = 60; if(type === '3min') wingoState[type].time = 180; if(type === '5min') wingoState[type].time = 300; wingoState[type].period++; }
+                });
+                try { localStorage.setItem('metroWingoState', JSON.stringify(wingoState)); } catch(e){}
+                let wingoEl = document.getElementById('wingoScreen'); if(wingoEl && wingoEl.classList.contains('active')) updateWingoUI();
+            }, 1000);
+        }
+
+        function updateWingoUI() {
+            let state = wingoState[activeWingoTab];
+            document.getElementById('wingoPeriod').innerText = state.period;
+            let min = Math.floor(state.time / 60); let sec = state.time % 60;
+            document.getElementById('t-min-1').innerText = Math.floor(min / 10); document.getElementById('t-min-2').innerText = min % 10;
+            document.getElementById('t-sec-1').innerText = Math.floor(sec / 10); document.getElementById('t-sec-2').innerText = sec % 10;
+            
+            let lockOverlay = document.getElementById('betLockOverlay'); let lockDigitSec = document.getElementById('lockDigitSec');
+            if (state.time <= 5 && state.time > 0) {
+                lockOverlay.classList.add('active');
+                let newLock = lockDigitSec.cloneNode(true); newLock.innerText = state.time; lockDigitSec.parentNode.replaceChild(newLock, lockDigitSec);
+            } else { lockOverlay.classList.remove('active'); }
+            renderWingoHistory(state.history);
+        }
+
+        let currentBet = { choice: '', multi: 0, base: 1, qty: 1, x: 1 };
+        function wingoBetPrompt(choice, multi) {
+            if (wingoState[activeWingoTab].time <= 5) return showToast("Betting is locked for the last 5 seconds!");
+            currentBet.choice = choice; currentBet.multi = multi; currentBet.base = 1; currentBet.qty = 1; currentBet.x = 1;
+            let headerBg = 'var(--primary)'; let btnBg = 'var(--primary)';
+            if(choice === 'Red' || choice % 2 === 0 && choice !== '0' && choice !== 'Big' && choice !== 'Small') { headerBg = 'var(--w-red)'; btnBg = 'var(--w-red)'; }
+            else if(choice === 'Green' || choice % 2 !== 0 && choice !== 'Big' && choice !== 'Small') { headerBg = 'var(--w-green)'; btnBg = 'var(--w-green)'; }
+            else if(choice === 'Violet' || choice === '0' || choice === '5') { headerBg = 'var(--w-violet)'; btnBg = 'var(--w-violet)'; }
+            else if(choice === 'Big') { headerBg = 'var(--w-orange)'; btnBg = 'var(--w-orange)'; }
+            else if(choice === 'Small') { headerBg = 'var(--w-blue)'; btnBg = 'var(--w-blue)'; }
+
+            document.getElementById('betModalHeader').style.background = headerBg;
+            document.getElementById('btnConfirmBet').style.background = btnBg;
+            
+            const styleElement = document.createElement('style'); styleElement.id = 'dynamicBetStyle';
+            styleElement.innerHTML = `.bet-opt.active { background: ${btnBg} !important; box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important; color: white !important; } .qty-control button { background: ${btnBg} !important; }`;
+            const existingStyle = document.getElementById('dynamicBetStyle'); if (existingStyle) existingStyle.remove();
+            document.head.appendChild(styleElement);
+            
+            let tabName = "WinGo 1 minute"; if(activeWingoTab === '3min') tabName = "WinGo 3 minute"; if(activeWingoTab === '5min') tabName = "WinGo 5 minute";
+            document.getElementById('betModalTitle').innerText = tabName; document.getElementById('betModalChoice').innerText = "Select " + choice;
+            updateBetModalUI(); document.getElementById('betModalOverlay').classList.add('active');
+        }
+
+        function setBetBase(val) { currentBet.base = val; updateBetModalUI(); }
+        function setBetMulti(val) { currentBet.x = val; updateBetModalUI(); }
+        function changeBetQty(val) { let newQty = currentBet.qty + val; if(newQty >= 1) currentBet.qty = newQty; updateBetModalUI(); }
+        function updateBetModalUI() {
+            document.querySelectorAll('#baseOptions .bet-opt').forEach(el => el.classList.toggle('active', parseInt(el.innerText) === currentBet.base));
+            document.querySelectorAll('#multiOptions .bet-opt').forEach(el => el.classList.toggle('active', parseInt(el.innerText.replace('X','')) === currentBet.x));
+            document.getElementById('betQtyInput').value = currentBet.qty;
+            let total = currentBet.base * currentBet.qty * currentBet.x;
+            document.getElementById('btnConfirmBet').innerText = `Total amount ₹${total.toFixed(2)}`;
+        }
+        function closeBetModal() { document.getElementById('betModalOverlay').classList.remove('active'); }
+
+        function confirmBet() {
+            let totalAmt = currentBet.base * currentBet.qty * currentBet.x;
+            if(totalAmt < 1) return showToast("Invalid amount");
+            let bal = parseFloat(currentUser.balance) || 0;
+            if(totalAmt > bal) { closeBetModal(); return showToast("Insufficient balance!"); }
+            
+            currentUser.balance = bal - totalAmt; 
+            saveUserToDB(currentUser);
+            wingoState[activeWingoTab].bets.push({ userId: currentUser.id, choice: currentBet.choice, amt: totalAmt, multi: currentBet.multi });
+            try { localStorage.setItem('metroWingoState', JSON.stringify(wingoState)); } catch(e){}
+            closeBetModal(); 
+            showToast("Bet success", 1200); 
+        }
+
+        // --- RESULT MODAL ENGINE ---
+        let resultModalTimeout;
+        function showResultModal(status, num, color, size, amt, type, period) {
+            clearTimeout(resultModalTimeout);
+            let overlay = document.getElementById('resultModalOverlay'), card = document.getElementById('resultCard'), badge = document.getElementById('resultBadge'), title = document.getElementById('resultTitle'), bonusLabel = document.getElementById('resultBonusLabel'), bonusAmt = document.getElementById('resultBonusAmt');
+
+            document.getElementById('resColorBox').innerText = color;
+            document.getElementById('resNumBox').innerText = num;
+            document.getElementById('resSizeBox').innerText = size;
+
+            let cBox = document.getElementById('resColorBox');
+            cBox.style.color = '#fff';
+            if(color === 'Red') cBox.style.background = 'var(--w-red)';
+            else if(color === 'Green') cBox.style.background = 'var(--w-green)';
+            else if(color === 'Red & Violet') cBox.style.background = 'linear-gradient(135deg, var(--w-red) 50%, var(--w-violet) 50%)';
+            else if(color === 'Green & Violet') cBox.style.background = 'linear-gradient(135deg, var(--w-green) 50%, var(--w-violet) 50%)';
+
+            let tabName = type === '1min' ? '1 Minute' : (type === '3min' ? '3 Minute' : '5 Minute');
+            document.getElementById('resultPeriodText').innerText = `Period: WinGo ${tabName} ${period}`;
+
+            if(status === 'win') {
+                card.className = 'result-card';
+                badge.innerHTML = '<i class="fa-solid fa-trophy"></i>';
+                title.innerText = 'Congratulations';
+                bonusLabel.innerText = 'Bonus';
+                bonusAmt.innerText = '₹' + amt.toFixed(2);
+                bonusAmt.style.color = '#f95959';
+            } else {
+                card.className = 'result-card lose-theme';
+                badge.innerHTML = '<i class="fa-solid fa-face-sad-tear"></i>';
+                title.innerText = 'Sorry, You Lose';
+                bonusLabel.innerText = 'Loss';
+                bonusAmt.innerText = '₹0.00';
+                bonusAmt.style.color = '#455a64';
+            }
+
+            overlay.classList.add('active');
+            resultModalTimeout = setTimeout(() => { closeResultModal(); }, 3000);
+        }
+        function closeResultModal() { document.getElementById('resultModalOverlay').classList.remove('active'); }
+
+        function resolveWingo(type) {
+            let state = wingoState[type], resNum = Math.floor(Math.random() * 10), resColor = '', dotHtml = '', numColorStyle = '';
+            if(resNum === 0) { resColor = 'Red & Violet'; dotHtml = `<span style="width:10px; height:10px; border-radius:50%; display:inline-block; background:var(--w-red);"></span> <span style="width:10px; height:10px; border-radius:50%; display:inline-block; background:var(--w-violet);"></span>`; numColorStyle = 'background: linear-gradient(135deg, var(--w-red) 50%, var(--w-violet) 50%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'; }
+            else if(resNum === 5) { resColor = 'Green & Violet'; dotHtml = `<span style="width:10px; height:10px; border-radius:50%; display:inline-block; background:var(--w-green);"></span> <span style="width:10px; height:10px; border-radius:50%; display:inline-block; background:var(--w-violet);"></span>`; numColorStyle = 'background: linear-gradient(135deg, var(--w-green) 50%, var(--w-violet) 50%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'; }
+            else if(resNum % 2 === 0) { resColor = 'Red'; dotHtml = `<span style="width:10px; height:10px; border-radius:50%; display:inline-block; background:var(--w-red);"></span>`; numColorStyle = 'color: var(--w-red);'; }
+            else { resColor = 'Green'; dotHtml = `<span style="width:10px; height:10px; border-radius:50%; display:inline-block; background:var(--w-green);"></span>`; numColorStyle = 'color: var(--w-green);'; }
+            let resSize = resNum < 5 ? 'Small' : 'Big';
+
+            if(state.bets.length > 0) {
+                let userTotalWin = 0;
+                let userPlayed = false;
+
+                state.bets.forEach(b => {
+                    let isWin = false;
+                    if(b.choice === 'Green' && (resNum===1 || resNum===3 || resNum===7 || resNum===9 || resNum===5)) isWin = true;
+                    if(b.choice === 'Red' && (resNum===2 || resNum===4 || resNum===6 || resNum===8 || resNum===0)) isWin = true;
+                    if(b.choice === 'Violet' && (resNum===0 || resNum===5)) isWin = true;
+                    if(b.choice === resSize) isWin = true;
+                    if(b.choice == resNum) isWin = true;
+                    
+                    let winAmt = isWin ? (b.amt * b.multi).toFixed(2) : 0;
+                    
+                    if(currentUser && currentUser.id === b.userId) {
+                        userPlayed = true;
+                        if(isWin) {
+                            userTotalWin += parseFloat(winAmt);
+                            currentUser.balance = (parseFloat(currentUser.balance) || 0) + parseFloat(winAmt);
+                        }
+                        if(!currentUser.gameHistory) currentUser.gameHistory = [];
+                        currentUser.gameHistory.unshift({ game: `Win Go ${type} (`+b.choice+')', bet: b.amt, result: isWin ? winAmt : 0, isWin: isWin, date: new Date().toLocaleString() });
+                    }
+                });
+
+                if(userPlayed) {
+                    saveUserToDB(currentUser);
+                    let isInsideGame = document.getElementById('wingoScreen').classList.contains('active');
+                    
+                    if(userTotalWin > 0) {
+                        if(isInsideGame) showResultModal('win', resNum, resColor, resSize, userTotalWin, type, state.period);
+                        else showToast(`🎉 Win Go Result: ${resNum} (${resColor})\nYOU WON ₹${userTotalWin.toFixed(2)}!`, 4000);
+                    } else {
+                        if(isInsideGame) showResultModal('lose', resNum, resColor, resSize, 0, type, state.period);
+                    }
+                }
+                state.bets = []; 
+            }
+            state.history.unshift({ period: state.period, num: resNum, size: resSize, colorHtml: dotHtml, numStyle: numColorStyle }); if(state.history.length > 10) state.history.pop();
+        }
+
+        function renderWingoHistory(histData) { let list = document.getElementById('wingoHistoryList'); list.innerHTML = ""; if(!histData || histData.length === 0) return; histData.forEach(r => list.innerHTML += `<div style="display:flex; padding:10px; border-bottom:1px solid var(--border); font-size:13px; align-items:center;"><div style="flex:2;">${r.period}</div><div style="flex:1; text-align:center;"><span style="font-size:18px; font-weight:bold; ${r.numStyle}">${r.num}</span></div><div style="flex:1; text-align:center;">${r.size}</div><div style="flex:1; display:flex; justify-content:center; gap:3px;">${r.colorHtml}</div></div>`); }
+
+        // --- ADMIN SYS ---
+        function loginAdmin(btn) { 
+            let u = document.getElementById('adminId').value, p = document.getElementById('adminPass').value; 
+            // HERE IS YOUR NEW ADMIN NUMBER
+            if(u === '9142816706' && p === 'admin123') { 
+                btn.classList.add('btn-loading'); 
+                setTimeout(() => { 
+                    btn.classList.remove('btn-loading'); 
+                    pushNav('adminScreen'); 
+                    document.getElementById('adminUpiInput').value = adminUpi !== 'Not Set' ? adminUpi : ''; 
+                    renderAdminLists(); 
+                    renderAdminUsers(); 
+                }, 800); 
+            } else showToast("Wrong Admin Details"); 
+        }
+        
+        function saveAdminSettings(btn) { 
+            btn.classList.add('btn-loading'); 
+            let upi = document.getElementById('adminUpiInput').value || 'Not Set';
+            let f = document.getElementById('adminQrFile'); 
+            if(f.files[0]) { 
+                let r = new FileReader(); 
+                r.onload = function(e) { 
+                    db.ref('admin').set({ upi: upi, qr: e.target.result }); 
+                    btn.classList.remove('btn-loading'); showToast("Settings Saved!"); 
+                }; 
+                r.readAsDataURL(f.files[0]); 
+            } else { 
+                db.ref('admin').update({ upi: upi });
+                btn.classList.remove('btn-loading'); showToast("UPI Saved!"); 
+            } 
+        }
+        
+        function showAdminTab(tabId) { 
+            document.getElementById('depTab').style.display = 'none'; document.getElementById('wthTab').style.display = 'none'; document.getElementById('usersTab').style.display = 'none';
+            document.getElementById('btnDepTab').style.background = '#f5f6f8'; document.getElementById('btnDepTab').style.color = 'black'; document.getElementById('btnWthTab').style.background = '#f5f6f8'; document.getElementById('btnWthTab').style.color = 'black'; document.getElementById('btnUsersTab').style.background = '#f5f6f8'; document.getElementById('btnUsersTab').style.color = 'black';
+            document.getElementById(tabId).style.display = 'block'; 
+            if(tabId === 'depTab') { document.getElementById('btnDepTab').style.background = '#00b894'; document.getElementById('btnDepTab').style.color = 'white'; } 
+            if(tabId === 'wthTab') { document.getElementById('btnWthTab').style.background = '#fdcb6e'; document.getElementById('btnWthTab').style.color = 'black'; } 
+            if(tabId === 'usersTab') { document.getElementById('btnUsersTab').style.background = '#2575fc'; document.getElementById('btnUsersTab').style.color = 'white'; renderAdminUsers(); }
+        }
+
+        function renderAdminUsers(filterText = "") {
+            let uList = document.getElementById('adminUsersList'); uList.innerHTML = "";
+            let keys = Object.keys(usersDB);
+            if(keys.length === 0) { uList.innerHTML = "<p style='color:gray;'>No users registered yet.</p>"; return; }
+            keys.forEach(k => {
+                let user = usersDB[k];
+                if(k.includes(filterText) || user.uid.includes(filterText)) {
+                    uList.innerHTML += `<div style="background:var(--bg); padding:15px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);"><p style="margin-bottom:5px;"><b>ID/Phone:</b> ${k}</p><p style="margin-bottom:5px;"><b>UID:</b> ${user.uid}</p><p style="margin-bottom:5px;"><b>Password:</b> <span style="color:#d63031; font-weight:bold;">${user.password}</span></p><p style="margin-bottom:5px;"><b>Balance:</b> ₹${(parseFloat(user.balance) || 0).toFixed(2)}</p></div>`;
+                }
+            });
+        }
+        function searchAdminUsers() { let text = document.getElementById('searchUserInput').value.trim().toLowerCase(); renderAdminUsers(text); }
+
+        function renderAdminLists() { 
+            let dList = document.getElementById('pendingDepositsList'), wList = document.getElementById('pendingWithdrawsList'); dList.innerHTML = ""; wList.innerHTML = ""; 
+            if(pendingDeps.length === 0) dList.innerHTML = "<p style='color:gray;'>No pending deposits.</p>"; 
+            else pendingDeps.forEach((r) => dList.innerHTML += `<div style="background:var(--bg); padding:15px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);"><p><b>${r.userId}</b>: ₹${r.amt} <br><small style="color:gray;">UTR: ${r.utr}</small></p><div style="margin-top:10px;"><button onclick="apprDep('${r.dbKey}')" style="background:#00b894; color:white; padding:8px 12px; border:none; border-radius:4px; font-weight:bold;">Approve</button> <button onclick="rejDep('${r.dbKey}')" style="background:#ff7675; color:white; padding:8px 12px; border:none; border-radius:4px; font-weight:bold;">Reject</button></div></div>`); 
+            
+            if(pendingWth.length === 0) wList.innerHTML = "<p style='color:gray;'>No pending withdrawals.</p>"; 
+            else pendingWth.forEach((r) => wList.innerHTML += `<div style="background:var(--bg); padding:15px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);"><p><b>${r.userId}</b>: ₹${r.amt}<br><small style="color:gray;">UPI: ${r.upi}</small></p><div style="margin-top:10px;"><button onclick="apprWth('${r.dbKey}')" style="background:#00b894; color:white; padding:8px 12px; border:none; border-radius:4px; font-weight:bold;">Approve</button> <button onclick="rejWth('${r.dbKey}')" style="background:#ff7675; color:white; padding:8px 12px; border:none; border-radius:4px; font-weight:bold;">Reject</button></div></div>`); 
+        }
+
+        // --- PUSH NOTIFICATION HELPERS ---
+        function pushUserNotification(userId, title, msg) {
+            if(usersDB[userId]) {
+                let u = usersDB[userId];
+                if(!u.notifications) u.notifications = [];
+                u.notifications.unshift({ title: title, msg: msg, date: new Date().toLocaleString(), read: false });
+                saveUserToDB(u);
+            }
+        }
+
+        function apprDep(dbKey) { 
+            let r = pendingDeps.find(p => p.dbKey === dbKey);
+            if(usersDB[r.userId]) { 
+                let u = usersDB[r.userId];
+                u.balance = (parseFloat(u.balance) || 0) + r.amt; 
+                if(!u.txHistory) u.txHistory = [];
+                let tx = u.txHistory.find(t => t.type==='Deposit' && t.amount===r.amt && t.status==='Pending'); if(tx) tx.status = 'Approved'; 
+                saveUserToDB(u);
+                pushUserNotification(r.userId, "Deposit Approved! ✅", `Your deposit of ₹${r.amt} was successful.`);
+            } 
+            db.ref('deposits/' + dbKey).remove(); 
+        }
+        
+        function rejDep(dbKey) { 
+            let r = pendingDeps.find(p => p.dbKey === dbKey);
+            if(usersDB[r.userId]) {
+                let u = usersDB[r.userId];
+                if(!u.txHistory) u.txHistory = [];
+                let tx = u.txHistory.find(t => t.type==='Deposit' && t.amount===r.amt && t.status==='Pending'); if(tx) tx.status = 'Rejected';
+                saveUserToDB(u);
+                pushUserNotification(r.userId, "Deposit Rejected ❌", `Your deposit request of ₹${r.amt} was rejected by Admin.`);
+            }
+            db.ref('deposits/' + dbKey).remove(); 
+        }
+        
+        function apprWth(dbKey) { 
+            let r = pendingWth.find(p => p.dbKey === dbKey);
+            if(usersDB[r.userId]) {
+                let u = usersDB[r.userId];
+                if(!u.txHistory) u.txHistory = [];
+                let tx = u.txHistory.find(t => t.type==='Withdraw' && t.amount===r.amt && t.status==='Pending'); if(tx) tx.status = 'Approved';
+                saveUserToDB(u);
+                pushUserNotification(r.userId, "Withdrawal Approved! 💸", `Your withdrawal of ₹${r.amt} has been processed.`);
+            }
+            db.ref('withdrawals/' + dbKey).remove(); 
+        }
+        
+        function rejWth(dbKey) { 
+            let r = pendingWth.find(p => p.dbKey === dbKey);
+            if(usersDB[r.userId]) { 
+                let u = usersDB[r.userId];
+                u.balance = (parseFloat(u.balance) || 0) + r.amt; // refund
+                if(!u.txHistory) u.txHistory = [];
+                let tx = u.txHistory.find(t => t.type==='Withdraw' && t.amount===r.amt && t.status==='Pending'); if(tx) tx.status = 'Rejected'; 
+                saveUserToDB(u);
+                pushUserNotification(r.userId, "Withdrawal Rejected ⚠️", `Your withdraw of ₹${r.amt} was rejected. Amount refunded to wallet.`);
+            } 
+            db.ref('withdrawals/' + dbKey).remove(); 
+        }
+    </script>
+</body>
+</html>
