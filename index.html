@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro Cash - Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #121212; --card: #1e1e24; --primary: #00e676; --text: #fff; --text-muted: #a0a0a0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
+        
+        .header { text-align: center; padding: 15px; background: #0a0a0c; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 100; }
+        .header h1 { color: var(--primary); font-size: 24px; margin-bottom: 5px; }
+        .bal-badge { background: #222; border: 1px solid var(--primary); padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        
+        .screen { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
+        .active { display: block; }
+        
+        .input-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #333; background: #2a2a32; color: white; outline: none; }
+        .btn { width: 100%; padding: 12px; background: var(--primary); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 10px; }
+        .btn-red { background: #ff4444; color: white; }
+        .btn-dark { background: #333; color: white; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: var(--card); padding: 20px 10px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #333; }
+        .card i { font-size: 24px; color: var(--primary); margin-bottom: 10px; }
+        
+        .admin-panel { border: 2px solid #ff4444; border-radius: 10px; padding: 15px; margin-top: 20px; }
+        .req-card { background: #2a2a32; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header" id="mainHeader" style="display:none;">
+        <h1>💰 Metro Cash</h1>
+        <div class="bal-badge">₹ <span id="userBal">0.00</span></div>
+    </div>
+
+    <!-- Login Screen -->
+    <div class="screen active" id="authScreen">
+        <h2 style="text-align:center; margin-bottom:20px; color:var(--primary);">Login to Metro Cash</h2>
+        <input type="text" class="input-box" id="username" placeholder="Username">
+        <input type="password" class="input-box" id="password" placeholder="Password">
+        <button class="btn" onclick="login('user')">User Login</button>
+        <button class="btn btn-dark" onclick="login('admin')">Admin Login 🛠</button>
+    </div>
+
+    <!-- User Dashboard -->
+    <div class="screen" id="dashScreen">
+        <div class="grid-2">
+            <div class="card" onclick="nav('gamesMenu')"><i class="fa-solid fa-gamepad"></i><p>Bet & Earn</p></div>
+            <div class="card" onclick="openDeposit()"><i class="fa-solid fa-download"></i><p>Deposit</p></div>
+            <div class="card" onclick="alert('Withdraw logic baad me backend se aayega')"><i class="fa-solid fa-building-columns"></i><p>Withdraw</p></div>
+            <div class="card"><i class="fa-solid fa-gift"></i><p>Bonus</p></div>
+        </div>
+        <button class="btn btn-dark" style="margin-top:30px;" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Deposit Screen -->
+    <div class="screen" id="depositScreen">
+        <h2>📥 Deposit Money</h2>
+        <p style="color:var(--text-muted); margin-bottom:15px;">Send money to Admin UPI & enter UTR.</p>
+        
+        <div style="background:var(--card); padding:15px; border-radius:8px; margin-bottom:15px; text-align:center;">
+            <h3>Admin UPI ID:</h3>
+            <p id="showAdminUpi" style="color:var(--primary); font-size:18px; margin-top:5px;">Not Set</p>
+        </div>
+
+        <input type="number" class="input-box" id="depAmt" placeholder="Amount (Min ₹10)">
+        <input type="text" class="input-box" id="depUtr" placeholder="12-Digit UTR Number">
+        <button class="btn" onclick="submitDeposit()">Submit Deposit</button>
+        <button class="btn btn-dark" onclick="nav('dashScreen')">Back</button>
+    </div>
+
+    <!-- Games Menu -->
+    <div class="screen" id="gamesMenu">
+        <h2 style="margin-bottom:15px;">🎮 Choose Game</h2>
+        <div class="grid-2">
+            <div class="card" onclick="nav('coinGame')"><i class="fa-solid fa-coins"></i><p>Coin Toss</p></div>
+            <div class="card" onclick="nav('colorGame')"><i class="fa-solid fa-palette"></i><p>Color Game</p></div>
+            <div class="card" onclick="alert('Aviator UI Next Update me!')"><i class="fa-solid fa-plane"></i><p>Aviator</p></div>
+            <div class="card" onclick="alert('Dice UI Next Update me!')"><i class="fa-solid fa-dice"></i><p>Dice Game</p></div>
+        </div>
+        <button class="btn btn-dark" style="margin-top:20px;" onclick="nav('dashScreen')">Back</button>
+    </div>
+
+    <!-- Coin Game -->
+    <div class="screen" id="coinGame">
+        <div class="card" style="cursor:default;">
+            <h2>🪙 Coin Toss (1.9x)</h2>
+            <input type="number" class="input-box" id="coinBet" placeholder="Bet Amount" style="margin-top:15px;">
+            <div class="grid-2">
+                <button class="btn" onclick="playGame('coin', 'head')">HEAD</button>
+                <button class="btn btn-red" onclick="playGame('coin', 'tail')">TAIL</button>
+            </div>
+            <h3 id="coinRes" style="margin-top:15px;"></h3>
+        </div>
+        <button class="btn btn-dark" style="margin-top:10px;" onclick="nav('gamesMenu')">Back to Games</button>
+    </div>
+
+    <!-- Color Game -->
+    <div class="screen" id="colorGame">
+        <div class="card" style="cursor:default;">
+            <h2>🎮 Color Game (1.8x)</h2>
+            <input type="number" class="input-box" id="colorBet" placeholder="Bet Amount" style="margin-top:15px;">
+            <div class="grid-2">
+                <button class="btn" style="background:red; color:white;" onclick="playGame('color', 'red')">RED</button>
+                <button class="btn" style="background:green; color:white;" onclick="playGame('color', 'green')">GREEN</button>
+            </div>
+            <h3 id="colorRes" style="margin-top:15px;"></h3>
+        </div>
+        <button class="btn btn-dark" style="margin-top:10px;" onclick="nav('gamesMenu')">Back to Games</button>
+    </div>
+    <!-- Admin Dashboard -->
+    <div class="screen admin-panel" id="adminScreen">
+        <h2 style="color:#ff4444; margin-bottom:20px;"><i class="fa-solid fa-shield-halved"></i> Admin Panel</h2>
+        
+        <div class="card" style="cursor:default; margin-bottom:20px;">
+            <h3>⚙️ Settings</h3>
+            <input type="text" class="input-box" id="adminUpiInput" placeholder="Enter Your UPI ID" style="margin-top:10px;">
+            <button class="btn" onclick="saveAdminSettings()">Save UPI</button>
+        </div>
+
+        <div class="card" style="cursor:default; text-align:left;">
+            <h3 style="text-align:center; margin-bottom:15px;">📋 Pending Deposits</h3>
+            <div id="pendingDepositsList">
+                <!-- Requests will appear here -->
+                <p style="text-align:center; color:var(--text-muted);">No pending requests.</p>
+            </div>
+        </div>
+        
+        <button class="btn btn-dark" style="margin-top:20px;" onclick="logout()">Logout</button>
+    </div>
+    <script>
+        // System State
+        let bal = parseFloat(localStorage.getItem('metroBal')) || 100.0;
+        let adminUpi = localStorage.getItem('metroUpi') || 'Not Set';
+        let pendingDeps = JSON.parse(localStorage.getItem('metroDeps')) || [];
+
+        // UI Navigation
+        function nav(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Login Logic
+        function login(role) {
+            let u = document.getElementById('username').value;
+            let p = document.getElementById('password').value;
+            
+            if (role === 'admin') {
+                if (u === 'admin' && p === 'admin123') { // ADMIN PASSWORD (Change it)
+                    document.getElementById('mainHeader').style.display = 'none';
+                    nav('adminScreen');
+                    loadAdminData();
+                } else {
+                    alert('Wrong Admin Credentials!');
+                }
+            } else {
+                if (u.length > 2) {
+                    document.getElementById('mainHeader').style.display = 'block';
+                    updateBal();
+                    nav('dashScreen');
+                } else {
+                    alert('Enter a valid username');
+                }
+            }
+        }
+
+        function logout() {
+            document.getElementById('mainHeader').style.display = 'none';
+            nav('authScreen');
+        }
+
+        function updateBal() {
+            document.getElementById('userBal').innerText = bal.toFixed(2);
+            localStorage.setItem('metroBal', bal);
+        }
+
+        // Deposit Logic (User Side)
+        function openDeposit() {
+            document.getElementById('showAdminUpi').innerText = adminUpi;
+            nav('depositScreen');
+        }
+
+        function submitDeposit() {
+            let amt = parseFloat(document.getElementById('depAmt').value);
+            let utr = document.getElementById('depUtr').value;
+            
+            if (isNaN(amt) || amt < 10) return alert("Min deposit ₹10");
+            if (utr.length < 5) return alert("Enter valid UTR");
+
+            pendingDeps.push({ id: Date.now(), amt: amt, utr: utr });
+            localStorage.setItem('metroDeps', JSON.stringify(pendingDeps));
+            
+            alert("Deposit Request Sent to Admin!");
+            document.getElementById('depAmt').value = '';
+            document.getElementById('depUtr').value = '';
+            nav('dashScreen');
+        }
+
+        // Game Logic (Local Simulator)
+        function playGame(gameType, choice) {
+            let betInput = document.getElementById(gameType + 'Bet');
+            let resText = document.getElementById(gameType + 'Res');
+            let bet = parseFloat(betInput.value);
+
+            if (isNaN(bet) || bet < 5) return alert("Min bet ₹5");
+            if (bet > bal) return alert("Insufficient Balance!");
+
+            bal -= bet;
+            updateBal();
+            resText.innerHTML = "<i>Playing... ⏳</i>";
+            resText.style.color = "white";
+
+            setTimeout(() => {
+                let win = Math.random() < 0.45; // 45% Win Chance
+                let multi = gameType === 'coin' ? 1.9 : 1.8;
+                
+                if (win) {
+                    let won = bet * multi;
+                    bal += won;
+                    resText.innerText = "🎉 WON! +" + won.toFixed(2);
+                    resText.style.color = "var(--primary)";
+                } else {
+                    resText.innerText = "😢 LOST! -" + bet.toFixed(2);
+                    resText.style.color = "#ff4444";
+                }
+                updateBal();
+            }, 1000);
+        }
+
+        // Admin Logic
+        function loadAdminData() {
+            document.getElementById('adminUpiInput').value = adminUpi !== 'Not Set' ? adminUpi : '';
+            renderPendingDeps();
+        }
+
+        function saveAdminSettings() {
+            let newUpi = document.getElementById('adminUpiInput').value;
+            if (newUpi.length > 3) {
+                adminUpi = newUpi;
+                localStorage.setItem('metroUpi', adminUpi);
+                alert("UPI Saved Successfully!");
+            }
+        }
+
+        function renderPendingDeps() {
+            let list = document.getElementById('pendingDepositsList');
+            list.innerHTML = '';
+            if (pendingDeps.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:gray;">No pending requests.</p>';
+                return;
+            }
+            
+            pendingDeps.forEach((req, index) => {
+                list.innerHTML += `
+                    <div class="req-card">
+                        <p><b>Amount:</b> ₹${req.amt}</p>
+                        <p><b>UTR:</b> ${req.utr}</p>
+                        <div style="margin-top:10px; display:flex; gap:10px;">
+                            <button class="btn" style="padding:8px;" onclick="approveDep(${index})">Approve</button>
+                            <button class="btn btn-red" style="padding:8px;" onclick="rejectDep(${index})">Reject</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function approveDep(index) {
+            let req = pendingDeps[index];
+            bal += req.amt; // Add to user balance (Simulated for this browser)
+            localStorage.setItem('metroBal', bal);
+            pendingDeps.splice(index, 1);
+            localStorage.setItem('metroDeps', JSON.stringify(pendingDeps));
+            renderPendingDeps();
+            alert(`Approved ₹${req.amt}`);
+        }
+
+        function rejectDep(index) {
+            pendingDeps.splice(index, 1);
+            localStorage.setItem('metroDeps', JSON.stringify(pendingDeps));
+            renderPendingDeps();
+            alert("Deposit Rejected");
+        }
+    </script>
+</body>
+</html>
