@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro Cash - VIP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg: #f5f7fa; 
+            --card: #ffffff; 
+            --primary: #f95959; 
+            --primary-grad: linear-gradient(135deg, #ff7b7b, #f95959);
+            --reg-grad: linear-gradient(135deg, #ff9a44, #fc6076); /* Slightly different color for Register */
+            --text: #333333; 
+            --text-muted: #888888; 
+            --border: #eeeeee;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); user-select: none; }
+        
+        .screen { display: none; min-height: 100vh; background: var(--bg); padding-bottom: 70px; }
+        .active { display: block; }
+        .full-screen { padding-bottom: 0; background: var(--card); }
+
+        /* --- AUTH SCREENS (LOGIN / REGISTER) --- */
+        .auth-header { padding: 20px 20px 40px 20px; color: white; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
+        .bg-login { background: var(--primary-grad); }
+        .bg-register { background: var(--reg-grad); }
+        .auth-top-nav { display: flex; justify-content: space-between; font-size: 18px; margin-bottom: 25px; }
+        .auth-header h2 { font-size: 28px; margin-bottom: 10px; }
+        .auth-header p { font-size: 13px; opacity: 0.9; }
+
+        .auth-tabs { display: flex; background: var(--card); border-bottom: 1px solid var(--border); }
+        .tab { flex: 1; text-align: center; padding: 15px; font-weight: 500; color: var(--text-muted); cursor: pointer; }
+        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+
+        .auth-body { padding: 20px; background: var(--card); }
+        .input-label { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; margin-top: 15px; display: flex; align-items: center; gap: 8px; }
+        .input-label i { color: var(--primary); }
+        
+        .input-row { display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0 15px; transition: 0.3s; }
+        .input-row:focus-within { border-color: var(--primary); }
+        .input-row input { width: 100%; padding: 15px 10px; border: none; background: transparent; outline: none; font-size: 15px; }
+        .input-row i.eye-icon { color: var(--text-muted); cursor: pointer; padding: 10px; }
+        
+        .btn-pill { width: 100%; padding: 14px; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; margin-top: 20px; transition: 0.2s; }
+        .btn-pill:active { transform: scale(0.97); }
+        .btn-main { background: var(--primary-grad); color: white; box-shadow: 0 4px 10px rgba(249, 89, 89, 0.3); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 15px; }
+        
+        /* --- BOTTOM NAVIGATION --- */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000; }
+        .nav-item { text-align: center; color: var(--text-muted); cursor: pointer; font-size: 12px; }
+        .nav-item i { font-size: 22px; margin-bottom: 4px; display: block; }
+        .nav-item.active { color: var(--primary); }
+
+        /* --- HOME SCREEN --- */
+        .banner { margin: 15px; border-radius: 12px; overflow: hidden; background: var(--reg-grad); color: white; padding: 20px; text-align: center; }
+        .grid-6 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; }
+        .game-card { background: var(--card); padding: 20px 10px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; }
+        .game-card img { width: 50px; height: 50px; margin-bottom: 10px; }
+        .game-card h3 { font-size: 16px; color: var(--text); }
+
+        /* --- ACCOUNT SCREEN --- */
+        .acc-header { background: var(--primary-grad); color: white; padding: 30px 20px 60px 20px; display: flex; align-items: center; gap: 15px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
+        .avatar { width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; color: var(--primary); }
+        .acc-info h2 { font-size: 18px; }
+        .uid-badge { background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 15px; font-size: 12px; margin-top: 5px; display: inline-block; }
+        
+        .acc-card { background: var(--card); margin: -30px 15px 15px 15px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .bal-row { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
+        .action-row { display: flex; justify-content: space-around; }
+        .action-btn { text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; }
+        .action-btn i { font-size: 24px; margin-bottom: 8px; display: block; }
+        
+        /* Distinct Colors for Deposit/Withdraw */
+        .icon-dep { color: #00c853; } /* Vibrant Green */
+        .icon-wth { color: #ff9100; } /* Vibrant Orange */
+        .icon-vip { color: #00b0ff; } /* Blue */
+        
+        .list-menu { margin: 15px; background: var(--card); border-radius: 12px; overflow: hidden; }
+        .list-item { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="loginScreen" class="screen active full-screen">
+        <div class="auth-header bg-login">
+            <div class="auth-top-nav">
+                <i class="fa-solid fa-chevron-left"></i>
+                <div style="font-weight:bold;">💰 Metro Cash</div>
+                <div style="font-size:14px;">EN</div>
+            </div>
+            <h2>Log in</h2>
+            <p>Please log in with your phone number or email.<br>If you forget your password, contact service.</p>
+        </div>
+
+        <div class="auth-tabs">
+            <div class="tab active" id="tabPhone" onclick="setAuthMode('phone')"><i class="fa-solid fa-mobile-screen"></i> Log in with phone</div>
+            <div class="tab" id="tabEmail" onclick="setAuthMode('email')"><i class="fa-solid fa-envelope"></i> Email login</div>
+        </div>
+
+        <div class="auth-body">
+            <div class="input-label" id="lblUsername"><i class="fa-solid fa-mobile-screen"></i> Phone number</div>
+            <div class="input-row">
+                <span id="countryCode" style="font-weight:bold; color:var(--text); padding-right:10px; border-right:1px solid var(--border);">+91</span>
+                <input type="text" id="logUsername" placeholder="Enter phone number">
+            </div>
+
+            <div class="input-label"><i class="fa-solid fa-lock"></i> Password</div>
+            <div class="input-row">
+                <input type="password" id="logPass" placeholder="Password">
+                <i class="fa-solid fa-eye-slash eye-icon" id="eyeLog" onclick="togglePass('logPass', 'eyeLog')"></i>
+            </div>
+
+            <button class="btn-pill btn-main" onclick="doLogin()">Log in</button>
+            <button class="btn-pill btn-outline" onclick="nav('registerScreen')">Register</button>
+            
+            <!-- Hidden Admin Button -->
+            <p style="text-align:center; margin-top:30px; font-size:12px; color:var(--text-muted); cursor:pointer;" onclick="nav('adminLoginScreen')">Admin Panel Access</p>
+        </div>
+    </div>
+
+    <!-- 2. REGISTER SCREEN -->
+    <div id="registerScreen" class="screen full-screen">
+        <div class="auth-header bg-register">
+            <div class="auth-top-nav">
+                <i class="fa-solid fa-chevron-left" onclick="nav('loginScreen')"></i>
+                <div style="font-weight:bold;">Register</div>
+                <div></div>
+            </div>
+            <h2>Create Account</h2>
+            <p>Register to get your unique UID and start playing.</p>
+        </div>
+
+        <div class="auth-body">
+            <div class="input-label"><i class="fa-solid fa-user"></i> Phone Number or Email</div>
+            <div class="input-row">
+                <input type="text" id="regId" placeholder="Enter Mobile or Email">
+            </div>
+
+            <div class="input-label"><i class="fa-solid fa-lock"></i> Set Password</div>
+            <div class="input-row">
+                <input type="password" id="regPass" placeholder="Please enter password">
+                <i class="fa-solid fa-eye-slash eye-icon" id="eyeReg1" onclick="togglePass('regPass', 'eyeReg1')"></i>
+            </div>
+
+            <div class="input-label"><i class="fa-solid fa-lock"></i> Confirm Password</div>
+            <div class="input-row">
+                <input type="password" id="regPassConf" placeholder="Please enter password again">
+                <i class="fa-solid fa-eye-slash eye-icon" id="eyeReg2" onclick="togglePass('regPassConf', 'eyeReg2')"></i>
+            </div>
+
+            <div class="input-label"><i class="fa-solid fa-gift"></i> Invite Code (Optional)</div>
+            <div class="input-row">
+                <input type="text" id="regInvite" placeholder="Enter invitation code">
+            </div>
+
+            <button class="btn-pill btn-main" style="background:var(--reg-grad);" onclick="doRegister()">Register</button>
+            <button class="btn-pill btn-outline" style="border-color:#fc6076; color:#fc6076;" onclick="nav('loginScreen')">I have an account. Login</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="appScreens" style="display:none;">
+        
+        <!-- BOTTOM NAVIGATION (3 Options Only) -->
+        <div class="bottom-nav">
+            <div class="nav-item active" id="navHome" onclick="switchAppTab('homeApp')">
+                <i class="fa-solid fa-house"></i>Home
+            </div>
+            <div class="nav-item" id="navRefer" onclick="switchAppTab('referApp')">
+                <i class="fa-solid fa-users"></i>Refer & Earn
+            </div>
+            <div class="nav-item" id="navAcc" onclick="switchAppTab('accountApp')">
+                <i class="fa-solid fa-user"></i>Account
+            </div>
+        </div>
+
+        <!-- 3. HOME APP -->
+        <div id="homeApp" class="screen active">
+            <div class="auth-header bg-login" style="padding:15px; border-radius:0; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0;">💰 Metro Cash</h3>
+                <span style="background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:15px; font-weight:bold;">₹ <span id="homeBal">0.00</span></span>
+            </div>
+            <div class="banner">
+                <h2>Welcome to VIP!</h2>
+                <p>Play games and win big rewards daily.</p>
+            </div>
+            <h3 style="padding: 0 15px; margin-top:10px;">🔥 Popular Games (6)</h3>
+            <div class="grid-6">
+                <div class="game-card" onclick="playMockGame('Win Go')"><i class="fa-solid fa-trophy" style="font-size:40px; color:#fbc02d; margin-bottom:10px;"></i><h3>Win Go</h3></div>
+                <div class="game-card" onclick="playMockGame('K3')"><i class="fa-solid fa-dice" style="font-size:40px; color:#d32f2f; margin-bottom:10px;"></i><h3>K3</h3></div>
+                <div class="game-card" onclick="playMockGame('5D Lottery')"><i class="fa-solid fa-bowling-ball" style="font-size:40px; color:#7b1fa2; margin-bottom:10px;"></i><h3>5D</h3></div>
+                <div class="game-card" onclick="playMockGame('Racing')"><i class="fa-solid fa-car-side" style="font-size:40px; color:#e64a19; margin-bottom:10px;"></i><h3>Racing</h3></div>
+                <div class="game-card" onclick="playMockGame('Slots')"><i class="fa-solid fa-lemon" style="font-size:40px; color:#f57c00; margin-bottom:10px;"></i><h3>Slots</h3></div>
+                <div class="game-card" onclick="playMockGame('Casino')"><i class="fa-solid fa-gem" style="font-size:40px; color:#1976d2; margin-bottom:10px;"></i><h3>Casino</h3></div>
+            </div>
+        </div>
+
+        <!-- 4. REFER APP -->
+        <div id="referApp" class="screen">
+            <div class="auth-header bg-login" style="padding:15px; border-radius:0; text-align:center;">
+                <h3 style="margin:0;">Refer & Earn</h3>
+            </div>
+            <div style="padding:20px; text-align:center;">
+                <i class="fa-solid fa-users" style="font-size:60px; color:var(--primary); margin-bottom:20px;"></i>
+                <h2>Invite Friends</h2>
+                <p style="color:var(--text-muted); margin-bottom:20px;">Share your UID as an invite code and earn bonus when they play!</p>
+                <div style="background:var(--card); padding:15px; border-radius:10px; border:1px dashed var(--primary); font-size:24px; font-weight:bold; color:var(--primary);" id="myInviteCode">
+                    00000000
+                </div>
+                <button class="btn-pill btn-main" onclick="alert('Link Copied!')">Copy Invite Link</button>
+            </div>
+        </div>
+
+        <!-- 5. ACCOUNT APP -->
+        <div id="accountApp" class="screen">
+            <div class="acc-header">
+                <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="acc-info">
+                    <h2 id="accUser">User</h2>
+                    <div class="uid-badge">UID: <span id="accUid">12345678</span></div>
+                </div>
+            </div>
+
+            <div class="acc-card">
+                <div class="bal-row">
+                    <div>
+                        <p style="color:var(--text-muted); font-size:13px;">Available Balance</p>
+                        <h3 style="font-size:22px;">₹ <span id="accBal">0.00</span></h3>
+                    </div>
+                    <div style="text-align:right;">
+                        <p style="color:var(--text-muted); font-size:13px;">VIP Level</p>
+                        <h3 style="color:#fbc02d;"><i class="fa-solid fa-crown"></i> VIP 1</h3>
+                    </div>
+                </div>
+                <!-- Deposit & Withdraw with Different Colors -->
+                <div class="action-row">
+                    <div class="action-btn" onclick="openDeposit()"><i class="fa-solid fa-wallet icon-dep"></i>Deposit</div>
+                    <div class="action-btn" onclick="alert('Withdraw logic will be connected soon.')"><i class="fa-solid fa-building-columns icon-wth"></i>Withdraw</div>
+                    <div class="action-btn"><i class="fa-solid fa-gem icon-vip"></i>VIP</div>
+                </div>
+            </div>
+
+            <div class="list-menu">
+                <div class="list-item"><span style="color:var(--text);"><i class="fa-solid fa-clock-rotate-left" style="color:var(--primary); margin-right:10px;"></i> Game History</span><i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i></div>
+                <div class="list-item"><span style="color:var(--text);"><i class="fa-solid fa-money-bill-transfer" style="color:#4caf50; margin-right:10px;"></i> Transaction History</span><i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i></div>
+                <div class="list-item" onclick="doLogout()"><span style="color:var(--text);"><i class="fa-solid fa-right-from-bracket" style="color:#ff4444; margin-right:10px;"></i> Logout</span><i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i></div>
+            </div>
+        </div>
+
+        <!-- 6. DEPOSIT SCREEN (Accessible from Account) -->
+        <div id="depositScreen" class="screen full-screen" style="z-index: 2000; position: fixed; top: 0; width: 100%; max-width: 500px; height: 100vh; overflow-y:auto;">
+            <div class="auth-header bg-login" style="padding:15px; border-radius:0; display:flex; align-items:center; gap:15px;">
+                <i class="fa-solid fa-chevron-left" style="font-size:20px; cursor:pointer;" onclick="switchAppTab('accountApp')"></i>
+                <h3 style="margin:0;">Deposit Amount</h3>
+            </div>
+            <div style="padding:20px;">
+                <div style="background:white; padding:20px; border-radius:12px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                    <img id="showAdminQr" src="" style="width:200px; border-radius:10px; display:none; border:2px solid #00c853; margin:0 auto 15px auto;">
+                    <p style="color:var(--text-muted); font-size:14px;">Admin UPI ID:</p>
+                    <h3 id="showAdminUpi" style="color:#00c853; margin-bottom:10px;">Not Set</h3>
+                </div>
+                
+                <div class="input-label" style="margin-top:20px;">Deposit Amount</div>
+                <div class="input-row"><input type="number" id="depAmt" placeholder="Min ₹10"></div>
+                
+                <div class="input-label">UTR Reference Number</div>
+                <div class="input-row"><input type="text" id="depUtr" placeholder="12-Digit UTR Number"></div>
+                
+                <button class="btn-pill" style="background:#00c853; color:white;" onclick="submitDeposit()">Submit Deposit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. ADMIN SCREENS (Hidden Setup) -->
+    <div id="adminLoginScreen" class="screen full-screen">
+        <div class="auth-header" style="background:#333; border-radius:0;">
+            <h2 style="text-align:center; margin:0;">Admin Access</h2>
+        </div>
+        <div class="auth-body">
+            <input type="text" id="adminId" class="input-row" placeholder="Admin Email (admin@gmail.com)" style="padding:15px; width:100%; margin-bottom:15px;">
+            <input type="password" id="adminPass" class="input-row" placeholder="Password (admin123)" style="padding:15px; width:100%;">
+            <button class="btn-pill" style="background:#ff4444; color:white;" onclick="loginAdmin()">Login Admin</button>
+            <button class="btn-pill btn-outline" onclick="nav('loginScreen')">Back to App</button>
+        </div>
+    </div>
+
+    <div id="adminScreen" class="screen full-screen">
+        <div class="auth-header" style="background:#333; border-radius:0;"><h2 style="margin:0;">Admin Panel</h2></div>
+        <div style="padding:20px;">
+            <h3>Payment Settings</h3>
+            <input type="text" id="adminUpiInput" class="input-row" placeholder="Your UPI ID" style="padding:10px; width:100%; margin:10px 0;">
+            <p style="font-size:12px; color:var(--text-muted);">Upload QR Photo:</p>
+            <input type="file" id="adminQrFile" accept="image/*" style="margin-bottom:10px;">
+            <button class="btn-pill" style="background:#00c853; color:white;" onclick="saveAdminSettings()">Save Details</button>
+            
+            <h3 style="margin-top:30px;">Pending Deposits</h3>
+            <div id="pendingDepositsList" style="margin-top:10px;"></div>
+            
+            <button class="btn-pill" style="background:#ff4444; color:white; margin-top:30px;" onclick="nav('loginScreen')">Logout Admin</button>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
+    <script>
+        // Database Initialization
+        let usersDB = JSON.parse(localStorage.getItem('metroUsers')) || {};
+        let currentUser = JSON.parse(localStorage.getItem('metroCurrent')) || null;
+        let pendingDeps = JSON.parse(localStorage.getItem('metroDeps')) || [];
+        
+        let adminUpi = localStorage.getItem('metroUpi') || 'Not Set';
+        let adminQr = localStorage.getItem('metroQr') || '';
+
+        // Startup Check
+        window.onload = function() {
+            if(currentUser) {
+                showApp();
+            } else {
+                nav('loginScreen');
+            }
+        }
+
+        // --- UI FUNCTIONS ---
+        function nav(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('appScreens').style.display = 'none';
+        }
+
+        function switchAppTab(tabId) {
+            document.getElementById('homeApp').classList.remove('active');
+            document.getElementById('referApp').classList.remove('active');
+            document.getElementById('accountApp').classList.remove('active');
+            document.getElementById('depositScreen').classList.remove('active');
+            
+            document.getElementById('navHome').classList.remove('active');
+            document.getElementById('navRefer').classList.remove('active');
+            document.getElementById('navAcc').classList.remove('active');
+
+            document.getElementById(tabId).classList.add('active');
+            if(tabId === 'homeApp') document.getElementById('navHome').classList.add('active');
+            if(tabId === 'referApp') document.getElementById('navRefer').classList.add('active');
+            if(tabId === 'accountApp') document.getElementById('navAcc').classList.add('active');
+        }
+
+        // Toggle Eye Button
+        function togglePass(inputId, iconId) {
+            let input = document.getElementById(inputId);
+            let icon = document.getElementById(iconId);
+            if(input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+                icon.style.color = "var(--primary)";
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+                icon.style.color = "var(--text-muted)";
+            }
+        }
+
+        // Switch Phone / Email Login Tab
+        let authMode = 'phone';
+        function setAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('tabPhone').classList.remove('active');
+            document.getElementById('tabEmail').classList.remove('active');
+            
+            let lbl = document.getElementById('lblUsername');
+            let input = document.getElementById('logUsername');
+            let code = document.getElementById('countryCode');
+
+            if(mode === 'phone') {
+                document.getElementById('tabPhone').classList.add('active');
+                lbl.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> Phone number';
+                input.placeholder = "Enter phone number";
+                code.style.display = "block";
+            } else {
+                document.getElementById('tabEmail').classList.add('active');
+                lbl.innerHTML = '<i class="fa-solid fa-envelope"></i> Email address';
+                input.placeholder = "Enter email address";
+                code.style.display = "none";
+            }
+        }
+
+        // --- AUTH LOGIC ---
+        function doRegister() {
+            let id = document.getElementById('regId').value.trim();
+            let p1 = document.getElementById('regPass').value;
+            let p2 = document.getElementById('regPassConf').value;
+
+            if(id.length < 5) return alert("Enter valid Phone/Email");
+            if(p1.length < 4) return alert("Password must be 4+ characters");
+            if(p1 !== p2) return alert("Passwords do not match");
+
+            if(usersDB[id]) return alert("Account already exists! Please Login.");
+
+            // Create Unique 8-Digit UID
+            let newUid = Math.floor(10000000 + Math.random() * 90000000).toString();
+
+            usersDB[id] = { password: p1, uid: newUid, balance: 0.0 };
+            localStorage.setItem('metroUsers', JSON.stringify(usersDB));
+            
+            alert(`Registration Successful!\nYour UID is: ${newUid}\nPlease Login now.`);
+            document.getElementById('regId').value = '';
+            document.getElementById('regPass').value = '';
+            document.getElementById('regPassConf').value = '';
+            nav('loginScreen');
+        }
+
+        function doLogin() {
+            let id = document.getElementById('logUsername').value.trim();
+            let pass = document.getElementById('logPass').value;
+
+            if(!usersDB[id]) return alert("Account not found! Please register first.");
+            if(usersDB[id].password !== pass) return alert("Incorrect password!");
+
+            // Set Current User
+            currentUser = { id: id, uid: usersDB[id].uid, balance: usersDB[id].balance };
+            localStorage.setItem('metroCurrent', JSON.stringify(currentUser));
+            
+            showApp();
+        }
+
+        function doLogout() {
+            currentUser = null;
+            localStorage.removeItem('metroCurrent');
+            document.getElementById('logUsername').value = '';
+            document.getElementById('logPass').value = '';
+            nav('loginScreen');
+        }
+
+        // Load User Data into App
+        function showApp() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('appScreens').style.display = 'block';
+            
+            updateDisplayBal();
+            document.getElementById('myInviteCode').innerText = currentUser.uid;
+            document.getElementById('accUser').innerText = currentUser.id;
+            document.getElementById('accUid').innerText = currentUser.uid;
+            
+            switchAppTab('homeApp');
+        }
+
+        function updateDisplayBal() {
+            document.getElementById('homeBal').innerText = currentUser.balance.toFixed(2);
+            document.getElementById('accBal').innerText = currentUser.balance.toFixed(2);
+            
+            // Sync with DB
+            usersDB[currentUser.id].balance = currentUser.balance;
+            localStorage.setItem('metroUsers', JSON.stringify(usersDB));
+            localStorage.setItem('metroCurrent', JSON.stringify(currentUser));
+        }
+
+        // --- DEPOSIT SYSTEM ---
+        function openDeposit() {
+            document.getElementById('showAdminUpi').innerText = adminUpi;
+            let qrImg = document.getElementById('showAdminQr');
+            if(adminQr !== '') {
+                qrImg.src = adminQr;
+                qrImg.style.display = 'block';
+            } else {
+                qrImg.style.display = 'none';
+            }
+            switchAppTab('depositScreen');
+        }
+
+        function submitDeposit() {
+            let amt = parseFloat(document.getElementById('depAmt').value);
+            let utr = document.getElementById('depUtr').value;
+            
+            if (isNaN(amt) || amt < 10) return alert("Min deposit is ₹10");
+            if (utr.length < 5) return alert("Enter valid UTR number");
+
+            pendingDeps.push({ id: Date.now(), userId: currentUser.id, amt: amt, utr: utr });
+            localStorage.setItem('metroDeps', JSON.stringify(pendingDeps));
+            
+            alert("Deposit Request Sent! Admin will verify soon.");
+            document.getElementById('depAmt').value = '';
+            document.getElementById('depUtr').value = '';
+            switchAppTab('accountApp');
+        }
+
+        // Mock Game logic for Home Screen
+        function playMockGame(name) {
+            let bet = prompt(`Play ${name}!\nEnter Bet Amount (Available: ₹${currentUser.balance}):`);
+            if(bet) {
+                bet = parseFloat(bet);
+                if(isNaN(bet) || bet <= 0) return alert("Invalid bet!");
+                if(bet > currentUser.balance) return alert("Balance kam hai!");
+                
+                currentUser.balance -= bet;
+                let win = Math.random() < 0.4; // 40% win chance
+                if(win) {
+                    let prize = bet * 1.9;
+                    currentUser.balance += prize;
+                    alert(`🎉 You WON ₹${prize.toFixed(2)} in ${name}!`);
+                } else {
+                    alert(`😢 You LOST ₹${bet.toFixed(2)} in ${name}. Better luck next time!`);
+                }
+                updateDisplayBal();
+            }
+        }
+
+        // --- ADMIN SYSTEM ---
+        function loginAdmin() {
+            let u = document.getElementById('adminId').value;
+            let p = document.getElementById('adminPass').value;
+            if(u === 'admin@gmail.com' && p === 'admin123') {
+                nav('adminScreen');
+                document.getElementById('adminUpiInput').value = adminUpi !== 'Not Set' ? adminUpi : '';
+                renderPendingDeps();
+            } else {
+                alert("Wrong Admin Details");
+            }
+        }
+
+        function saveAdminSettings() {
+            adminUpi = document.getElementById('adminUpiInput').value || 'Not Set';
+            localStorage.setItem('metroUpi', adminUpi);
+            let fileInput = document.getElementById('adminQrFile');
+            if (fileInput.files && fileInput.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    adminQr = e.target.result; 
+                    localStorage.setItem('metroQr', adminQr); 
+                    alert("Settings Saved!");
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                alert("UPI Saved!");
+            }
+        }
+
+        function renderPendingDeps() {
+            let list = document.getElementById('pendingDepositsList');
+            list.innerHTML = '';
+            if (pendingDeps.length === 0) return list.innerHTML = '<p>No pending requests.</p>';
+            
+            pendingDeps.forEach((req, index) => {
+                list.innerHTML += `
+                    <div style="background:#f1f1f1; padding:10px; margin-bottom:10px; border-radius:5px;">
+                        <p><b>User:</b> ${req.userId}</p>
+                        <p><b>Amount:</b> ₹${req.amt} | <b>UTR:</b> ${req.utr}</p>
+                        <button onclick="approveDep(${index})" style="background:#00c853; color:white; border:none; padding:5px 10px; margin-top:5px;">Approve</button>
+                        <button onclick="rejectDep(${index})" style="background:#ff4444; color:white; border:none; padding:5px 10px;">Reject</button>
+                    </div>
+                `;
+            });
+        }
+
+        function approveDep(index) {
+            let req = pendingDeps[index];
+            if(usersDB[req.userId]) {
+                usersDB[req.userId].balance += req.amt;
+                localStorage.setItem('metroUsers', JSON.stringify(usersDB));
+                alert(`Approved ₹${req.amt} for ${req.userId}`);
+            }
+            pendingDeps.splice(index, 1);
+            localStorage.setItem('metroDeps', JSON.stringify(pendingDeps));
+            renderPendingDeps();
+        }
+
+        function rejectDep(index) {
+            pendingDeps.splice(index, 1);
+            localStorage.setItem('metroDeps', JSON.stringify(pendingDeps));
+            renderPendingDeps();
+        }
+    </script>
+</body>
+</html>
