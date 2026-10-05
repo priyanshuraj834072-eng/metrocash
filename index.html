@@ -1271,10 +1271,14 @@
     let rawInput = document.getElementById('logUsername').value.trim().toLowerCase(); 
     let id = rawInput.replace(/\./g, ','); 
     let pass = document.getElementById('logPass').value; 
-        let isPhone = /^\d{10}$/.test(rawInput);
+            let isPhone = /^\d{10}$/.test(rawInput);
     let isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawInput);
-    if(!isPhone && !isEmail) return showToast("Please enter a valid 10-digit Number or Email!");
+    
+    // Check which tab is active
+    if(authMode === 'phone' && !isPhone) return showToast("Please enter a valid 10-digit Phone Number!");
+    if(authMode === 'email' && !isEmail) return showToast("Please enter a valid Email Address!");
     if(!pass) return showToast("Please enter Password!");
+
 
 
     btn.classList.add('btn-loading'); 
