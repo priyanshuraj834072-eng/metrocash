@@ -46,30 +46,45 @@ function getPeriod(durationSec, offsetMs = 0) {
 }
 
 
+// NAYA: Smart Save Function (Jo purane result ko overwrite nahi karega)
+async function saveResultSafe(gameType, periodId) {
+    const ref = db.ref(`wingo/results/${gameType}/${periodId}`);
+    const snap = await ref.once('value');
+    if (!snap.exists()) {
+        await ref.set(generateRandomResult(periodId));
+    }
+}
+
 export default async function handler(req, res) {
-    const currentMin = new Date().getMinutes();
+    try {
+        const tasks = [];
 
-    // 1. 30Sec Game (Ek sath 2 result banayega taaki 1 min me dono cover ho jayein)
-    let p30_1 = getPeriod(30);
-    let p30_2 = getPeriod(30, 30000); // 30 second aage ka period
-    await db.ref(`wingo/results/30sec/${p30_1}`).set(generateRandomResult(p30_1));
-    await db.ref(`wingo/results/30sec/${p30_2}`).set(generateRandomResult(p30_2));
+        // 1. 30Sec Game
+        tasks.push(saveResultSafe('30sec', getPeriod(30, -30000)));
+        tasks.push(saveResultSafe('30sec', getPeriod(30, 0)));
+        tasks.push(saveResultSafe('30sec', getPeriod(30, 30000)));
+        tasks.push(saveResultSafe('30sec', getPeriod(30, 60000)));
 
-    // 2. 1Min Game (Har minute banega)
-    let p1 = getPeriod(60);
-    await db.ref(`wingo/results/1min/${p1}`).set(generateRandomResult(p1));
+        // 2. 1Min Game
+        tasks.push(saveResultSafe('1min', getPeriod(60, -60000)));
+        tasks.push(saveResultSafe('1min', getPeriod(60, 0)));
+        tasks.push(saveResultSafe('1min', getPeriod(60, 60000)));
 
-    // 3. 3Min Game (Sirf tab banega jab minute 3 se divide ho jaye)
-    if (currentMin % 3 === 0) {
-        let p3 = getPeriod(180);
-        await db.ref(`wingo/results/3min/${p3}`).set(generateRandomResult(p3));
+        // 3. 3Min Game
+        tasks.push(saveResultSafe('3min', getPeriod(180, -180000)));
+        tasks.push(saveResultSafe('3min', getPeriod(180, 0)));
+        tasks.push(saveResultSafe('3min', getPeriod(180, 180000)));
+
+        // 4. 5Min Game
+        tasks.push(saveResultSafe('5min', getPeriod(300, -300000)));
+        tasks.push(saveResultSafe('5min', getPeriod(300, 0)));
+        tasks.push(saveResultSafe('5min', getPeriod(300, 300000)));
+
+        // Ek sath saare result superfast save karo (Vercel Timeout se bachne ke liye)
+        await Promise.all(tasks);
+
+        res.status(200).json({ success: true, message: "Superfast Bulletproof Results Generated!" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
-
-    // 4. 5Min Game (Sirf tab banega jab minute 5 se divide ho jaye)
-    if (currentMin % 5 === 0) {
-        let p5 = getPeriod(300);
-        await db.ref(`wingo/results/5min/${p5}`).set(generateRandomResult(p5));
-    }
-
-    res.status(200).json({ success: true, message: "All timer results updated securely!" });
 }
