@@ -1,4 +1,5 @@
 {
+  "name": "metro-cash",
   "dependencies": {
     "firebase-admin": "^11.11.0"
   }
