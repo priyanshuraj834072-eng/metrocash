@@ -1,12 +1,10 @@
 const admin = require("firebase-admin");
-
-// Seedha file se key read kar rahe hain (Environment variables ki zarurat nahi)
 const serviceAccount = require("./firebase-key.json");
 
 if (!admin.apps.length) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
-      databaseURL: "https://metro-cash-1fc92-default-rtdb.firebaseio.com" // Aapka DB URL
+      databaseURL: "https://metro-cash-1fc92-default-rtdb.firebaseio.com"
     });
 }
 const db = admin.database();
@@ -22,10 +20,11 @@ function generateRandomResult(period) {
     return { period, num: resNum, size, color: resColor, colorHtml: dotHtml, numStyle };
 }
 
-function getPeriod(durationSec, offsetMs = 0) {
-    const ms = Date.now() + offsetMs;
+// Ye function jo period abhi just khatam hua hai, uska exact number nikalega (IST Time ke sath)
+function getFinishedPeriod(durationSec, offsetMs) {
+    const ms = Date.now() - offsetMs; 
     const durationMs = durationSec * 1000;
-    const istOffset = 5.5 * 60 * 60 * 1000; // India Timezone
+    const istOffset = 5.5 * 60 * 60 * 1000;
     const startOfDayIST = Math.floor((ms + istOffset) / 86400000) * 86400000 - istOffset;
     const elapsedMs = ms - startOfDayIST;
     const seq = Math.floor(elapsedMs / durationMs) + 1;
@@ -37,29 +36,29 @@ module.exports = async function(req, res) {
     try {
         const currentMin = new Date().getMinutes();
 
-        // 30Sec Game 
-        let p30_1 = getPeriod(30);
-        let p30_2 = getPeriod(30, 30000); 
+        // 30Sec Game (Pichle 1 minute mein 2 blocks khatam hue)
+        let p30_1 = getFinishedPeriod(30, 45000); 
+        let p30_2 = getFinishedPeriod(30, 15000); 
         await db.ref(`wingo/results/30sec/${p30_1}`).set(generateRandomResult(p30_1));
         await db.ref(`wingo/results/30sec/${p30_2}`).set(generateRandomResult(p30_2));
 
-        // 1Min Game
-        let p1 = getPeriod(60);
+        // 1Min Game (Jo abhi khatam hua hai)
+        let p1 = getFinishedPeriod(60, 30000);
         await db.ref(`wingo/results/1min/${p1}`).set(generateRandomResult(p1));
 
         // 3Min Game
         if (currentMin % 3 === 0) {
-            let p3 = getPeriod(180);
+            let p3 = getFinishedPeriod(180, 30000);
             await db.ref(`wingo/results/3min/${p3}`).set(generateRandomResult(p3));
         }
 
         // 5Min Game
         if (currentMin % 5 === 0) {
-            let p5 = getPeriod(300);
+            let p5 = getFinishedPeriod(300, 30000);
             await db.ref(`wingo/results/5min/${p5}`).set(generateRandomResult(p5));
         }
 
-        res.status(200).json({ success: true, message: "All results updated via JSON File!" });
+        res.status(200).json({ success: true, message: "All correct past results generated successfully!" });
     } catch (error) {
         console.error("Backend Error:", error);
         res.status(500).json({ success: false, error: error.message });
