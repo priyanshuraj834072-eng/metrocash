@@ -1,9 +1,12 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("./firebase-key.json");
 
 if (!admin.apps.length) {
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined
+      }),
       databaseURL: "https://metro-cash-1fc92-default-rtdb.firebaseio.com"
     });
 }
@@ -20,7 +23,6 @@ function generateRandomResult(period) {
     return { period, num: resNum, size, color: resColor, colorHtml: dotHtml, numStyle };
 }
 
-// Ye function jo period abhi just khatam hua hai, uska exact number nikalega (IST Time ke sath)
 function getFinishedPeriod(durationSec, offsetMs) {
     const ms = Date.now() - offsetMs; 
     const durationMs = durationSec * 1000;
@@ -36,29 +38,25 @@ module.exports = async function(req, res) {
     try {
         const currentMin = new Date().getMinutes();
 
-        // 30Sec Game (Pichle 1 minute mein 2 blocks khatam hue)
         let p30_1 = getFinishedPeriod(30, 45000); 
         let p30_2 = getFinishedPeriod(30, 15000); 
         await db.ref(`wingo/results/30sec/${p30_1}`).set(generateRandomResult(p30_1));
         await db.ref(`wingo/results/30sec/${p30_2}`).set(generateRandomResult(p30_2));
 
-        // 1Min Game (Jo abhi khatam hua hai)
         let p1 = getFinishedPeriod(60, 30000);
         await db.ref(`wingo/results/1min/${p1}`).set(generateRandomResult(p1));
 
-        // 3Min Game
         if (currentMin % 3 === 0) {
             let p3 = getFinishedPeriod(180, 30000);
             await db.ref(`wingo/results/3min/${p3}`).set(generateRandomResult(p3));
         }
 
-        // 5Min Game
         if (currentMin % 5 === 0) {
             let p5 = getFinishedPeriod(300, 30000);
             await db.ref(`wingo/results/5min/${p5}`).set(generateRandomResult(p5));
         }
 
-        res.status(200).json({ success: true, message: "All correct past results generated successfully!" });
+        res.status(200).json({ success: true, message: "Results generated successfully via ENV!" });
     } catch (error) {
         console.error("Backend Error:", error);
         res.status(500).json({ success: false, error: error.message });
