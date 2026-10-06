@@ -1,17 +1,19 @@
 const admin = require("firebase-admin");
 
 if (!admin.apps.length) {
+    // Vercel me Environment Variables set karna hoga
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
       }),
-      databaseURL: "https://metro-cash-1fc92-default-rtdb.firebaseio.com"
+      databaseURL: "https://metro-cash-1fc92-default-rtdb.firebaseio.com" // Aapka DB URL
     });
 }
 const db = admin.database();
 
+// Result banane ka logic
 function generateRandomResult(period) {
     const resNum = Math.floor(Math.random() * 10);
     let resColor = '', dotHtml = '', numStyle = '';
@@ -23,42 +25,40 @@ function generateRandomResult(period) {
     return { period, num: resNum, size, color: resColor, colorHtml: dotHtml, numStyle };
 }
 
-function getFinishedPeriod(durationSec, offsetMs) {
-    const ms = Date.now() - offsetMs; 
+// Period ID nikalne ka logic
+function getPeriod(durationSec, offsetMs = 0) {
+    const ms = Date.now() + offsetMs;
     const durationMs = durationSec * 1000;
-    const istOffset = 5.5 * 60 * 60 * 1000;
-    const startOfDayIST = Math.floor((ms + istOffset) / 86400000) * 86400000 - istOffset;
-    const elapsedMs = ms - startOfDayIST;
-    const seq = Math.floor(elapsedMs / durationMs) + 1;
+    const startOfDay = new Date().setHours(0,0,0,0);
+    const seq = Math.floor((ms - startOfDay) / durationMs) + 1;
     const dateStr = new Date(ms).toISOString().slice(0,10).replace(/-/g,'');
     return dateStr + String(seq).padStart(4, '0');
 }
 
-module.exports = async function(req, res) {
-    try {
-        const currentMin = new Date().getMinutes();
+export default async function handler(req, res) {
+    const currentMin = new Date().getMinutes();
 
-        let p30_1 = getFinishedPeriod(30, 45000); 
-        let p30_2 = getFinishedPeriod(30, 15000); 
-        await db.ref(`wingo/results/30sec/${p30_1}`).set(generateRandomResult(p30_1));
-        await db.ref(`wingo/results/30sec/${p30_2}`).set(generateRandomResult(p30_2));
+    // 1. 30Sec Game (Ek sath 2 result banayega taaki 1 min me dono cover ho jayein)
+    let p30_1 = getPeriod(30);
+    let p30_2 = getPeriod(30, 30000); // 30 second aage ka period
+    await db.ref(`wingo/results/30sec/${p30_1}`).set(generateRandomResult(p30_1));
+    await db.ref(`wingo/results/30sec/${p30_2}`).set(generateRandomResult(p30_2));
 
-        let p1 = getFinishedPeriod(60, 30000);
-        await db.ref(`wingo/results/1min/${p1}`).set(generateRandomResult(p1));
+    // 2. 1Min Game (Har minute banega)
+    let p1 = getPeriod(60);
+    await db.ref(`wingo/results/1min/${p1}`).set(generateRandomResult(p1));
 
-        if (currentMin % 3 === 0) {
-            let p3 = getFinishedPeriod(180, 30000);
-            await db.ref(`wingo/results/3min/${p3}`).set(generateRandomResult(p3));
-        }
-
-        if (currentMin % 5 === 0) {
-            let p5 = getFinishedPeriod(300, 30000);
-            await db.ref(`wingo/results/5min/${p5}`).set(generateRandomResult(p5));
-        }
-
-        res.status(200).json({ success: true, message: "Results generated successfully via ENV!" });
-    } catch (error) {
-        console.error("Backend Error:", error);
-        res.status(500).json({ success: false, error: error.message });
+    // 3. 3Min Game (Sirf tab banega jab minute 3 se divide ho jaye)
+    if (currentMin % 3 === 0) {
+        let p3 = getPeriod(180);
+        await db.ref(`wingo/results/3min/${p3}`).set(generateRandomResult(p3));
     }
+
+    // 4. 5Min Game (Sirf tab banega jab minute 5 se divide ho jaye)
+    if (currentMin % 5 === 0) {
+        let p5 = getPeriod(300);
+        await db.ref(`wingo/results/5min/${p5}`).set(generateRandomResult(p5));
+    }
+
+    res.status(200).json({ success: true, message: "All timer results updated securely!" });
 }
