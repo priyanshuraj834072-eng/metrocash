@@ -1607,7 +1607,7 @@
         let usersDB = {}; let pendingDeps = []; let pendingWth = []; let currentUser = null; let isFirstLoad = true;
         let globalPaymentSettings = { upi: "merchant@upi", qrUrl: "", apiKey: "" }; let globalGiftCodes = {};
 
-        // Fetch Users Data
+                // Fetch Users Data (WITH ERROR HANDLING)
         db.ref('users').on('value', (snap) => {
             usersDB = snap.val() || {};
             if(isFirstLoad) { 
@@ -1616,7 +1616,9 @@
                 if(storedId && usersDB[storedId]) { 
                     currentUser = usersDB[storedId]; 
                     initAppUI(); 
-                } else { pushNav('loginScreen'); } 
+                } else { 
+                    pushNav('loginScreen'); 
+                } 
             } 
             else if (currentUser && usersDB[currentUser.id]) { 
                 currentUser = usersDB[currentUser.id]; 
@@ -1626,7 +1628,16 @@
                 if(document.getElementById('subordinateScreen').classList.contains('active')) renderSubordinateData();
             }
             if (document.getElementById('adminScreen').classList.contains('active')) renderAdminUsers();
+            
+        }, (error) => {
+            // ERROR HANDLER: Agar bina login data access block ho, toh seedha login par bhejein
+            console.error("Firebase error. Redirecting to login...", error);
+            if (isFirstLoad) {
+                isFirstLoad = false;
+                pushNav('loginScreen');
+            }
         });
+
 
         // Fetch Dynamic Payment Settings
         db.ref('admin/paymentSettings').on('value', snap => {
