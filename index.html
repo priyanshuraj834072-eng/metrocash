@@ -1729,10 +1729,19 @@
         function pushNav(screenId, tabId = null) { showGlobalLoader(350); window.scrollTo(0,0); try { history.pushState({ screen: screenId, tab: tabId }, "", "#" + (tabId || screenId)); } catch(e){} renderNav(screenId, tabId); }
 
         
-        function renderNav(screenId, tabId) {
+                function renderNav(screenId, tabId) {
             if (window.tidioChatApi) {
                 if (screenId === 'loginScreen' || screenId === 'registerScreen' || screenId === 'forgotPasswordScreen') { window.tidioChatApi.show(); } else { window.tidioChatApi.hide(); }
             }
+
+            // --- NEW AUDIO FIX START ---
+            if (screenId !== 'aviatorScreen') {
+                let avFly = document.getElementById('avFlySound');
+                let avCrash = document.getElementById('avCrashSound');
+                if (avFly) { avFly.pause(); avFly.currentTime = 0; }
+                if (avCrash) { avCrash.pause(); avCrash.currentTime = 0; }
+            }
+            // --- NEW AUDIO FIX END ---
 
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             if(screenId === 'appScreens' && tabId) {
@@ -1751,6 +1760,7 @@
             updateBalDisplay(); 
             sessionStorage.setItem('activeScreen', screenId);
         }
+
         window.addEventListener('popstate', function(e) { window.scrollTo(0,0); if(e.state && e.state.screen) renderNav(e.state.screen, e.state.tab); else if(currentUser) renderNav('appScreens', 'homeApp'); else renderNav('loginScreen'); });
         window.onload = function() { startGlobalWingoTimers(); }
         function switchTab(tabId) { pushNav('appScreens', tabId); }
@@ -3009,6 +3019,23 @@ let avCrashAudio = document.getElementById('avCrashSound');
         }
         document.addEventListener('click', initAvAudio, {once:true});
         document.addEventListener('touchstart', initAvAudio, {once:true});
+                document.addEventListener('click', initAvAudio, {once:true});
+        document.addEventListener('touchstart', initAvAudio, {once:true});
+        // ------------------------------------------------
+
+        // --- CHROME MINIMIZE / BACKGROUND AUDIO FIX ---
+        document.addEventListener("visibilitychange", function() {
+            let avFly = document.getElementById('avFlySound');
+            let avCrash = document.getElementById('avCrashSound');
+            if (document.hidden) {
+                if (avFly) avFly.pause();
+                if (avCrash) avCrash.pause();
+            }
+        });
+        // ----------------------------------------------
+
+        // 2. Main Game Loop (Always Running in Background)
+
         // ------------------------------------------------
 
 
@@ -3051,7 +3078,7 @@ let avCrashAudio = document.getElementById('avCrashSound');
                 }
             } 
                             else if (now >= flightStart && now < currentAvRound.endTime - 3000) {
-                // PHASE 2: Plane Flying
+                                // PHASE 2: Plane Flying
                 if (currentAvPhase !== 2) {
                     currentAvPhase = 2; isAvFlying = true;
                     document.getElementById('avMultiplierText').style.fontSize = "60px";
@@ -3059,8 +3086,10 @@ let avCrashAudio = document.getElementById('avCrashSound');
                     startAviatorAnimation();
                     
                     // NAYA LOGIC: JS AUDIO PLAY
-                    avFlyAudio.currentTime = 0;
-                    avFlyAudio.play().catch(e=>{});
+                    if(document.getElementById('aviatorScreen').classList.contains('active') && !document.hidden) {
+                        avFlyAudio.currentTime = 0;
+                        avFlyAudio.play().catch(e=>{});
+                    }
                 }
             }
             
@@ -3080,10 +3109,13 @@ let avCrashAudio = document.getElementById('avCrashSound');
                     
                     // NAYA LOGIC: FLY AUDIO STOP, CRASH AUDIO PLAY
                     avFlyAudio.pause(); 
-                    avCrashAudio.currentTime = 0;
-                    avCrashAudio.play().catch(e=>{});
+                    if(document.getElementById('aviatorScreen').classList.contains('active') && !document.hidden) {
+                        avCrashAudio.currentTime = 0;
+                        avCrashAudio.play().catch(e=>{});
+                    }
                 }
             }
+
 
 
 
