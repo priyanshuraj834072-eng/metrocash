@@ -22,12 +22,17 @@ module.exports = async (req, res) => {
         snap.forEach(child => { lastRound = child.val(); });
 
         let now = Date.now();
-        let currentStart = now + 5000; // 5 Seconds betting time
-        
-        // Date ke hisaab se Period ID generate karna
         let dateStr = new Date(now).toISOString().slice(0,10).replace(/-/g,'');
         let startPeriod = parseInt(dateStr + "0001");
 
+        // FIX 1: Period ID hamesha sequence me chalega, chahe cron ruk jaye
+        if (lastRound && lastRound.period && lastRound.period.startsWith(dateStr)) {
+            startPeriod = parseInt(lastRound.period) + 1;
+        }
+
+        let currentStart = now + 5000; // 5 Seconds betting time
+        
+        // FIX 2: Timing logic
         if (lastRound && lastRound.endTime > now) {
             let timeDiff = lastRound.endTime - now;
             
@@ -36,7 +41,6 @@ module.exports = async (req, res) => {
                 return res.status(200).json({ success: true, message: "Queue full. No new rounds needed." });
             }
             currentStart = lastRound.endTime + 5000; // Pichli flight ke 5 sec baad
-            startPeriod = parseInt(lastRound.period) + 1;
         }
 
         let newRounds = {};
