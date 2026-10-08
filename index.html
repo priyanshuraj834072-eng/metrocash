@@ -1800,37 +1800,65 @@
         function pushNav(screenId, tabId = null) { showGlobalLoader(350); window.scrollTo(0,0); try { history.pushState({ screen: screenId, tab: tabId }, "", "#" + (tabId || screenId)); } catch(e){} renderNav(screenId, tabId); }
 
         
-                function renderNav(screenId, tabId) {
-            if (window.tidioChatApi) {
-                if (screenId === 'loginScreen' || screenId === 'registerScreen' || screenId === 'forgotPasswordScreen') { window.tidioChatApi.show(); } else { window.tidioChatApi.hide(); }
+            function renderNav(screenId, tabId) {
+    // 1. Tidio Chat Crash Fix (Try-Catch me wrap kiya gaya hai)
+    try {
+        if (window.tidioChatApi && typeof window.tidioChatApi.show === 'function' && typeof window.tidioChatApi.hide === 'function') {
+            if (screenId === 'loginScreen' || screenId === 'registerScreen' || screenId === 'forgotPasswordScreen') { 
+                window.tidioChatApi.show(); 
+            } else { 
+                window.tidioChatApi.hide(); 
             }
-
-            // --- NEW AUDIO FIX START ---
-            if (screenId !== 'aviatorScreen') {
-                let avFly = document.getElementById('avFlySound');
-                let avCrash = document.getElementById('avCrashSound');
-                if (avFly) { avFly.pause(); avFly.currentTime = 0; }
-                if (avCrash) { avCrash.pause(); avCrash.currentTime = 0; }
-            }
-            // --- NEW AUDIO FIX END ---
-
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            if(screenId === 'appScreens' && tabId) {
-                let appScreen = document.getElementById('appScreens'); if(appScreen) appScreen.classList.add('active');
-                document.querySelectorAll('.app-tab-pane').forEach(p => p.style.display = 'none'); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                let targetTab = document.getElementById(tabId); if(targetTab) targetTab.style.display = 'block';
-                if(tabId === 'homeApp' && document.getElementById('navHome')) document.getElementById('navHome').classList.add('active');
-                if(tabId === 'referApp' && document.getElementById('navRefer')) document.getElementById('navRefer').classList.add('active');
-                if(tabId === 'accountApp' && document.getElementById('navAcc')) document.getElementById('navAcc').classList.add('active');
-                sessionStorage.setItem('activeAppTab', tabId); sessionStorage.setItem('activeScreen', 'appScreens');
-            } else {
-                let el = document.getElementById(screenId); if(el) el.classList.add('active'); else document.getElementById('loginScreen').classList.add('active');
-                if(screenId === 'wingoScreen') { switchWingoTab(activeWingoTab); switchHistPanel(activeHistTab); }
-                if(screenId === 'allGamesScreen' && tabId) { switchAllGamesTab(tabId); }
-            }
-            updateBalDisplay(); 
-            sessionStorage.setItem('activeScreen', screenId);
         }
+    } catch(e) { console.warn("Tidio API not ready yet."); }
+
+    // 2. Audio Fix Crash Prevention (iOS/Safari ke liye)
+    try {
+        if (screenId !== 'aviatorScreen') {
+            let avFly = document.getElementById('avFlySound');
+            let avCrash = document.getElementById('avCrashSound');
+            if (avFly) { avFly.pause(); avFly.currentTime = 0; }
+            if (avCrash) { avCrash.pause(); avCrash.currentTime = 0; }
+        }
+    } catch(e) { console.warn("Audio reset blocked by browser."); }
+
+    // Baaki ka navigation logic same rahega
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    
+    if(screenId === 'appScreens' && tabId) {
+        let appScreen = document.getElementById('appScreens');
+        if(appScreen) appScreen.classList.add('active');
+
+        document.querySelectorAll('.app-tab-pane').forEach(p => p.style.display = 'none');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+        let targetTab = document.getElementById(tabId);
+        if(targetTab) {
+            targetTab.style.display = 'block';
+        } else {
+            // Fallback agar tab ID galat pass ho gayi ho
+            document.getElementById('homeApp').style.display = 'block';
+        }
+
+        if(tabId === 'homeApp' && document.getElementById('navHome')) document.getElementById('navHome').classList.add('active');
+        if(tabId === 'referApp' && document.getElementById('navRefer')) document.getElementById('navRefer').classList.add('active');
+        if(tabId === 'accountApp' && document.getElementById('navAcc')) document.getElementById('navAcc').classList.add('active');
+
+        sessionStorage.setItem('activeAppTab', tabId);
+        sessionStorage.setItem('activeScreen', 'appScreens');
+    } else {
+        let el = document.getElementById(screenId);
+        if(el) el.classList.add('active');
+        else document.getElementById('loginScreen').classList.add('active');
+
+        if(screenId === 'wingoScreen') { switchWingoTab(activeWingoTab); switchHistPanel(activeHistTab); }
+        if(screenId === 'allGamesScreen' && tabId) { switchAllGamesTab(tabId); }
+    }
+    
+    updateBalDisplay(); 
+    sessionStorage.setItem('activeScreen', screenId);
+}
+
 
         window.addEventListener('popstate', function(e) { window.scrollTo(0,0); if(e.state && e.state.screen) renderNav(e.state.screen, e.state.tab); else if(currentUser) renderNav('appScreens', 'homeApp'); else renderNav('loginScreen'); });
         window.onload = function() { startGlobalWingoTimers(); }
@@ -2313,27 +2341,51 @@
 
         // ALL GAMES TAB RESTORED EXACTLY
                 function switchAllGamesTab(tabId) {
-            let tabs = ['tabPopular', 'tabLottery', 'tabOriginal'];
-            tabs.forEach(t => document.getElementById(t).classList.remove('active'));
-            document.getElementById(tabId).classList.add('active'); document.getElementById(tabId).scrollIntoView({behavior: "smooth", block: "nearest", inline: "center"});
-            let titleEl = document.getElementById('allGamesSectionTitle'); let gridEl = document.getElementById('allGamesGrid'); let lotteryGrid = document.getElementById('allLotteryGrid'); gridEl.innerHTML = ''; 
-            
-            if (tabId === 'tabLottery') { titleEl.innerText = '| Lottery'; gridEl.style.display = 'none'; lotteryGrid.style.display = 'grid'; } 
-            else {
-                lotteryGrid.style.display = 'none'; gridEl.style.display = 'grid';
-                let dataKey = tabId.replace('tab', '').toLowerCase(); let displayTitle = tabId.replace('tab', ''); titleEl.innerText = '| ' + displayTitle;
-                let gamesData = gameLibrary[dataKey] || []; 
-                
-                let randomizedGames = [...gamesData];
-                for (let i = randomizedGames.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [randomizedGames[i], randomizedGames[j]] = [randomizedGames[j], randomizedGames[i]]; }
+    let tabs = ['tabPopular', 'tabLottery', 'tabOriginal'];
+    tabs.forEach(t => {
+        let el = document.getElementById(t);
+        if(el) el.classList.remove('active');
+    });
+    
+    let activeTab = document.getElementById(tabId);
+    if(activeTab) {
+        activeTab.classList.add('active');
+        try {
+            activeTab.scrollIntoView({behavior: "smooth", block: "nearest", inline: "center"});
+        } catch(e){}
+    }
 
-                randomizedGames.forEach(g => { 
-                    let imgHtml = g.isAviator ? `<div style="width:100%; height:100%; background: radial-gradient(circle at center, #222 0%, #000 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden;"><i class="fa-solid fa-plane" style="color:#ff2a2a; font-size:35px; transform: rotate(-45deg); filter: drop-shadow(0 0 10px #ff2a2a); margin-bottom:5px; z-index:5;"></i><span style="color:#ff2a2a; font-family:'Arial', sans-serif; font-weight:900; font-size:12px; text-transform:uppercase; font-style:italic; letter-spacing:1px; text-shadow:0 0 10px #ff2a2a; z-index:5;">Aviator</span><div style="position:absolute; bottom:15%; width:50%; height:2px; background:#ff2a2a; box-shadow:0 0 10px #ff2a2a; z-index:2;"></div></div>` : (g.img ? `<img src="${g.img}" alt="${g.title}">` : `<i class="fa-solid ${g.icon}"></i>`); 
-                    let clickAction = g.title === 'Aviator' ? `pushNav('aviatorScreen')` : `showToast('Coming soon!')`;
-                    gridEl.innerHTML += `<div class="sq-card" onclick="${clickAction}"><div class="sq-img-placeholder" style="background:${g.color}; padding:0;">${imgHtml}</div><div class="title">${g.title}</div></div>`; 
-                });
-            }
+    let titleEl = document.getElementById('allGamesSectionTitle'); 
+    let gridEl = document.getElementById('allGamesGrid'); 
+    let lotteryGrid = document.getElementById('allLotteryGrid'); 
+    gridEl.innerHTML = ''; 
+    
+    if (tabId === 'tabLottery') { 
+        titleEl.innerText = '| Lottery'; 
+        gridEl.style.display = 'none'; 
+        lotteryGrid.style.display = 'grid'; 
+    } else if (tabId) {
+        lotteryGrid.style.display = 'none'; 
+        gridEl.style.display = 'grid';
+        let dataKey = tabId.replace('tab', '').toLowerCase(); 
+        let displayTitle = tabId.replace('tab', ''); 
+        titleEl.innerText = '| ' + displayTitle;
+        let gamesData = gameLibrary[dataKey] || []; 
+        
+        let randomizedGames = [...gamesData];
+        for (let i = randomizedGames.length - 1; i > 0; i--) { 
+            const j = Math.floor(Math.random() * (i + 1)); 
+            [randomizedGames[i], randomizedGames[j]] = [randomizedGames[j], randomizedGames[i]]; 
         }
+
+        randomizedGames.forEach(g => { 
+            let imgHtml = g.isAviator ? `<div style="width:100%; height:100%; background: radial-gradient(circle at center, #222 0%, #000 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden;"><i class="fa-solid fa-plane" style="color:#ff2a2a; font-size:35px; transform: rotate(-45deg); filter: drop-shadow(0 0 10px #ff2a2a); margin-bottom:5px; z-index:5;"></i><span style="color:#ff2a2a; font-family:'Arial', sans-serif; font-weight:900; font-size:12px; text-transform:uppercase; font-style:italic; letter-spacing:1px; text-shadow:0 0 10px #ff2a2a; z-index:5;">Aviator</span><div style="position:absolute; bottom:15%; width:50%; height:2px; background:#ff2a2a; box-shadow:0 0 10px #ff2a2a; z-index:2;"></div></div>` : (g.img ? `<img src="${g.img}" alt="${g.title}">` : `<i class="fa-solid ${g.icon}"></i>`); 
+            let clickAction = g.title === 'Aviator' ? `pushNav('aviatorScreen')` : `showToast('Coming soon!')`;
+            gridEl.innerHTML += `<div class="sq-card" onclick="${clickAction}"><div class="sq-img-placeholder" style="background:${g.color}; padding:0;">${imgHtml}</div><div class="title">${g.title}</div></div>`; 
+        });
+    }
+}
+
 
 
         let activeWingoTab = sessionStorage.getItem('wTab') || '1min'; let activeHistTab = sessionStorage.getItem('hTab') || 'global'; let currentWingoPage = 1; const wingoItemsPerPage = 10; let globalWingoHistory = { '30sec': [], '1min': [], '3min': [], '5min': [] }; let wingoInterval = null;
