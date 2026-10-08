@@ -209,10 +209,11 @@ function initAppUI() {
     }
 
     if(savedScreen === 'appScreens') pushNav('appScreens', savedAppTab); else pushNav(savedScreen);
-
+} // <--- YE BRACKET MISSING THA
 
 // Aviator HTML Injection Fix
 function renderHomePreviews() {
+    
     let pContainer = document.getElementById('homePopularPreview'); pContainer.innerHTML = '';
     gameLibrary.popular.slice(0, 6).forEach(g => { 
         let imgHtml = g.isAviator ? `<div style="width:100%; height:100%; background: radial-gradient(circle at center, #222 0%, #000 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden;"><i class="fa-solid fa-plane" style="color:#ff2a2a; font-size:35px; transform: rotate(-45deg); filter: drop-shadow(0 0 10px #ff2a2a); margin-bottom:5px; z-index:5;"></i><span style="color:#ff2a2a; font-family:'Arial', sans-serif; font-weight:900; font-size:12px; text-transform:uppercase; font-style:italic; letter-spacing:1px; text-shadow:0 0 10px #ff2a2a; z-index:5;">Aviator</span><div style="position:absolute; bottom:15%; width:50%; height:2px; background:#ff2a2a; box-shadow:0 0 10px #ff2a2a; z-index:2;"></div></div>` : (g.img ? `<img src="${g.img}" alt="${g.title}">` : `<i class="fa-solid ${g.icon}"></i>`); 
