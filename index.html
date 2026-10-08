@@ -167,11 +167,11 @@
 
                 <!-- YAHAN GAME ICONS PAR NAYA ONCLICK LAGA HAI -->
                 <div class="lottery-fixed-container">
-                    <div class="glass-card-premium" onclick="openGame('Win Go', '/game/wingo.html')">
+                    <div class="glass-card-premium" onclick="openGame('Win Go', '/game/wingo.html', '/game/wingo.js')">
+    <img src="https://i.postimg.cc/PxRx4Gv9/win-go-transparent.png" alt="Win Go">
+    <div class="glass-btn-outline">GO <i class="fa-solid fa-arrow-right"></i></div>
+</div>
 
-                        <img src="https://i.postimg.cc/PxRx4Gv9/win-go-transparent.png" alt="Win Go">
-                        <div class="glass-btn-outline">GO <i class="fa-solid fa-arrow-right"></i></div>
-                    </div>
                     <div class="glass-card-premium" onclick="showToast('Coming soon!')">
                         <h3>K3</h3>
                         <img src="https://i.postimg.cc/1XVz7WDL/file-000000009d9c8210937969513d8a0751.png" alt="K3">
@@ -343,7 +343,10 @@
     
     <div id="walletScreen" class="screen"><div class="fixed-header" style="background:#ff4d4d; border-bottom:none; box-shadow:none;"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> Wallet</h2></div><div class="scroll-body" style="padding-top:0;"><div class="wallet-card-main"><div class="wallet-top-label">Total balance</div><div class="wallet-main-bal">₹<span id="wallTotalBal">0.00</span> <i class="fa-solid fa-rotate-right" onclick="forceBalanceRefresh()" style="font-size:18px; cursor:pointer; color:rgba(255,255,255,0.8);"></i></div><div class="wallet-split-area"><div class="wallet-circle-wrap"><div class="w-circle w-circle-silver" id="wallDepPercent">0.00%</div><div class="w-sub-amt">₹<span id="wallDepBal">0.00</span></div><div class="w-sub-label">Deposit</div></div><div class="wallet-circle-wrap"><div class="w-circle w-circle-gold" id="wallWthPercent">100.00%</div><div class="w-sub-amt">₹<span id="wallWthBal">0.00</span></div><div class="w-sub-label">Withdraw</div></div></div></div><div class="wallet-actions-grid"><div class="w-action-box" onclick="pushNav('depositScreen')"><div class="icon-wrap" style="background:rgba(0, 184, 148, 0.1);"><i class="fa-solid fa-money-bill-wave" style="color:#00b894;"></i></div><span>Deposit</span></div><div class="w-action-box" onclick="pushNav('withdrawScreen')"><div class="icon-wrap" style="background:rgba(9, 132, 227, 0.1);"><i class="fa-solid fa-building-columns" style="color:#0984e3;"></i></div><span>Withdraw</span></div><div class="w-action-box" onclick="openHistory('dep')"><div class="icon-wrap" style="background:rgba(232, 67, 147, 0.1);"><i class="fa-solid fa-file-invoice-dollar" style="color:#e84393;"></i></div><span>Deposit<br>history</span></div><div class="w-action-box" onclick="openHistory('wth')"><div class="icon-wrap" style="background:rgba(253, 203, 110, 0.1);"><i class="fa-solid fa-clock-rotate-left" style="color:#fdcb6e;"></i></div><span>Withdrawal<br>history</span></div></div></div></div>
 
-    <div id="allGamesScreen" class="screen" style="padding-top: 60px;"><div class="fixed-header" style="background:white; color:var(--text); border-bottom:1px solid var(--border);"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> All</h2></div><div class="sliding-tabs-wrapper"><div class="sliding-tabs"><div class="s-tab" id="tabPopular" onclick="switchAllGamesTab('tabPopular')"><i class="fa-solid fa-fire" style="color:#ff4d4d;"></i> Popular</div><div class="s-tab" id="tabLottery" onclick="switchAllGamesTab('tabLottery')"><i class="fa-solid fa-bowling-ball" style="color:#2575fc;"></i> Lottery</div><div class="s-tab" id="tabOriginal" onclick="switchAllGamesTab('tabOriginal')"><i class="fa-solid fa-dice" style="color:#18b660;"></i> Original</div></div></div><div class="scroll-body" style="padding-top: 15px;"><div style="padding: 0 15px 15px 15px; font-weight:bold; font-size:16px; border-left: 4px solid var(--primary); margin-left: 15px; margin-bottom:10px;" id="allGamesSectionTitle">| Popular</div><div class="game-grid-3" id="allGamesGrid"></div><div class="all-lottery-list" id="allLotteryGrid" style="display:none;"><div class="lottery-long-card" onclick="openGame('Win Go', 'games/wingo.html')"><div class="lottery-long-card-text"><h3>Win Go</h3><p>Guess Number</p><small>Green/Red/Violet</small></div><img src="https://i.postimg.cc/PxRx4Gv9/win-go-transparent.png" alt="Win Go"></div><div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>K3</h3><p>Guess Number</p><small>Big/Small/Odd</small></div><img src="https://i.postimg.cc/1XVz7WDL/file-000000009d9c8210937969513d8a0751.png" alt="K3"></div><div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>Racing</h3><p>Guess Number</p><small>Big/Small/Even</small></div><img src="https://i.postimg.cc/Lhd8czT6/file-00000000f04c820a82cc09ca6499fae5.png" alt="Racing"></div><div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>5D</h3><p>Guess Number</p><small>Big/Small/Odd</small></div><img src="https://i.postimg.cc/xCrpb8t5/file-00000000ff48820a95c5fdc63559c45e.png" alt="5D"></div></div></div></div>
+    <div id="allGamesScreen" class="screen" style="padding-top: 60px;"><div class="fixed-header" style="background:white; color:var(--text); border-bottom:1px solid var(--border);"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> All</h2></div><div class="sliding-tabs-wrapper"><div class="sliding-tabs"><div class="s-tab" id="tabPopular" onclick="switchAllGamesTab('tabPopular')"><i class="fa-solid fa-fire" style="color:#ff4d4d;"></i> Popular</div><div class="s-tab" id="tabLottery" onclick="switchAllGamesTab('tabLottery')"><i class="fa-solid fa-bowling-ball" style="color:#2575fc;"></i> Lottery</div><div class="s-tab" id="tabOriginal" onclick="switchAllGamesTab('tabOriginal')"><i class="fa-solid fa-dice" style="color:#18b660;"></i> Original</div></div></div><div class="scroll-body" style="padding-top: 15px;"><div style="padding: 0 15px 15px 15px; font-weight:bold; font-size:16px; border-left: 4px solid var(--primary); margin-left: 15px; margin-bottom:10px;" id="allGamesSectionTitle">| Popular</div><div class="game-grid-3" id="allGamesGrid"></div><div class="all-lottery-list" id="allLotteryGrid" style="display:none;"><div class="lottery-long-card" onclick="openGame('Win Go', '/game/wingo.html', '/game/wingo.js')">
+    <div class="lottery-long-card-text"><h3>Win Go</h3><p>Guess Number</p><small>Green/Red/Violet</small></div><img src="https://i.postimg.cc/PxRx4Gv9/win-go-transparent.png" alt="Win Go">
+</div>
+<div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>K3</h3><p>Guess Number</p><small>Big/Small/Odd</small></div><img src="https://i.postimg.cc/1XVz7WDL/file-000000009d9c8210937969513d8a0751.png" alt="K3"></div><div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>Racing</h3><p>Guess Number</p><small>Big/Small/Even</small></div><img src="https://i.postimg.cc/Lhd8czT6/file-00000000f04c820a82cc09ca6499fae5.png" alt="Racing"></div><div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>5D</h3><p>Guess Number</p><small>Big/Small/Odd</small></div><img src="https://i.postimg.cc/xCrpb8t5/file-00000000ff48820a95c5fdc63559c45e.png" alt="5D"></div></div></div></div>
 
     <!-- MISC SCREENS & MODALS -->
     <div id="giftScreen" class="screen">
@@ -460,11 +463,12 @@
     <script src="//code.tidio.co/zzjntjcfia8bpfwn1cshhcmrimt37qme.js" async></script>
 
                   <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
+        <!-- SMART DYNAMIC GAME LOADER (HTML + JS) -->
     <script>
-        function openGame(gameTitle, gameFileUrl) {
-            // MAGIC FIX: Refresh pe wahi game kholne ke liye Memory me save karna
+        function openGame(gameTitle, gameFileUrl, jsFileUrl) {
             sessionStorage.setItem('savedGameTitle', gameTitle);
             sessionStorage.setItem('savedGameUrl', gameFileUrl);
+            sessionStorage.setItem('savedGameJs', jsFileUrl || '');
 
             let loader = document.getElementById('globalLoader');
             if(loader) loader.style.display = 'flex';
@@ -477,39 +481,29 @@
                     
                     let innerScreen = document.querySelector('#gameContainer .screen');
                     if(innerScreen) innerScreen.classList.add('active');
-                    
-                    // Aviator Re-enter & Button Fix
-                    if (gameTitle === 'Aviator') {
-                        if (typeof currentAvPhase !== 'undefined') currentAvPhase = 0;
-                        if (typeof avAnimFrame !== 'undefined') cancelAnimationFrame(avAnimFrame);
-                        
-                        setTimeout(() => {
-                            let b1 = document.getElementById('avBtn1'); if(b1) b1.onclick = () => handleAvBtnClick(1);
-                            let b2 = document.getElementById('avBtn2'); if(b2) b2.onclick = () => handleAvBtnClick(2);
-                        }, 200);
+
+                    // Agar game ki JS file hai, toh usko load karo
+                    if (jsFileUrl) {
+                        let oldScript = document.getElementById('dynamicGameScript');
+                        if (oldScript) oldScript.remove();
+
+                        let script = document.createElement('script');
+                        script.src = jsFileUrl;
+                        script.id = 'dynamicGameScript';
+                        document.body.appendChild(script);
                     }
-                    
                     if(loader) loader.style.display = 'none';
                 })
-                .catch(err => {
-                    console.error("File load nahi hui: ", err);
-                    showToast("Game load fail ho gaya!");
-                    if(loader) loader.style.display = 'none';
-                });
+                .catch(err => console.error("Game load fail: ", err));
         }
 
         function closeGame() {
-            // Memory Clear karna
             sessionStorage.removeItem('savedGameTitle');
             sessionStorage.removeItem('savedGameUrl');
+            sessionStorage.removeItem('savedGameJs');
 
-            // Background Animation & Sound Stop
-            let flySnd = document.getElementById('avFlySound');
-            let crashSnd = document.getElementById('avCrashSound');
-            if (flySnd) { flySnd.pause(); flySnd.currentTime = 0; }
-            if (crashSnd) { crashSnd.pause(); crashSnd.currentTime = 0; }
-            if (typeof avAnimFrame !== 'undefined') cancelAnimationFrame(avAnimFrame);
-            if (typeof currentAvPhase !== 'undefined') currentAvPhase = 0;
+            let oldScript = document.getElementById('dynamicGameScript');
+            if (oldScript) oldScript.remove();
 
             document.getElementById('gameContainer').innerHTML = ""; 
             history.back();
@@ -519,18 +513,14 @@
         window.addEventListener('popstate', function(e) {
             sessionStorage.removeItem('savedGameTitle');
             sessionStorage.removeItem('savedGameUrl');
-
-            let flySnd = document.getElementById('avFlySound');
-            let crashSnd = document.getElementById('avCrashSound');
-            if (flySnd) { flySnd.pause(); flySnd.currentTime = 0; }
-            if (crashSnd) { crashSnd.pause(); crashSnd.currentTime = 0; }
-            if (typeof avAnimFrame !== 'undefined') cancelAnimationFrame(avAnimFrame);
-            if (typeof currentAvPhase !== 'undefined') currentAvPhase = 0;
-            
+            sessionStorage.removeItem('savedGameJs');
+            let oldScript = document.getElementById('dynamicGameScript');
+            if (oldScript) oldScript.remove();
             let gc = document.getElementById('gameContainer');
             if(gc) gc.innerHTML = "";
         });
     </script>
+
 
 
 
