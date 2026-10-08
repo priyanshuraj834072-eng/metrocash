@@ -3249,9 +3249,7 @@ let avCrashAudio = document.getElementById('avCrashSound');
                 if(record) { record.status = 'Success'; record.isWin = true; record.winAmt = winAmt.toFixed(2); }
             }
 
-            updateBalDisplay();
-            saveUserToDB(currentUser); 
-            addTxRecord('Aviator Win', winAmt.toFixed(2), 'Success');
+            
             
             avBets[panel].cashedOut = true; avBets[panel].active = false;
             let btn = document.getElementById(`avBtn${panel}`);
