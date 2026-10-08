@@ -464,7 +464,7 @@
 
                   <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
         <!-- SMART DYNAMIC GAME LOADER (HTML + JS) -->
-    <script>
+        <script>
         function openGame(gameTitle, gameFileUrl, jsFileUrl) {
             sessionStorage.setItem('savedGameTitle', gameTitle);
             sessionStorage.setItem('savedGameUrl', gameFileUrl);
@@ -482,15 +482,15 @@
                     let innerScreen = document.querySelector('#gameContainer .screen');
                     if(innerScreen) innerScreen.classList.add('active');
 
-                    // Agar game ki JS file hai, toh usko load karo
+                    // FIX: Script ko sirf ek baar inject karenge taaki crash aur double-timer na ho
                     if (jsFileUrl) {
-                        let oldScript = document.getElementById('dynamicGameScript');
-                        if (oldScript) oldScript.remove();
-
-                        let script = document.createElement('script');
-                        script.src = jsFileUrl;
-                        script.id = 'dynamicGameScript';
-                        document.body.appendChild(script);
+                        let scriptId = 'script_' + gameTitle.replace(/\s/g, '');
+                        if (!document.getElementById(scriptId)) {
+                            let script = document.createElement('script');
+                            script.src = jsFileUrl;
+                            script.id = scriptId;
+                            document.body.appendChild(script);
+                        }
                     }
                     if(loader) loader.style.display = 'none';
                 })
@@ -501,10 +501,7 @@
             sessionStorage.removeItem('savedGameTitle');
             sessionStorage.removeItem('savedGameUrl');
             sessionStorage.removeItem('savedGameJs');
-
-            let oldScript = document.getElementById('dynamicGameScript');
-            if (oldScript) oldScript.remove();
-
+            // FIX: Script tag ko remove nahi karenge, bas HTML clear karenge
             document.getElementById('gameContainer').innerHTML = ""; 
             history.back();
         }
@@ -514,12 +511,11 @@
             sessionStorage.removeItem('savedGameTitle');
             sessionStorage.removeItem('savedGameUrl');
             sessionStorage.removeItem('savedGameJs');
-            let oldScript = document.getElementById('dynamicGameScript');
-            if (oldScript) oldScript.remove();
             let gc = document.getElementById('gameContainer');
             if(gc) gc.innerHTML = "";
         });
     </script>
+
 
 
 
