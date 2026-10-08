@@ -1052,8 +1052,9 @@
                 <path id="avTrailPath" fill="rgba(229, 5, 58, 0.4)" stroke="#e5053a" stroke-width="4"></path>
             </svg>
             
-                        <!-- Real Plane Image -->
-            <img src="https://i.postimg.cc/SNZNW2H4/file-00000000c9948211b3140c9ce0ef1663.png" id="avPlane" class="av-plane-icon" style="width: 75px; height: auto; left: 10px; bottom: 10px; transform: rotate(5deg); z-index: 5;">
+                            <!-- Asli Realistic Glowing Plane -->
+            <i class="fa-solid fa-plane" id="avPlane" style="position: absolute; left: 10px; bottom: 10px; color: #e5053a; font-size: 55px; filter: drop-shadow(0px 8px 6px rgba(229,5,58,0.8)); z-index: 5; transform: rotate(5deg);"></i>
+
 
             <div style="z-index: 10; display:flex; flex-direction:column; align-items:center; transform: translateY(15px);">
                 <div class="av-flew-txt" id="avFlewText" style="display:none; position:relative; top:0; color:#e5053a; font-size:22px;">FLEW AWAY!</div>
@@ -3103,7 +3104,7 @@ let avCrashAudio = document.getElementById('avCrashSound');
                     }
                 }
             }
-            else {
+                        else {
                 // PHASE 3: Crashed (PLANE FLY AWAY EFFECT)
                 if (currentAvPhase !== 3) {
                     currentAvPhase = 3; isAvFlying = false;
@@ -3115,9 +3116,10 @@ let avCrashAudio = document.getElementById('avCrashSound');
                     
                     // PLANE TEZI SE AAGE UDEGA AUR GAYAB HOGA
                     let planeEl = document.getElementById('avPlane');
-                    planeEl.style.transition = 'all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
-                    planeEl.style.left = (window.innerWidth + 100) + 'px'; // Move out of screen
-                    planeEl.style.bottom = '350px'; // Fly upwards
+                    planeEl.style.transition = 'left 0.5s ease-in, bottom 0.5s ease-in, opacity 0.4s ease-in';
+                    planeEl.style.transform = 'rotate(25deg)'; // Crash hote hi aage ghoomega
+                    planeEl.style.left = '150%'; // Screen ke bahar jayega
+                    planeEl.style.bottom = '400px'; 
                     planeEl.style.opacity = '0';
                     
                     // Lal trail turant gayab
@@ -3129,10 +3131,12 @@ let avCrashAudio = document.getElementById('avCrashSound');
                     
                     avFlyAudio.pause(); 
                     if(document.getElementById('aviatorScreen').classList.contains('active') && !document.hidden) {
-                        avCrashAudio.currentTime = 0; avCrashAudio.play().catch(e=>{});
+                        avCrashAudio.currentTime = 0;
+                        avCrashAudio.play().catch(e=>{});
                     }
                 }
             }
+
         }, 100); 
 
         // 3. Smooth Plane Animation with RED CURVE TRAIL
@@ -3165,10 +3169,15 @@ let avCrashAudio = document.getElementById('avCrashSound');
                 let px = 10 + (percentX/100 * maxW);
                 let py = 10 + (percentY/100 * maxH);
                 
-                planeEl.style.left = px + 'px';
+                                planeEl.style.left = px + 'px';
                 planeEl.style.bottom = py + 'px';
+                
+                // NAYA: Plane ko curve ke hisaab se tehda (tilt) karna (Real Video Effect)
+                let tiltAngle = Math.min((percentY / 100) * 20, 20); 
+                planeEl.style.transform = `rotate(${tiltAngle}deg)`;
 
                 // YAHAN RED TRAIL (CURVE) BANEGI
+
                 let pathY = canvasH - py - 20; // Y axis reverse hota hai SVG mein
                 let startY = canvasH - 20;     
                 let d = `M 20 ${startY} Q ${px * 0.5} ${startY} ${px+15} ${pathY} L ${px+15} ${canvasH} L 20 ${canvasH} Z`;
