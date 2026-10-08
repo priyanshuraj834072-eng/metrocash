@@ -1,0 +1,136 @@
+<!-- AVIATOR GAME SCREEN -->
+<div id="aviatorScreen" class="screen aviator-bg active" style="padding-top: 0;">
+    <!-- Header -->
+    <div class="av-header">
+        <i class="fa-solid fa-chevron-left" style="color:white; font-size:18px; cursor:pointer;" onclick="closeGame()"></i>
+        <div class="av-logo">Aviator</div>
+        <div class="av-bal"><span id="avWalletBal">0.00</span> INR <i class="fa-solid fa-bars" style="color:gray;"></i></div>
+    </div>
+
+    <!-- History Tape -->
+    <div class="av-history-bar">
+        <div class="av-hist-tape" id="avTopHistory">
+            <div class="av-pill blue">1.16x</div><div class="av-pill blue">1.26x</div>
+            <div class="av-pill pink">43.89x</div><div class="av-pill blue">1.19x</div>
+            <div class="av-pill purple">1.77x</div><div class="av-pill purple">1.78x</div>
+        </div>
+        <button class="av-hist-btn" onclick="toggleAviatorHistory()"><i class="fa-solid fa-clock-rotate-left"></i> <i class="fa-solid fa-chevron-down" id="avHistIcon"></i></button>
+    </div>
+
+    <!-- 50 History Dropdown -->
+    <div class="av-history-dropdown" id="avHistoryDropdown">
+        <div style="display:flex; justify-content:space-between; color:gray; font-size:12px; font-weight:bold; border-bottom:1px solid #333; padding-bottom:8px;">
+            Round History <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="toggleAviatorHistory()"></i>
+        </div>
+        <div class="av-hd-grid" id="avFullHistoryGrid">
+            <!-- Data will inject here -->
+        </div>
+    </div>
+
+    <!-- Main Game Area -->
+    <div class="av-game-area" id="avGameCanvas">
+        <svg id="avTrailSvg" style="position:absolute; bottom:0; left:0; width:100%; height:100%; z-index:1;">
+            <path id="avTrailPath" fill="rgba(229, 5, 58, 0.4)" stroke="#e5053a" stroke-width="4"></path>
+        </svg>
+        
+        <i class="fa-solid fa-plane" id="avPlane" style="position: absolute; left: 10px; bottom: 10px; color: #e5053a; font-size: 55px; filter: drop-shadow(0px 8px 6px rgba(229,5,58,0.8)); z-index: 5; transform: rotate(5deg); transition: left 0.1s linear, bottom 0.1s linear, transform 0.5s ease;"></i>
+
+        <div style="z-index: 10; display:flex; flex-direction:column; align-items:center; transform: translateY(15px);">
+            <div class="av-flew-txt" id="avFlewText" style="display:none; position:relative; top:0; color:#e5053a; font-size:22px;">FLEW AWAY!</div>
+            <div class="av-multiplier" id="avMultiplierText" style="color:white; margin-top:5px; transition: color 0.2s;">1.00x</div>
+        </div>
+        
+        <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.5); padding:3px 8px; border-radius:15px; border:1px solid #333; font-size:10px; color:gray; display:flex; align-items:center; gap:5px; z-index: 10;">
+            <i class="fa-solid fa-shield-halved" style="color:#28a745;"></i> Provably Fair
+        </div>
+    </div>
+
+    <!-- Betting Controls -->
+    <div class="av-bet-controls">
+        <!-- PANEL 1 -->
+        <div class="av-bet-panel">
+            <div class="av-bet-tabs">
+                <div class="av-btab active" id="p1-tab-bet" onclick="switchAvTab(1, 'bet')">Bet</div>
+                <div class="av-btab" id="p1-tab-auto" onclick="switchAvTab(1, 'auto')">Auto</div>
+            </div>
+            <div class="av-bet-row">
+                <div class="av-input-group">
+                    <div class="av-qty-control">
+                        <button class="av-qty-btn" onclick="changeAvBet(1, -10)"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" class="av-qty-input" id="avBetInput1" value="10.00">
+                        <button class="av-qty-btn" onclick="changeAvBet(1, 10)"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div class="av-quick-amounts">
+                        <div class="av-q-btn" onclick="setAvBet(1, 100)">100.00</div><div class="av-q-btn" onclick="setAvBet(1, 200)">200.00</div>
+                        <div class="av-q-btn" onclick="setAvBet(1, 500)">500.00</div><div class="av-q-btn" onclick="setAvBet(1, 1000)">1,000.00</div>
+                    </div>
+                </div>
+                <button class="av-big-btn av-btn-green" id="avBtn1">
+                    <span>BET</span><span style="font-size:14px; font-weight:normal;" id="avBtnTxt1">10.00 INR</span>
+                </button>
+            </div>
+            <div class="av-auto-row" id="p1-auto-options">
+                <div style="display:flex; align-items:center; gap:5px;">
+                    Auto bet <label class="switch"><input type="checkbox" id="p1-autobet"><span class="slider"></span></label>
+                </div>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    Auto Cash Out <label class="switch"><input type="checkbox" id="p1-autocash"><span class="slider"></span></label>
+                    <input type="number" value="1.10" style="width:40px; background:#000; border:1px solid #333; color:white; border-radius:5px; text-align:center; padding:2px;"> x
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL 2 -->
+        <div class="av-bet-panel">
+            <div class="av-bet-tabs">
+                <div class="av-btab active" id="p2-tab-bet" onclick="switchAvTab(2, 'bet')">Bet</div>
+                <div class="av-btab" id="p2-tab-auto" onclick="switchAvTab(2, 'auto')">Auto</div>
+            </div>
+            <div class="av-bet-row">
+                <div class="av-input-group">
+                    <div class="av-qty-control">
+                        <button class="av-qty-btn" onclick="changeAvBet(2, -10)"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" class="av-qty-input" id="avBetInput2" value="10.00">
+                        <button class="av-qty-btn" onclick="changeAvBet(2, 10)"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div class="av-quick-amounts">
+                        <div class="av-q-btn" onclick="setAvBet(2, 100)">100.00</div><div class="av-q-btn" onclick="setAvBet(2, 200)">200.00</div>
+                        <div class="av-q-btn" onclick="setAvBet(2, 500)">500.00</div><div class="av-q-btn" onclick="setAvBet(2, 1000)">1,000.00</div>
+                    </div>
+                </div>
+                <button class="av-big-btn av-btn-green" id="avBtn2">
+                    <span>BET</span><span style="font-size:14px; font-weight:normal;" id="avBtnTxt2">10.00 INR</span>
+                </button>
+            </div>
+            <div class="av-auto-row" id="p2-auto-options">
+                <div style="display:flex; align-items:center; gap:5px;">
+                    Auto bet <label class="switch"><input type="checkbox" id="p2-autobet"><span class="slider"></span></label>
+                </div>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    Auto Cash Out <label class="switch"><input type="checkbox" id="p2-autocash"><span class="slider"></span></label>
+                    <input type="number" value="1.10" style="width:40px; background:#000; border:1px solid #333; color:white; border-radius:5px; text-align:center; padding:2px;"> x
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Bets Bottom Area -->
+    <div class="av-bottom-tabs">
+        <div class="av-btm-tab active">All Bets</div>
+        <div class="av-btm-tab">My Bets</div>
+        <div class="av-btm-tab">Top</div>
+    </div>
+
+    <div class="av-live-list">
+        <div style="display:flex; justify-content:space-between; color:gray; font-size:11px; margin-bottom:10px; padding:0 5px;">
+            <span>Player</span><span>Bet INR</span><span>X</span><span>Win INR</span>
+        </div>
+        <div class="av-live-item"><span><i class="fa-solid fa-user-circle" style="color:gray;"></i> s***j</span><span>8,000.00</span><span style="color:#28a745;">1.50x</span><span style="color:white; font-weight:bold;">12,000.00</span></div>
+        <div class="av-live-item"><span><i class="fa-solid fa-user-circle" style="color:gray;"></i> y***w</span><span>2,000.00</span><span style="color:gray;">-</span><span style="color:gray;">-</span></div>
+        <div class="av-live-item"><span><i class="fa-solid fa-user-circle" style="color:gray;"></i> z***r</span><span>500.00</span><span style="color:#9b59b6;">2.10x</span><span style="color:white; font-weight:bold;">1,050.00</span></div>
+    </div>
+
+    <!-- AUDIO FILES -->
+    <audio id="avFlySound" src="https://github.com/priyanshuraj834072-eng/metrocash/raw/refs/heads/main/Aviator_-_Music(256k).mp3" loop preload="auto"></audio>
+    <audio id="avCrashSound" src="https://github.com/priyanshuraj834072-eng/metrocash/raw/refs/heads/main/Video.Guru_20261007-214031959.mp3" preload="auto"></audio>
+</div>
