@@ -306,16 +306,14 @@
         </div>
     </div> <!-- appScreens End -->
 
-        <!-- ==============================================
+           <!-- ==============================================
          DYNAMIC GAME PLAY SCREEN (FETCH API)
     =============================================== -->
     <div id="gamePlayScreen" class="screen" style="padding-top: 0;">
-        <div class="fixed-header">
-            <h2><i class="fa-solid fa-chevron-left" onclick="closeGame()"></i> <span id="activeGameTitle">Loading...</span></h2>
-        </div>
-        <!-- Iframe hata diya, ab direct DOM me HTML load hoga -->
-        <div id="gameContainer" style="width: 100%; height: 100vh; overflow-y: auto; padding-top: 60px;"></div>
+        <!-- Header hata diya kyunki Wingo/Aviator ka apna header hai -->
+        <div id="gameContainer" style="width: 100%; height: 100vh; overflow-y: auto;"></div>
     </div>
+
 
 
     <!-- WALLET & TRANSACTION SCREENS -->
@@ -461,22 +459,27 @@
     <script src="main.js" defer></script>
     <script src="//code.tidio.co/zzjntjcfia8bpfwn1cshhcmrimt37qme.js" async></script>
 
-        <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
+           <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
     <script>
         function openGame(gameTitle, gameFileUrl) {
             let loader = document.getElementById('globalLoader');
             if(loader) loader.style.display = 'flex';
             
-            document.getElementById('activeGameTitle').innerText = gameTitle;
-            
-            // FETCH API se dusri HTML file ka code la kar inject karna
             fetch(gameFileUrl)
                 .then(response => response.text())
                 .then(htmlData => {
-                    // HTML ko gameContainer ke andar daal diya
+                    // 1. HTML Inject karo
                     document.getElementById('gameContainer').innerHTML = htmlData;
                     
+                    // 2. Navigation push karo
                     pushNav('gamePlayScreen');
+                    
+                    // 3. MAGIC FIX: pushNav ne game ki screen ko hide kar diya tha, usko wapas show (active) karna
+                    let innerScreen = document.querySelector('#gameContainer .screen');
+                    if(innerScreen) {
+                        innerScreen.classList.add('active');
+                    }
+                    
                     if(loader) loader.style.display = 'none';
                 })
                 .catch(err => {
@@ -487,11 +490,12 @@
         }
 
         function closeGame() {
-            // Game close karte waqt container khali kar do
+            // Game close karte waqt background script band karne ke liye container clear karna
             document.getElementById('gameContainer').innerHTML = ""; 
             history.back();
         }
     </script>
+
 
 </div>
 </body>
