@@ -199,16 +199,25 @@ function initAppUI() {
     let userDisplay = currentUser.id || 'User'; if(currentUser.id === '9142816706') { userDisplay += ` <span onclick="openAdminAuth()" style="background:#ff4757; color:white; font-size:10px; padding:3px 8px; border-radius:12px; vertical-align:middle; cursor:pointer; margin-left:8px;"><i class="fa-solid fa-shield-halved"></i> Admin</span>`; }
     document.getElementById('accUser').innerHTML = userDisplay; renderReferrals(); renderHomePreviews(); updateDepositScreenUI();
     
-        let savedScreen = sessionStorage.getItem('activeScreen') || 'appScreens'; 
+            let savedScreen = sessionStorage.getItem('activeScreen') || 'appScreens'; 
     let savedAppTab = sessionStorage.getItem('activeAppTab') || 'homeApp';
     
-    // MAGIC FIX: Agar user game ke andar refresh kare, toh usko safely wapas Home par bhej do taaki blank screen na aaye
+    // MAGIC FIX: Refresh par wapas wahi game kholo jahan user tha!
     if (savedScreen === 'gamePlayScreen') {
-        savedScreen = 'appScreens';
-        savedAppTab = 'homeApp';
+        let gTitle = sessionStorage.getItem('savedGameTitle');
+        let gUrl = sessionStorage.getItem('savedGameUrl');
+        
+        if (gTitle && gUrl) {
+            // Agar memory me game ka naam aur URL hai, toh usko khol do
+            openGame(gTitle, gUrl);
+        } else {
+            // Agar data nahi mila (fallback), toh Home pe bhej do
+            pushNav('appScreens', 'homeApp');
+        }
+    } else {
+        if(savedScreen === 'appScreens') pushNav('appScreens', savedAppTab); else pushNav(savedScreen);
     }
-
-    if(savedScreen === 'appScreens') pushNav('appScreens', savedAppTab); else pushNav(savedScreen);
+    
 } // <--- YE BRACKET MISSING THA
 
 // Aviator HTML Injection Fix
