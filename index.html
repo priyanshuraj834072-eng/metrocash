@@ -3161,33 +3161,34 @@ let avCrashAudio = document.getElementById('avCrashSound');
                 document.getElementById('avMultiplierText').innerText = currentMulti.toFixed(2) + "x";
                 document.getElementById('avMultiplierText').style.color = "#ffffff"; 
                 
-                let maxH = 140, maxW = window.innerWidth - 60;
+                                // Canvas ki ekdum accurate width nikali hai taaki right me gap na bache
+                let gameW = document.getElementById('avGameCanvas').clientWidth;
+                let maxH = 150, maxW = gameW - 65; 
                 
-                                    // Plane ko thora aur aage (right side) le jaane ke liye limit 85% kar di hai
-                let percentX = Math.min((timeElapsed / 10000) * 55, 85); 
-                let percentY = Math.min(Math.pow(timeElapsed / 10000, 1.2) * 55, 70);
+                // Ab plane full screen (100% width aur 90% height) cover karega!
+                let percentX = Math.min((timeElapsed / 10000) * 65, 100); 
+                let percentY = Math.min(Math.pow(timeElapsed / 10000, 1.2) * 65, 90);
                 
-                // Plane jab aage jakar rukega toh wahi mast hawa mein up-down float karega
+                // Float effect
                 let hoverY = Math.sin(timeElapsed / 200) * 4; 
 
                 let px = 10 + (percentX/100 * maxW);
                 let py = 10 + (percentY/100 * maxH) + hoverY;
-
                 
                 planeEl.style.left = px + 'px';
                 planeEl.style.bottom = py + 'px';
-
                 
-                // NAYA: Plane ko curve ke hisaab se tehda (tilt) karna (Real Video Effect)
-                let tiltAngle = Math.min((percentY / 100) * 20, 20); 
+                // Tilt angle thoda kam kiya (12 degree) taaki realistic lage
+                let tiltAngle = Math.min((percentY / 100) * 12, 12); 
                 planeEl.style.transform = `rotate(${tiltAngle}deg)`;
 
                 // YAHAN RED TRAIL (CURVE) BANEGI
-
-                let pathY = canvasH - py - 20; // Y axis reverse hota hai SVG mein
+                let pathY = canvasH - py - 20; 
                 let startY = canvasH - 20;     
-                let d = `M 20 ${startY} Q ${px * 0.5} ${startY} ${px+15} ${pathY} L ${px+15} ${canvasH} L 20 ${canvasH} Z`;
+                // px+30 kiya hai taaki red trail plane ke exactly center (engine) tak touch kare aur gap khatam ho jaye
+                let d = `M 20 ${startY} Q ${px * 0.5} ${startY} ${px+30} ${pathY} L ${px+30} ${canvasH} L 20 ${canvasH} Z`;
                 if(trailPath) trailPath.setAttribute('d', d);
+
 
                 // Cashout Updates
                 if(avBets[1].active && !avBets[1].cashedOut) document.getElementById('avLiveCash1').innerText = (avBets[1].amount * currentMulti).toFixed(2) + " INR";
