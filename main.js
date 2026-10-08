@@ -673,3 +673,12 @@ function submitCustomWithdraw(btn) {
 }
 
 function openSupportChat() { if (window.tidioChatApi) { window.tidioChatApi.show(); window.tidioChatApi.open(); } else { showToast("Support chat is loading..."); } }
+// Tidio Chat API - Hide floating bubble by default
+document.addEventListener("tidioChat-ready", function() {
+    window.tidioChatApi.hide();
+});
+
+// Hide the bubble again when the user closes the chat window
+document.addEventListener("tidioChat-close", function() {
+    window.tidioChatApi.hide();
+});
