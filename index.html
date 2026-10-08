@@ -3273,7 +3273,7 @@ let avCrashAudio = document.getElementById('avCrashSound');
             }
         }
 
-                function cashoutAviator(panel, multi) {
+                    function cashoutAviator(panel, multi) {
             let winAmt = avBets[panel].amount * multi;
             currentUser.withdrawBal += winAmt; 
             currentUser.balance = currentUser.depositBal + currentUser.withdrawBal;
@@ -3285,37 +3285,50 @@ let avCrashAudio = document.getElementById('avCrashSound');
 
             avBets[panel].cashedOut = true; avBets[panel].active = false;
             let btn = document.getElementById(`avBtn${panel}`);
+            btn.style.background = ''; // Yahan bhi extra color clear kar diya
             btn.className = 'av-big-btn av-btn-orange';
             btn.innerHTML = `<span style="font-size:12px;">CASHED OUT</span><span>${winAmt.toFixed(2)} INR</span><span style="font-size:10px;">at ${multi.toFixed(2)}x</span>`;
 
+            // Naya Notification Toast (Screen ke upar hamesha dikhega)
             let toast = document.createElement('div');
             toast.innerHTML = `
-            <div style="display: flex; background: #28a745; color: white; padding: 4px 15px; border-radius: 30px; align-items: center; justify-content: space-between; min-width: 180px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 2px solid #1e7e34;">
-                <div style="text-align: center; border-right: 1px solid #1e7e34; padding-right: 10px;">
-                    <span style="font-size: 9px; font-weight:normal; display: block; margin-bottom: 2px;">You have cashed out!</span>
-                    <span style="font-size: 14px;">${multi.toFixed(2)}x</span>
+            <div style="display: flex; background: #28a745; color: white; padding: 6px 15px; border-radius: 30px; align-items: center; justify-content: space-between; min-width: 220px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid #1e7e34;">
+                <div style="text-align: center; border-right: 1px solid #1e7e34; padding-right: 15px;">
+                    <span style="font-size: 10px; font-weight:normal; display: block; margin-bottom: 2px;">You have cashed out!</span>
+                    <span style="font-size: 16px;">${multi.toFixed(2)}x</span>
                 </div>
-                <div style="text-align: center; padding-left: 10px;">
-                    <span style="font-size: 9px; font-weight:normal; display: block; margin-bottom: 2px;">You got:</span>
-                    <span style="font-size: 14px;">${winAmt.toFixed(2)}</span>
+                <div style="text-align: center; padding-left: 15px;">
+                    <span style="font-size: 10px; font-weight:normal; display: block; margin-bottom: 2px;">You got:</span>
+                    <span style="font-size: 16px;">₹${winAmt.toFixed(2)}</span>
                 </div>
             </div>`;
-            toast.style.position = 'absolute';
-            toast.style.top = (10 + (panel * 50)) + 'px'; 
+            
+            // Notification Box ki Styling (Hamesha on top)
+            toast.style.position = 'fixed';
+            toast.style.top = '80px'; // Screen ke slightly upar se aayega
             toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.zIndex = '100';
-            toast.style.transition = 'top 0.4s ease, opacity 0.4s ease';
+            toast.style.transform = 'translate(-50%, -20px)';
+            toast.style.zIndex = '999999';
+            toast.style.opacity = '0';
+            toast.style.pointerEvents = 'none';
+            toast.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
             
-            let canvas = document.getElementById('avGameCanvas');
-            if(canvas) canvas.appendChild(toast);
+            document.body.appendChild(toast);
             
+            // Animate In
             setTimeout(() => {
-                toast.style.top = '-50px';
+                toast.style.transform = 'translate(-50%, 0)';
+                toast.style.opacity = '1';
+            }, 10);
+            
+            // Animate Out & Remove after 2.5 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -20px)';
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 400);
-            }, 3000);
+            }, 2500);
         }
+
 
 
 
@@ -3332,12 +3345,14 @@ let avCrashAudio = document.getElementById('avCrashSound');
             });
         }
 
-        function resetSingleAvButton(panel) {
+                function resetSingleAvButton(panel) {
             let btn = document.getElementById(`avBtn${panel}`);
             let amt = document.getElementById(`avBetInput${panel}`).value;
+            btn.style.background = ''; // Ye line inline black color ko remove kar degi
             btn.className = 'av-big-btn av-btn-green';
             btn.innerHTML = `<span>BET</span><span style="font-size:14px; font-weight:normal;" id="avBtnTxt${panel}">${parseFloat(amt).toFixed(2)} INR</span>`;
         }
+
 
         function lockAvBetsAndTurnToCashout() {
             [1, 2].forEach(panel => {
