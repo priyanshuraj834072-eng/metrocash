@@ -1053,7 +1053,8 @@
             </svg>
             
                             <!-- Asli Realistic Glowing Plane -->
-            <i class="fa-solid fa-plane" id="avPlane" style="position: absolute; left: 10px; bottom: 10px; color: #e5053a; font-size: 55px; filter: drop-shadow(0px 8px 6px rgba(229,5,58,0.8)); z-index: 5; transform: rotate(5deg);"></i>
+            <img src="https://i.postimg.cc/SNZNW2H4/file-00000000c9948211b3140c9ce0ef1663.png" id="avPlane" style="position: absolute; left: 10px; bottom: 10px; width: 85px; z-index: 5; transition: all 0.1s linear; filter: drop-shadow(0px 8px 6px rgba(229,5,58,0.5));">
+
 
 
             <div style="z-index: 10; display:flex; flex-direction:column; align-items:center; transform: translateY(15px);">
@@ -3115,12 +3116,11 @@ let avCrashAudio = document.getElementById('avCrashSound');
                     document.getElementById('avFlewText').style.display = 'block'; // Show "FLEW AWAY!"
                     
                     // PLANE TEZI SE AAGE UDEGA AUR GAYAB HOGA
-                    let planeEl = document.getElementById('avPlane');
-                    planeEl.style.transition = 'left 0.5s ease-in, bottom 0.5s ease-in, opacity 0.4s ease-in';
-                    planeEl.style.transform = 'rotate(25deg)'; // Crash hote hi aage ghoomega
-                    planeEl.style.left = '150%'; // Screen ke bahar jayega
-                    planeEl.style.bottom = '400px'; 
-                    planeEl.style.opacity = '0';
+                                        let planeEl = document.getElementById('avPlane');
+                    planeEl.style.transition = 'left 0.7s ease-in, bottom 0.7s ease-in';
+                    planeEl.style.left = '200%'; 
+                    planeEl.style.bottom = '800px'; 
+
                     
                     // Lal trail turant gayab
                     let trail = document.getElementById('avTrailPath');
@@ -3273,24 +3273,50 @@ let avCrashAudio = document.getElementById('avCrashSound');
             }
         }
 
-        function cashoutAviator(panel, multi) {
+                function cashoutAviator(panel, multi) {
             let winAmt = avBets[panel].amount * multi;
             currentUser.withdrawBal += winAmt; 
             currentUser.balance = currentUser.depositBal + currentUser.withdrawBal;
             
-            // NAYA: Cashout hone par usko 'Success' mark kar do History mein
             if(currentUser.gameHistory) {
                 let record = currentUser.gameHistory.find(g => g.id === avBets[panel].gameId);
                 if(record) { record.status = 'Success'; record.isWin = true; record.winAmt = winAmt.toFixed(2); }
             }
 
-            
-            
             avBets[panel].cashedOut = true; avBets[panel].active = false;
             let btn = document.getElementById(`avBtn${panel}`);
             btn.className = 'av-big-btn av-btn-orange';
             btn.innerHTML = `<span style="font-size:12px;">CASHED OUT</span><span>${winAmt.toFixed(2)} INR</span><span style="font-size:10px;">at ${multi.toFixed(2)}x</span>`;
+
+            let toast = document.createElement('div');
+            toast.innerHTML = `
+            <div style="display: flex; background: #28a745; color: white; padding: 4px 15px; border-radius: 30px; align-items: center; justify-content: space-between; min-width: 180px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 2px solid #1e7e34;">
+                <div style="text-align: center; border-right: 1px solid #1e7e34; padding-right: 10px;">
+                    <span style="font-size: 9px; font-weight:normal; display: block; margin-bottom: 2px;">You have cashed out!</span>
+                    <span style="font-size: 14px;">${multi.toFixed(2)}x</span>
+                </div>
+                <div style="text-align: center; padding-left: 10px;">
+                    <span style="font-size: 9px; font-weight:normal; display: block; margin-bottom: 2px;">You got:</span>
+                    <span style="font-size: 14px;">${winAmt.toFixed(2)}</span>
+                </div>
+            </div>`;
+            toast.style.position = 'absolute';
+            toast.style.top = (10 + (panel * 50)) + 'px'; 
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.zIndex = '100';
+            toast.style.transition = 'top 0.4s ease, opacity 0.4s ease';
+            
+            let canvas = document.getElementById('avGameCanvas');
+            if(canvas) canvas.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.top = '-50px';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
         }
+
 
 
         function resetAvButtonsForBet() {
