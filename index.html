@@ -1045,18 +1045,26 @@
             </div>
         </div>
 
-        <!-- Main Game Area -->
+                <!-- Main Game Area (REALISTIC EFFECT) -->
         <div class="av-game-area" id="avGameCanvas">
+            <!-- Dynamic Red Trail Curve -->
+            <svg id="avTrailSvg" style="position:absolute; bottom:0; left:0; width:100%; height:100%; z-index:1;">
+                <path id="avTrailPath" fill="rgba(229, 5, 58, 0.4)" stroke="#e5053a" stroke-width="4"></path>
+            </svg>
+            
             <!-- Plane Icon -->
-            <i class="fa-solid fa-plane av-plane-icon" id="avPlane" style="left:10px; bottom:10px;"></i>
+            <i class="fa-solid fa-plane av-plane-icon" id="avPlane" style="left:10px; bottom:10px; transform: rotate(0deg);"></i>
             
-            <div class="av-flew-txt" id="avFlewText" style="display:none;">Flew Away!</div>
-            <div class="av-multiplier" id="avMultiplierText" style="color:#e5053a;">1.00x</div>
+            <div style="z-index: 10; display:flex; flex-direction:column; align-items:center; transform: translateY(15px);">
+                <div class="av-flew-txt" id="avFlewText" style="display:none; position:relative; top:0; color:#e5053a; font-size:22px;">FLEW AWAY!</div>
+                <div class="av-multiplier" id="avMultiplierText" style="color:white; margin-top:5px; transition: color 0.2s;">1.00x</div>
+            </div>
             
-            <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.5); padding:3px 8px; border-radius:15px; border:1px solid #333; font-size:10px; color:gray; display:flex; align-items:center; gap:5px;">
+            <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.5); padding:3px 8px; border-radius:15px; border:1px solid #333; font-size:10px; color:gray; display:flex; align-items:center; gap:5px; z-index: 10;">
                 <i class="fa-solid fa-shield-halved" style="color:#28a745;"></i> Provably Fair
             </div>
         </div>
+
 
         <!-- Betting Controls (Double Panels) -->
         <div class="av-bet-controls">
@@ -3043,15 +3051,11 @@ let avCrashAudio = document.getElementById('avCrashSound');
         // 2. Main Game Loop (Always Running in Background)
 
 
-        // 2. Main Game Loop (Always Running in Background)
+                // 2. Main Game Loop (Always Running in Background)
         setInterval(() => {
             if(!currentAvRound) {
-                // Agar round nahi hai, toh atka hua 1.00x mat dikhao
                 document.getElementById('avMultiplierText').innerHTML = `<span style="font-size:20px; color:#ccc;">Loading next round...</span>`;
                 document.getElementById('avFlewText').style.display = 'none';
-                document.getElementById('avPlane').style.bottom = '10px';
-                document.getElementById('avPlane').style.left = '10px';
-                document.getElementById('avPlane').style.color = '#e5053a';
                 return;
             }
             
@@ -3067,66 +3071,77 @@ let avCrashAudio = document.getElementById('avCrashSound');
                     document.getElementById('avMultiplierText').style.color = "#ccc";
                     document.getElementById('avMultiplierText').style.fontSize = "30px";
                     document.getElementById('avFlewText').style.display = 'none';
-                    document.getElementById('avPlane').style.bottom = '10px';
-                    document.getElementById('avPlane').style.left = '10px';
-                    document.getElementById('avPlane').style.color = '#e5053a';
+                    
+                    // Plane back to start instantly
+                    let planeEl = document.getElementById('avPlane');
+                    planeEl.style.transition = 'none';
+                    planeEl.style.bottom = '10px';
+                    planeEl.style.left = '10px';
+                    planeEl.style.opacity = '1';
+                    
+                    // Hide Red Trail
+                    let trail = document.getElementById('avTrailPath');
+                    if(trail) trail.setAttribute('d', '');
+
                     resetAvButtonsForBet();
                 }
                 let waitTime = ((flightStart - now) / 1000).toFixed(1);
                 if(waitTime > 0 && document.getElementById('aviatorScreen').classList.contains('active')) {
-                    document.getElementById('avMultiplierText').innerHTML = `Waiting for next round<br><span style="font-size:40px; color:#28a745;">${waitTime}s</span>`;
+                    document.getElementById('avMultiplierText').innerHTML = `<img src="https://i.postimg.cc/SNZNW2H4/file-00000000c9948211b3140c9ce0ef1663.png" style="width:50px; opacity:0.5; filter:grayscale(1); display:block; margin:0 auto -10px auto;"><br><span style="font-size:14px; letter-spacing:1px; color:white;">WAITING FOR NEXT ROUND</span><br><span style="font-size:30px; color:#e5053a; font-weight:bold;">${waitTime}s</span>`;
                 }
             } 
-                            else if (now >= flightStart && now < currentAvRound.endTime - 3000) {
-                                // PHASE 2: Plane Flying
+            else if (now >= flightStart && now < currentAvRound.endTime - 3000) {
+                // PHASE 2: Plane Flying
                 if (currentAvPhase !== 2) {
                     currentAvPhase = 2; isAvFlying = true;
                     document.getElementById('avMultiplierText').style.fontSize = "60px";
                     lockAvBetsAndTurnToCashout();
                     startAviatorAnimation();
                     
-                    // NAYA LOGIC: JS AUDIO PLAY
                     if(document.getElementById('aviatorScreen').classList.contains('active') && !document.hidden) {
-                        avFlyAudio.currentTime = 0;
-                        avFlyAudio.play().catch(e=>{});
+                        avFlyAudio.currentTime = 0; avFlyAudio.play().catch(e=>{});
                     }
                 }
             }
-            
-            
-                        else {
-                // PHASE 3: Crashed
+            else {
+                // PHASE 3: Crashed (PLANE FLY AWAY EFFECT)
                 if (currentAvPhase !== 3) {
                     currentAvPhase = 3; isAvFlying = false;
                     if(avAnimFrame) cancelAnimationFrame(avAnimFrame);
-                    document.getElementById('avMultiplierText').innerText = crashPoint.toFixed(2) + "x";
-                    document.getElementById('avMultiplierText').style.color = "#e5053a";
-                    document.getElementById('avFlewText').style.display = 'block';
-                    document.getElementById('avPlane').style.color = 'gray';
-                    failUncashedBets();
                     
+                    document.getElementById('avMultiplierText').innerText = crashPoint.toFixed(2) + "x";
+                    document.getElementById('avMultiplierText').style.color = "#e5053a"; // Turn Red
+                    document.getElementById('avFlewText').style.display = 'block'; // Show "FLEW AWAY!"
+                    
+                    // PLANE TEZI SE AAGE UDEGA AUR GAYAB HOGA
+                    let planeEl = document.getElementById('avPlane');
+                    planeEl.style.transition = 'all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                    planeEl.style.left = (window.innerWidth + 100) + 'px'; // Move out of screen
+                    planeEl.style.bottom = '350px'; // Fly upwards
+                    planeEl.style.opacity = '0';
+                    
+                    // Lal trail turant gayab
+                    let trail = document.getElementById('avTrailPath');
+                    if(trail) trail.setAttribute('d', '');
+
+                    failUncashedBets();
                     renderAviatorHistoryUI(); 
                     
-                    // NAYA LOGIC: FLY AUDIO STOP, CRASH AUDIO PLAY
                     avFlyAudio.pause(); 
                     if(document.getElementById('aviatorScreen').classList.contains('active') && !document.hidden) {
-                        avCrashAudio.currentTime = 0;
-                        avCrashAudio.play().catch(e=>{});
+                        avCrashAudio.currentTime = 0; avCrashAudio.play().catch(e=>{});
                     }
                 }
             }
+        }, 100); 
 
-
-
-
-        }, 100); // Checks states smoothly every 100ms
-
-
-        // 3. Smooth Plane Animation
+        // 3. Smooth Plane Animation with RED CURVE TRAIL
         function startAviatorAnimation() {
             let flightStart = currentAvRound.flightStartTime;
             let crashPoint = parseFloat(currentAvRound.crashPoint);
             let planeEl = document.getElementById('avPlane');
+            let trailPath = document.getElementById('avTrailPath');
+            let canvasH = 220; // Height of the game area
 
             function animate() {
                 let now = getTrueTime();
@@ -3135,21 +3150,31 @@ let avCrashAudio = document.getElementById('avCrashSound');
                 let timeElapsed = now - flightStart;
                 let currentMulti = Math.exp(timeElapsed / 10000);
                 if(currentMulti > crashPoint) currentMulti = crashPoint;
-
                 currentAvMulti = currentMulti; 
 
+                // Safed (White) Text udte waqt
                 document.getElementById('avMultiplierText').innerText = currentMulti.toFixed(2) + "x";
-                if(currentMulti >= 10.0) document.getElementById('avMultiplierText').style.color = "#e84393"; 
-                else if(currentMulti >= 2.0) document.getElementById('avMultiplierText').style.color = "#9b59b6"; 
-                else document.getElementById('avMultiplierText').style.color = "#3498db"; 
+                document.getElementById('avMultiplierText').style.color = "#ffffff"; 
                 
-                let maxH = 150, maxW = window.innerWidth - 60;
-                let percentX = Math.min((timeElapsed / 10000) * 50, 100); 
-                let percentY = Math.min((timeElapsed / 10000) * 50, 100);
+                let maxH = 140, maxW = window.innerWidth - 60;
                 
-                planeEl.style.left = (10 + (percentX/100 * maxW)) + 'px';
-                planeEl.style.bottom = (10 + (percentY/100 * maxH)) + 'px';
+                // Exponential curve math plane movement ke liye
+                let percentX = Math.min((timeElapsed / 10000) * 45, 100); 
+                let percentY = Math.min(Math.pow(timeElapsed / 10000, 1.2) * 45, 100);
+                
+                let px = 10 + (percentX/100 * maxW);
+                let py = 10 + (percentY/100 * maxH);
+                
+                planeEl.style.left = px + 'px';
+                planeEl.style.bottom = py + 'px';
 
+                // YAHAN RED TRAIL (CURVE) BANEGI
+                let pathY = canvasH - py - 20; // Y axis reverse hota hai SVG mein
+                let startY = canvasH - 20;     
+                let d = `M 20 ${startY} Q ${px * 0.5} ${startY} ${px+15} ${pathY} L ${px+15} ${canvasH} L 20 ${canvasH} Z`;
+                if(trailPath) trailPath.setAttribute('d', d);
+
+                // Cashout Updates
                 if(avBets[1].active && !avBets[1].cashedOut) document.getElementById('avLiveCash1').innerText = (avBets[1].amount * currentMulti).toFixed(2) + " INR";
                 if(avBets[2].active && !avBets[2].cashedOut) document.getElementById('avLiveCash2').innerText = (avBets[2].amount * currentMulti).toFixed(2) + " INR";
                 
@@ -3159,6 +3184,7 @@ let avCrashAudio = document.getElementById('avCrashSound');
             }
             animate();
         }
+
 
         // ==========================================
         // 4. BETTING & CASHOUT BUTTON LOGIC
