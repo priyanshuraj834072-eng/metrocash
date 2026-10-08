@@ -3163,15 +3163,16 @@ let avCrashAudio = document.getElementById('avCrashSound');
                 
                 let maxH = 140, maxW = window.innerWidth - 60;
                 
-                                // Plane ko hamesha screen ke andar rakhne ke liye limits (Max 70% width, 60% height)
-                let percentX = Math.min((timeElapsed / 10000) * 45, 70); 
-                let percentY = Math.min(Math.pow(timeElapsed / 10000, 1.2) * 45, 60);
+                                    // Plane ko thora aur aage (right side) le jaane ke liye limit 85% kar di hai
+                let percentX = Math.min((timeElapsed / 10000) * 55, 85); 
+                let percentY = Math.min(Math.pow(timeElapsed / 10000, 1.2) * 55, 70);
                 
-                // Plane jab apni max height par pahuchega toh halka up-down hover karega (Realistic effect)
+                // Plane jab aage jakar rukega toh wahi mast hawa mein up-down float karega
                 let hoverY = Math.sin(timeElapsed / 200) * 4; 
 
                 let px = 10 + (percentX/100 * maxW);
                 let py = 10 + (percentY/100 * maxH) + hoverY;
+
                 
                 planeEl.style.left = px + 'px';
                 planeEl.style.bottom = py + 'px';
