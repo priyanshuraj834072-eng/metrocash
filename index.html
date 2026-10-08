@@ -396,21 +396,22 @@
 
         <!-- HOME APP SCREEN -->
         <div id="homeApp" class="app-tab-pane" style="display:block; padding-top: 60px; padding-bottom: 70px;">
-            <div class="fixed-header">
-                <h2><i class="fa-solid fa-sack-dollar"></i> Metro Cash</h2>
-                <div style="display:flex; align-items:center; gap:12px;">
-                    
-                    <div style="cursor:pointer; background:#ff9800; color:white; width:30px; height:30px; border-radius:50%; display:flex; justify-content:center; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.2);" onclick="openSupportChat()">
-                        <i class="fa-solid fa-headset"></i>
-                    </div>
+                    <div class="fixed-header" style="background: #ffffff; border-bottom: 1px solid var(--border);">
+            <h2 style="color: var(--primary); font-weight: 900; font-style: italic; font-size: 22px; text-shadow: 1px 1px 2px rgba(37, 117, 252, 0.2);"><i class="fa-solid fa-sack-dollar" style="color: var(--primary);"></i> Metro Cash</h2>
+            <div style="display:flex; align-items:center; gap:12px;">
+                
+                <div style="cursor:pointer; background:var(--primary); color:white; width:30px; height:30px; border-radius:50%; display:flex; justify-content:center; align-items:center; box-shadow:0 2px 5px rgba(37, 117, 252, 0.3);" onclick="openSupportChat()">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
 
-                    <span onclick="pushNav('walletScreen')" style="background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:15px; font-weight:bold; font-size:13px; display:flex; align-items:center; gap:5px; cursor:pointer;">₹ <span id="homeBal">0.00</span> <i class="fa-solid fa-wallet"></i></span>
-                    <div style="position:relative; cursor:pointer;" onclick="openNotifications()">
-                        <i class="fa-solid fa-envelope" style="font-size:22px;"></i>
-                        <span id="mailBadge" style="display:none; position:absolute; top:-5px; right:-5px; background:#ff4d4d; color:white; font-size:10px; border-radius:50%; padding:2px 5px;">0</span>
-                    </div>
+                <span onclick="pushNav('walletScreen')" style="background:rgba(37, 117, 252, 0.1); color:var(--primary); padding:5px 10px; border-radius:15px; font-weight:bold; font-size:13px; display:flex; align-items:center; gap:5px; cursor:pointer; border: 1px solid rgba(37, 117, 252, 0.2);">₹ <span id="homeBal">0.00</span> <i class="fa-solid fa-wallet"></i></span>
+                <div style="position:relative; cursor:pointer;" onclick="openNotifications()">
+                    <i class="fa-solid fa-envelope" style="font-size:22px; color:var(--text-muted);"></i>
+                    <span id="mailBadge" style="display:none; position:absolute; top:-5px; right:-5px; background:#ff4d4d; color:white; font-size:10px; border-radius:50%; padding:2px 5px;">0</span>
                 </div>
             </div>
+        </div>
+
             
             <div class="scroll-body">
                 <div style="margin: 15px; border-radius: 12px; background: var(--primary-grad); color: white; padding: 20px; text-align: center;">
@@ -632,82 +633,141 @@
             </div>
         </div>
 
-        <!-- ACCOUNT APP SCREEN -->
-        <div id="accountApp" class="app-tab-pane" style="padding-top: 60px; padding-bottom: 70px;">
-            <div class="fixed-header"><h2 style="margin:0 auto;">My Account</h2></div>
-            <div class="scroll-body">
-                <div style="background:var(--primary-grad); color:white; padding: 20px 20px 40px 20px; display:flex; gap:15px; align-items:center; border-bottom-left-radius:30px; border-bottom-right-radius:30px;">
-                    <div style="width:60px; height:60px; background:white; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:30px; color:var(--primary);"><i class="fa-solid fa-user"></i></div>
-                    <div>
-                        <h2 id="accUser" style="margin:0; font-size:18px;">User</h2>
-                        <span style="background:rgba(255,255,255,0.2); padding:3px 10px; border-radius:15px; font-size:12px; display:inline-block; margin-top:4px;">UID: <span id="accUid">12345678</span></span>
+                <!-- ACCOUNT APP SCREEN -->
+        <div id="accountApp" class="app-tab-pane" style="padding-top: 0px; padding-bottom: 70px; background: #f5f7fa;">
+            <div class="scroll-body" style="padding-top: 0;">
+                
+                <!-- TOP HEADER BANNER (NO FIXED HEADER) -->
+                <div style="background: linear-gradient(135deg, rgba(106, 17, 203, 0.95) 0%, rgba(37, 117, 252, 0.95) 100%); color: white; padding: 40px 20px 70px 20px; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; position: relative;">
+                    <div style="display:flex; gap:15px; align-items:center;">
+                        <div style="width:70px; height:70px; background:white; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:35px; color:var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <h2 id="accUser" style="margin:0; font-size:20px; font-weight:bold;">User</h2>
+                            <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
+                                <span style="background:rgba(255,255,255,0.2); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; display:flex; align-items:center; gap:5px;">UID | <span id="accUid">12345678</span> <i class="fa-regular fa-copy" style="cursor:pointer;" onclick="navigator.clipboard.writeText(document.getElementById('accUid').innerText); showToast('UID Copied!');"></i></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <div style="background:var(--card); margin:-20px 15px 15px 15px; padding:20px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05); position:relative; z-index:5;">
-                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px;">
-                        <div>
-                            <p style="color:var(--text-muted); font-size:13px;">Total Balance</p>
-                            <h3 style="font-size:24px; display:flex; align-items:center; gap:8px;">₹ <span id="accBal">0.00</span> <i class="fa-solid fa-rotate-right" onclick="forceBalanceRefresh()" style="font-size:16px; color:var(--primary); cursor:pointer;"></i></h3>
+                <!-- WALLET CARD (Overlapping) -->
+                <div style="background:var(--card); margin:-50px 15px 15px 15px; padding:20px; border-radius:15px; box-shadow:0 6px 15px rgba(0,0,0,0.05); position:relative; z-index:5;">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px;">
+                        <div style="cursor:pointer;" onclick="pushNav('walletScreen')">
+                            <i class="fa-solid fa-wallet" style="color:#ff6b81; font-size:28px; margin-bottom:8px; display:block;"></i>
+                            <span style="font-size: 12px; color: var(--text); font-weight: 600;">Wallet</span>
                         </div>
-                        <div style="text-align:right;">
-                            <p style="color:var(--text-muted); font-size:13px;">VIP Level</p>
-                            <h3 style="color:#10ac84;"><i class="fa-solid fa-medal"></i> VIP 1</h3>
+                        <div style="cursor:pointer;" onclick="pushNav('depositScreen')">
+                            <i class="fa-solid fa-money-bill-wave" style="color:#ffa502; font-size:28px; margin-bottom:8px; display:block;"></i>
+                            <span style="font-size: 12px; color: var(--text); font-weight: 600;">Deposit</span>
+                        </div>
+                        <div style="cursor:pointer;" onclick="pushNav('withdrawScreen')">
+                            <i class="fa-solid fa-building-columns" style="color:#3742fa; font-size:28px; margin-bottom:8px; display:block;"></i>
+                            <span style="font-size: 12px; color: var(--text); font-weight: 600;">Withdraw</span>
+                        </div>
+                        <div style="cursor:pointer;" onclick="showToast('More VIP Privileges coming soon!')">
+                            <i class="fa-solid fa-gem" style="color:#2ed573; font-size:28px; margin-bottom:8px; display:block;"></i>
+                            <span style="font-size: 12px; color: var(--text); font-weight: 600;">VIP</span>
                         </div>
                     </div>
-                    
-                    <div style="display: flex; justify-content: space-around;">
-                        <div style="text-align:center; cursor:pointer;" onclick="pushNav('walletScreen')">
-                            <i class="fa-solid fa-wallet" style="color:#e84393; font-size:26px; margin-bottom:8px; display:block;"></i>Wallet
+                    <div style="display: flex; justify-content: space-between; text-align: center;">
+                        <div style="flex:1;">
+                            <p style="color:var(--text-muted); font-size:12px; margin-bottom: 5px;">Available balance</p>
+                            <h3 style="font-size:18px; color:var(--text); display:flex; justify-content:center; align-items:center; gap:5px;">₹ <span id="accBal">0.00</span> <i class="fa-solid fa-rotate-right" onclick="forceBalanceRefresh()" style="font-size:14px; color:var(--primary); cursor:pointer;"></i></h3>
                         </div>
-                        <div style="text-align:center; cursor:pointer;" onclick="pushNav('depositScreen')">
-                            <i class="fa-solid fa-money-bill-wave" style="color:#00b894; font-size:26px; margin-bottom:8px; display:block;"></i>Deposit
-                        </div>
-                        <div style="text-align:center; cursor:pointer;" onclick="pushNav('withdrawScreen')">
-                            <i class="fa-solid fa-building-columns" style="color:#0984e3; font-size:26px; margin-bottom:8px; display:block;"></i>Withdraw
-                        </div>
-                        <div style="text-align:center; cursor:pointer;" onclick="showToast('More VIP Privileges coming soon!')">
-                            <i class="fa-solid fa-gem" style="color:#10ac84; font-size:26px; margin-bottom:8px; display:block;"></i>VIP
+                        <div style="width: 1px; background: var(--border);"></div>
+                        <div style="flex:1;">
+                            <p style="color:var(--text-muted); font-size:12px; margin-bottom: 5px;">Freeze balance</p>
+                            <h3 style="font-size:18px; color:var(--text); display:flex; justify-content:center; align-items:center; gap:5px;">₹ 0.00</h3>
                         </div>
                     </div>
                 </div>
 
-                <div style="margin:15px; background:var(--card); border-radius:12px; overflow:hidden; border:1px solid var(--border);">
-                    <div style="padding:15px; border-bottom:1px solid var(--border); cursor:pointer;" onclick="openHistory('tx')">
-                        <span><i class="fa-solid fa-clock-rotate-left" style="color:#0984e3; width:25px;"></i> History</span>
-                        <i class="fa-solid fa-chevron-right" style="float:right; color:var(--text-muted);"></i>
-                    </div>
+                <!-- NOTIFICATION / GIFTS FULL WIDTH LIST -->
+                <div style="margin: 0 15px 15px 15px; display: flex; flex-direction: column; gap: 12px;">
                     
-                    <div style="padding:15px; border-bottom:1px solid var(--border); cursor:pointer;" onclick="openHistory('game')">
-                        <span><i class="fa-solid fa-gamepad" style="color:var(--primary); width:25px;"></i> Game History</span>
-                        <i class="fa-solid fa-chevron-right" style="float:right; color:var(--text-muted);"></i>
-                    </div>
-                    
-                    <div style="padding:15px; border-bottom:1px solid var(--border); cursor:pointer; position:relative;" onclick="openNotifications()">
-                        <span><i class="fa-solid fa-bell" style="color:#ff7675; width:25px;"></i> Notification</span>
+                    <div style="background:var(--card); border-radius:12px; padding:15px; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer; position:relative;" onclick="openNotifications()">
+                        <div style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: white; width: 42px; height: 42px; border-radius: 12px; display:flex; justify-content:center; align-items:center; font-size:18px; margin-right: 12px;">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                        </div>
+                        <div style="flex:1;">
+                            <h4 style="margin:0; font-size:15px; color:var(--text);">Notification</h4>
+                            <p style="margin:2px 0 0 0; font-size:11px; color:var(--text-muted);">View platform messages and updates</p>
+                        </div>
                         <span id="accNotiBadge" style="display:none; position:absolute; right:40px; top:15px; background:#ff4d4d; color:white; font-size:10px; font-weight:bold; border-radius:50%; padding:2px 6px;">0</span>
-                        <i class="fa-solid fa-chevron-right" style="float:right; color:var(--text-muted);"></i>
-                    </div>
-                    
-                    <!-- GIFT CODE TAB -->
-                    <div style="padding:15px; border-bottom:1px solid var(--border); cursor:pointer;" onclick="pushNav('giftScreen')">
-                        <span><i class="fa-solid fa-gift" style="color:#e84393; width:25px;"></i> Gifts</span>
-                        <i class="fa-solid fa-chevron-right" style="float:right; color:var(--text-muted);"></i>
-                    </div>
-                    
-                    <!-- USER PASSWORD CHANGE -->
-                    <div style="padding:15px; border-bottom:1px solid var(--border); cursor:pointer;" onclick="openChangePassword()">
-                        <span><i class="fa-solid fa-lock" style="color:#2d3436; width:25px;"></i> Change Password</span>
-                        <i class="fa-solid fa-chevron-right" style="float:right; color:var(--text-muted);"></i>
+                        <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
                     </div>
 
-                    <div style="padding:15px; cursor:pointer;" onclick="doLogout()">
-                        <span><i class="fa-solid fa-right-from-bracket" style="color:var(--text-muted); width:25px;"></i> Logout</span>
+                    <div style="background:var(--card); border-radius:12px; padding:15px; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer;" onclick="pushNav('giftScreen')">
+                        <div style="background: linear-gradient(135deg, rgba(106, 17, 203, 0.8) 0%, rgba(37, 117, 252, 0.8) 100%); color: white; width: 42px; height: 42px; border-radius: 12px; display:flex; justify-content:center; align-items:center; font-size:18px; margin-right: 12px;">
+                            <i class="fa-solid fa-gift"></i>
+                        </div>
+                        <div style="flex:1;">
+                            <h4 style="margin:0; font-size:15px; color:var(--text);">Gifts</h4>
+                            <p style="margin:2px 0 0 0; font-size:11px; color:var(--text-muted);">Redeem mysterious bonus codes</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
                     </div>
+
+                </div>
+
+                <!-- HISTORY GRID (2x2 Layout Like 66 Lottery) -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px 15px 15px;">
+                    
+                    <div style="background:var(--card); border-radius:12px; padding:15px 12px; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer;" onclick="openHistory('game')">
+                        <i class="fa-solid fa-gamepad" style="color: #4facfe; font-size:26px; margin-right: 10px;"></i>
+                        <div>
+                            <h4 style="margin:0; font-size:13px; color:var(--text);">Game history</h4>
+                            <p style="margin:2px 0 0 0; font-size:10px; color:var(--text-muted);">My game history</p>
+                        </div>
+                    </div>
+
+                    <div style="background:var(--card); border-radius:12px; padding:15px 12px; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer;" onclick="openHistory('tx')">
+                        <i class="fa-solid fa-clock-rotate-left" style="color: #2ed573; font-size:26px; margin-right: 10px;"></i>
+                        <div>
+                            <h4 style="margin:0; font-size:13px; color:var(--text);">Transaction</h4>
+                            <p style="margin:2px 0 0 0; font-size:10px; color:var(--text-muted);">My transaction</p>
+                        </div>
+                    </div>
+
+                    <div style="background:var(--card); border-radius:12px; padding:15px 12px; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer;" onclick="openHistory('dep')">
+                        <i class="fa-solid fa-money-bill-wave" style="color: #ff6b81; font-size:26px; margin-right: 10px;"></i>
+                        <div>
+                            <h4 style="margin:0; font-size:13px; color:var(--text);">Deposit</h4>
+                            <p style="margin:2px 0 0 0; font-size:10px; color:var(--text-muted);">Deposit history</p>
+                        </div>
+                    </div>
+
+                    <div style="background:var(--card); border-radius:12px; padding:15px 12px; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer;" onclick="openHistory('wth')">
+                        <i class="fa-solid fa-building-columns" style="color: #ffa502; font-size:26px; margin-right: 10px;"></i>
+                        <div>
+                            <h4 style="margin:0; font-size:13px; color:var(--text);">Withdraw</h4>
+                            <p style="margin:2px 0 0 0; font-size:10px; color:var(--text-muted);">Withdraw history</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SETTINGS & LOGOUT FULL WIDTH -->
+                <div style="margin: 0 15px 15px 15px; display: flex; flex-direction: column; gap: 12px;">
+                    
+                    <div style="background:var(--card); border-radius:12px; padding:15px; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer;" onclick="openChangePassword()">
+                        <i class="fa-solid fa-lock" style="color: #a4b0be; font-size:22px; width: 35px; text-align:center; margin-right: 8px;"></i>
+                        <h4 style="margin:0; font-size:15px; color:var(--text); flex:1;">Change Password</h4>
+                        <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
+                    </div>
+
+                    <div style="background:var(--card); border-radius:12px; padding:15px; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer;" onclick="doLogout()">
+                        <i class="fa-solid fa-right-from-bracket" style="color: #ff4757; font-size:22px; width: 35px; text-align:center; margin-right: 8px;"></i>
+                        <h4 style="margin:0; font-size:15px; color:var(--text); flex:1;">Logout</h4>
+                        <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </div>
+
 
     <!-- NEW SUBORDINATE DATA SCREEN (VIP Design) -->
     <div id="subordinateScreen" class="screen">
