@@ -459,9 +459,13 @@
     <script src="main.js" defer></script>
     <script src="//code.tidio.co/zzjntjcfia8bpfwn1cshhcmrimt37qme.js" async></script>
 
-               <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
+                  <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
     <script>
         function openGame(gameTitle, gameFileUrl) {
+            // MAGIC FIX: Refresh pe wahi game kholne ke liye Memory me save karna
+            sessionStorage.setItem('savedGameTitle', gameTitle);
+            sessionStorage.setItem('savedGameUrl', gameFileUrl);
+
             let loader = document.getElementById('globalLoader');
             if(loader) loader.style.display = 'flex';
             
@@ -472,18 +476,18 @@
                     pushNav('gamePlayScreen');
                     
                     let innerScreen = document.querySelector('#gameContainer .screen');
-                    if(innerScreen) {
-                        innerScreen.classList.add('active');
-                    }
+                    if(innerScreen) innerScreen.classList.add('active');
                     
-                    // --- MAGIC FIX: AVIATOR RE-ENTER GLITCH ---
+                    // Aviator Re-enter & Button Fix
                     if (gameTitle === 'Aviator') {
-                        // Background memory ko zero (0) par reset karna
                         if (typeof currentAvPhase !== 'undefined') currentAvPhase = 0;
-                        // Purani animation band karna
                         if (typeof avAnimFrame !== 'undefined') cancelAnimationFrame(avAnimFrame);
+                        
+                        setTimeout(() => {
+                            let b1 = document.getElementById('avBtn1'); if(b1) b1.onclick = () => handleAvBtnClick(1);
+                            let b2 = document.getElementById('avBtn2'); if(b2) b2.onclick = () => handleAvBtnClick(2);
+                        }, 200);
                     }
-                    // ------------------------------------------
                     
                     if(loader) loader.style.display = 'none';
                 })
@@ -495,19 +499,39 @@
         }
 
         function closeGame() {
-            // --- MAGIC FIX: BACKGROUND SOUND & ANIMATION STOP ---
+            // Memory Clear karna
+            sessionStorage.removeItem('savedGameTitle');
+            sessionStorage.removeItem('savedGameUrl');
+
+            // Background Animation & Sound Stop
             let flySnd = document.getElementById('avFlySound');
             let crashSnd = document.getElementById('avCrashSound');
             if (flySnd) { flySnd.pause(); flySnd.currentTime = 0; }
             if (crashSnd) { crashSnd.pause(); crashSnd.currentTime = 0; }
             if (typeof avAnimFrame !== 'undefined') cancelAnimationFrame(avAnimFrame);
-            // ----------------------------------------------------
+            if (typeof currentAvPhase !== 'undefined') currentAvPhase = 0;
 
-            // Game close karte waqt container khali kar do
             document.getElementById('gameContainer').innerHTML = ""; 
             history.back();
         }
+        
+        // Mobile Hardware Back Button
+        window.addEventListener('popstate', function(e) {
+            sessionStorage.removeItem('savedGameTitle');
+            sessionStorage.removeItem('savedGameUrl');
+
+            let flySnd = document.getElementById('avFlySound');
+            let crashSnd = document.getElementById('avCrashSound');
+            if (flySnd) { flySnd.pause(); flySnd.currentTime = 0; }
+            if (crashSnd) { crashSnd.pause(); crashSnd.currentTime = 0; }
+            if (typeof avAnimFrame !== 'undefined') cancelAnimationFrame(avAnimFrame);
+            if (typeof currentAvPhase !== 'undefined') currentAvPhase = 0;
+            
+            let gc = document.getElementById('gameContainer');
+            if(gc) gc.innerHTML = "";
+        });
     </script>
+
 
 
 
