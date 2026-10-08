@@ -459,7 +459,7 @@
     <script src="main.js" defer></script>
     <script src="//code.tidio.co/zzjntjcfia8bpfwn1cshhcmrimt37qme.js" async></script>
 
-           <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
+               <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
     <script>
         function openGame(gameTitle, gameFileUrl) {
             let loader = document.getElementById('globalLoader');
@@ -468,17 +468,22 @@
             fetch(gameFileUrl)
                 .then(response => response.text())
                 .then(htmlData => {
-                    // 1. HTML Inject karo
                     document.getElementById('gameContainer').innerHTML = htmlData;
-                    
-                    // 2. Navigation push karo
                     pushNav('gamePlayScreen');
                     
-                    // 3. MAGIC FIX: pushNav ne game ki screen ko hide kar diya tha, usko wapas show (active) karna
                     let innerScreen = document.querySelector('#gameContainer .screen');
                     if(innerScreen) {
                         innerScreen.classList.add('active');
                     }
+                    
+                    // --- MAGIC FIX: AVIATOR RE-ENTER GLITCH ---
+                    if (gameTitle === 'Aviator') {
+                        // Background memory ko zero (0) par reset karna
+                        if (typeof currentAvPhase !== 'undefined') currentAvPhase = 0;
+                        // Purani animation band karna
+                        if (typeof avAnimFrame !== 'undefined') cancelAnimationFrame(avAnimFrame);
+                    }
+                    // ------------------------------------------
                     
                     if(loader) loader.style.display = 'none';
                 })
@@ -490,11 +495,20 @@
         }
 
         function closeGame() {
-            // Game close karte waqt background script band karne ke liye container clear karna
+            // --- MAGIC FIX: BACKGROUND SOUND & ANIMATION STOP ---
+            let flySnd = document.getElementById('avFlySound');
+            let crashSnd = document.getElementById('avCrashSound');
+            if (flySnd) { flySnd.pause(); flySnd.currentTime = 0; }
+            if (crashSnd) { crashSnd.pause(); crashSnd.currentTime = 0; }
+            if (typeof avAnimFrame !== 'undefined') cancelAnimationFrame(avAnimFrame);
+            // ----------------------------------------------------
+
+            // Game close karte waqt container khali kar do
             document.getElementById('gameContainer').innerHTML = ""; 
             history.back();
         }
     </script>
+
 
 
 </div>
