@@ -1,6 +1,5 @@
 <!-- WINGO GAME SCREEN -->
 <div id="wingoScreen" class="screen active" style="padding-top: 0; background: var(--bg); min-height: 100vh;">
-
     <style>
         /* CSS Styling for WinGo */
         .w-tab { position: relative; transition: all 0.3s; }
@@ -40,59 +39,23 @@
         .hist-btn.active { background: var(--primary-grad) !important; color: white !important; box-shadow: 0 2px 8px rgba(37, 117, 252, 0.4) !important; border: none !important; }
         .lock-digit { background: var(--primary-grad) !important; box-shadow: 0 10px 25px rgba(37, 117, 252, 0.4) !important; }
         
-        /* Modal UI */
-        .htp-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+        /* Modal UI - BLUR REMOVED */
+        .htp-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; display: none; justify-content: center; align-items: center; } /* Backdrop filter blur removed */
         .htp-modal-overlay.active { display: flex; }
         .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; overflow: hidden; animation: popScale 0.3s ease; }
         .htp-header { background: var(--primary-grad); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 16px; position: relative; }
         .htp-body { padding: 15px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.5; }
 
-        /* ========================================= */
-        /* FIXES ADDED HERE: BLUR & POPUP CENTERING  */
-        /* ========================================= */
+        .bet-modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99999; display:none; justify-content:center; } /* Backdrop filter blur removed */
+        .bet-modal-overlay.active { display: flex; flex-direction:column; justify-content:flex-end; }
         
-        /* Bet Menu Blur Fix */
-        #betModalOverlay {
-            backdrop-filter: none !important; 
-            background: rgba(0, 0, 0, 0.6) !important; 
-        }
-
-        /* Result Modal ko center karna */
-        #resultModalOverlay {
-            flex-direction: column !important;
-            justify-content: center !important;
-            align-items: center !important;
-            padding: 20px !important;
-        }
-        
-        #resultModalOverlay.active {
-            display: flex !important; 
-        }
-
-        /* X button ko strongly target karna (Kahin bhi ho overlay ke andar) */
-        #resultModalOverlay [onclick*="closeResultModal"] {
-            position: static !important; /* Absolute hatane ke liye, ab ye card ke just niche aayega */
-            margin-top: 25px !important; /* Card aur button ke bich ka gap */
-            background: transparent !important;
-            border: 2px solid white !important;
-            border-radius: 50% !important;
-            width: 40px !important;
-            height: 40px !important;
-            color: white !important;
-            font-size: 20px !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            transform: none !important;
-            z-index: 999999 !important;
-            cursor: pointer !important;
-            pointer-events: auto !important;
-        }
-        /* ========================================= */
-
+        /* Result Modal Overrides */
+        .result-modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99999; display:none; justify-content:center; align-items:center; flex-direction:column;}
+        .result-modal-overlay.active { display: flex; }
+        .result-card { margin: 0; animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 
-    <!-- FIXED HEADER (Scroll karne par yahi ruke ga) -->
+    <!-- FIXED HEADER -->
     <div class="fixed-header" style="display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: var(--primary-grad); color: white; border-bottom: none; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <h2><i class="fa-solid fa-chevron-left" onclick="closeGame()"></i> <span style="font-style: italic; font-weight: 900; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Metro Cash</span></h2>
         <i class="fa-solid fa-volume-high" id="soundToggleIcon" onclick="toggleWingoSound()" style="font-size: 20px; cursor: pointer;"></i>
@@ -101,10 +64,9 @@
     <!-- SCROLLABLE BODY -->
     <div class="scroll-body" style="position: relative; padding-top: 60px; min-height: 100vh; padding-bottom: 40px;">
         
-        <!-- Curved Background (Scroll ke sath upar jayega) -->
+        <!-- Curved Background -->
         <div class="wingo-bg-header"></div>
 
-        <!-- Yahan se saara content curve ke upar aur scrollable hoga -->
         <div style="position: relative; z-index: 5;">
             
             <div style="background:white; margin:15px; border-radius:15px; padding:20px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
@@ -116,7 +78,7 @@
                 </div>
             </div>
 
-            <!-- Marquee Announcement Bar (Premium Blue Theme Detail button) -->
+            <!-- Marquee Announcement Bar -->
             <div style="background: white; margin: 0 15px 15px 15px; border-radius: 20px; padding: 8px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
                 <i class="fa-solid fa-volume-high" style="color: var(--primary);"></i>
                 <marquee style="flex: 1; font-size: 12px; color: var(--text-muted); font-weight: 500;" scrollamount="4">Welcome to Metro Cash! Play WinGo and earn big rewards daily. Fast deposits and instant withdrawals.</marquee>
@@ -130,7 +92,7 @@
                 <div class="w-tab" id="tab5min" onclick="switchWingoTab('5min')" style="border-right:none;"><i class="fa-regular fa-clock" style="font-size:20px; margin-bottom:5px; display:block;"></i>Win Go<br>5Min</div>
             </div>
 
-            <!-- TICKET BOX (BLUE BACKGROUND, WHITE TIMER DIGITS) -->
+            <!-- TICKET BOX -->
             <div class="ticket-box">
                 <div class="ticket-left">
                     <div class="how-to-btn" onclick="openHowToPlay()"><i class="fa-solid fa-book"></i> How to play</div>
