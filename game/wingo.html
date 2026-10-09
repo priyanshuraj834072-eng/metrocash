@@ -57,23 +57,30 @@
             background: rgba(0, 0, 0, 0.6) !important; 
         }
 
-        /* Result Modal ko center aur button ko niche karna */
+        /* Result Modal ko center karna - bina active class ke display nahi karega */
         #resultModalOverlay {
-            display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
             align-items: center !important;
+            gap: 12px !important; /* Card aur X button ke bich 12px ka gap (ekdum satake) */
+        }
+        
+        /* Jab result aayega tabhi display flex hoga */
+        #resultModalOverlay.active {
+            display: flex !important; 
         }
 
-        /* Result modal ka Close(X) button thik popup ke niche layega */
-        #resultModalOverlay > div[onclick="closeResultModal()"],
-        #resultModalOverlay > i[onclick="closeResultModal()"],
-        #resultModalOverlay .close-btn {
+        /* Result modal ka Cut(X) button card ke thik niche layega aur click kaam karega */
+        #resultModalOverlay .close-btn,
+        #resultModalOverlay > div[onclick*="closeResultModal"],
+        #resultModalOverlay > i[onclick*="closeResultModal"],
+        #resultModalOverlay > i.fa-xmark {
             position: relative !important;
             top: auto !important;
             right: auto !important;
             left: auto !important;
-            margin-top: 20px !important;
+            bottom: auto !important;
+            margin: 0 !important; /* Faltu ka margin hataya taaki satake rahe */
             background: transparent !important;
             border: 2px solid white !important;
             border-radius: 50% !important;
@@ -84,6 +91,9 @@
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
+            z-index: 999999 !important; /* Button ko sabse upar laane ke liye taki click ho */
+            cursor: pointer !important;
+            pointer-events: auto !important; /* Click action properly register hone ke liye */
         }
         /* ========================================= */
 
