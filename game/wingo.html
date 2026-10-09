@@ -46,6 +46,47 @@
         .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; overflow: hidden; animation: popScale 0.3s ease; }
         .htp-header { background: var(--primary-grad); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 16px; position: relative; }
         .htp-body { padding: 15px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.5; }
+
+        /* ========================================= */
+        /* FIXES ADDED HERE: BLUR & POPUP CENTERING  */
+        /* ========================================= */
+        
+        /* Bet Menu Blur Fix (Screen Saaf Dikhega) */
+        #betModalOverlay {
+            backdrop-filter: none !important; 
+            background: rgba(0, 0, 0, 0.6) !important; 
+        }
+
+        /* Result Modal ko center aur button ko niche karna */
+        #resultModalOverlay {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        /* Result modal ka Close(X) button thik popup ke niche layega */
+        #resultModalOverlay > div[onclick="closeResultModal()"],
+        #resultModalOverlay > i[onclick="closeResultModal()"],
+        #resultModalOverlay .close-btn {
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            left: auto !important;
+            margin-top: 20px !important;
+            background: transparent !important;
+            border: 2px solid white !important;
+            border-radius: 50% !important;
+            width: 35px !important;
+            height: 35px !important;
+            color: white !important;
+            font-size: 18px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        /* ========================================= */
+
     </style>
 
     <!-- FIXED HEADER (Scroll karne par yahi ruke ga) -->
