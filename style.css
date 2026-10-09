@@ -424,3 +424,177 @@ input:checked + .slider:before { transform: translateX(14px); }
 
 .av-live-list { padding: 0 10px 20px 10px; }
 .av-live-item { display: flex; justify-content: space-between; background: #111; margin-bottom: 5px; padding: 10px 15px; border-radius: 8px; font-size: 12px; align-items: center;}
+/* =========================================
+   DETAILED GAME HISTORY UI (WinGo & Aviator)
+========================================= */
+.detailed-hist-card {
+    background: white;
+    border-radius: 12px;
+    margin: 0 0 15px 0;
+    padding: 15px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.detailed-hist-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary); /* Blue theme border */
+}
+
+/* Header Section */
+.dh-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.dh-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0;
+}
+.dh-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 3px;
+}
+.dh-status {
+    font-weight: 700;
+    font-size: 14px;
+}
+.dh-status.win { color: var(--w-green); }
+.dh-status.lose { color: var(--w-red); }
+.dh-status.pending { color: #f39c12; }
+.dh-status.refund { color: var(--primary); }
+
+/* Timeline Order Details */
+.dh-timeline {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+.dh-timeline::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 5px;
+    bottom: 5px;
+    width: 1px;
+    border-left: 1px dashed var(--primary); /* Blue dashed line */
+}
+.dh-row {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+}
+.dh-row::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--primary); /* Blue dots */
+}
+.dh-row-val {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* Copy Icon */
+.dh-copy-icon {
+    margin-left: 5px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: 0.2s;
+}
+.dh-copy-icon:active { color: var(--primary); }
+
+/* Lottery Result Badges */
+.dh-result-section {
+    border-top: 1px dashed var(--border);
+    padding-top: 15px;
+    margin-bottom: 15px;
+}
+.dh-res-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.dh-res-badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.dh-ball {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+    font-size: 13px;
+    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+}
+.dh-badge {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+}
+.dh-badge-outline {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    background: transparent;
+    border: 1px solid var(--primary); /* Blue Outline */
+    color: var(--primary);
+}
+
+/* 4-Box Grid (Amount Breakdown) */
+.dh-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.dh-box {
+    background: #f8f9fa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+.dh-box-val {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 3px;
+}
+.dh-box-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
