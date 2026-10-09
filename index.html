@@ -461,7 +461,16 @@
     
     <!-- YAHAN AAPKI JS FILE LINK HO RAHI HAI -->
     <script src="main.js" defer></script>
-    <script src="//code.tidio.co/zzjntjcfia8bpfwn1cshhcmrimt37qme.js" async></script>
+<script src="//code.tidio.co/zzjntjcfia8bpfwn1cshhcmrimt37qme.js" async></script>
+<script>
+    window.tidioChatApi = window.tidioChatApi || {};
+    window.tidioChatApi.onLoad = function() { 
+        window.tidioChatApi.hide(); 
+    };
+    document.addEventListener("tidioChat-close", function() { 
+        window.tidioChatApi.hide(); 
+    });
+</script>
 
                   <!-- FETCH API GAME OPEN KARNE KA SCRIPT -->
         <!-- SMART DYNAMIC GAME LOADER (HTML + JS) -->
