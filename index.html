@@ -459,6 +459,17 @@
     <div class="result-modal-overlay" id="resultModalOverlay"><div class="result-card" id="resultCard"><div class="result-badge" id="resultBadge"><i class="fa-solid fa-trophy"></i></div><h2 id="resultTitle" style="margin-top:15px;">Congratulations</h2><div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:12px; margin:15px 0;"><p style="font-size:13px; margin-bottom:10px;">Lottery results</p><div style="display:flex; justify-content:center; gap:8px;"><span id="resColorBox" style="padding:4px 10px; border-radius:5px; font-weight:bold; font-size:14px; background:white; color:#333;">Green</span><span id="resNumBox" style="padding:4px 10px; border-radius:5px; font-weight:bold; font-size:14px; background:white; color:#333;">7</span><span id="resSizeBox" style="padding:4px 10px; border-radius:5px; font-weight:bold; font-size:14px; background:white; color:#333;">Big</span></div></div><div style="background:white; color:#f95959; border-radius:10px; padding:15px; margin:15px 0;" id="resBonusSlipBox"><p id="resultBonusLabel">Bonus</p><h3 id="resultBonusAmt" style="font-size:26px; margin:5px 0;">₹0.00</h3><p style="font-size:11px; color:#888;" id="resultPeriodText">Period: WinGo...</p></div><p style="font-size:12px; opacity:0.8;">3 seconds auto close</p></div><div style="margin-top:25px; width:40px; height:40px; border-radius:50%; border:2px solid white; color:white; display:flex; justify-content:center; align-items:center; font-size:20px; cursor:pointer;" onclick="closeResultModal()"><i class="fa-solid fa-xmark"></i></div></div>
     <div id="changePassOverlay" class="result-modal-overlay" style="z-index: 9999999;"><div class="result-card" style="background:white; color:black; padding:20px; text-align:center; width:90%; max-width:350px;"><h3 style="margin-bottom:15px; color:var(--text);">Change Password</h3><input type="password" id="chgOldPass" class="input-box" placeholder="Enter Old Password" style="margin-bottom:10px; border:1px solid var(--border);"><input type="password" id="chgNewPass" class="input-box" placeholder="Enter New Password" style="margin-bottom:10px; border:1px solid var(--border);"><input type="password" id="chgConfPass" class="input-box" placeholder="Confirm New Password" style="margin-bottom:15px; border:1px solid var(--border);"><button class="btn-pill btn-main" style="margin-bottom:10px;" onclick="submitChangePassword()">Update Password</button><button class="btn-pill btn-outline" style="margin-bottom:0;" onclick="closeChangePassword()">Cancel</button></div></div>
     
+        <!-- GAME HISTORY FILTER MODAL (BOTTOM SHEET) -->
+    <div class="game-filter-modal-overlay" id="gameFilterModalOverlay" onclick="closeGameFilterModal(event)">
+        <div class="gf-modal" onclick="event.stopPropagation()">
+            <div style="width: 40px; height: 5px; background: #ddd; border-radius: 10px; margin: 0 auto 15px auto;"></div>
+            <h3 style="text-align: center; margin-bottom: 15px; font-size: 16px; color: var(--text);">Select Game</h3>
+            <div class="gf-grid" id="gfModalGrid">
+                <!-- Data Dynamically main.js se aayega -->
+            </div>
+        </div>
+    </div>
+
     <!-- YAHAN AAPKI JS FILE LINK HO RAHI HAI -->
     <script src="main.js" defer></script>
 
