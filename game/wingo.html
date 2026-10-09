@@ -1,9 +1,12 @@
 <!-- WINGO GAME SCREEN -->
-<div id="wingoScreen" class="screen active" style="padding-top: 60px;">
+<div id="wingoScreen" class="screen active" style="padding-top: 0; position: relative;">
     <style>
         /* CSS Styling for WinGo */
         .w-tab { position: relative; transition: all 0.3s; }
         .w-tab.active { background: linear-gradient(180deg, rgba(37, 117, 252, 0.15) 0%, rgba(37, 117, 252, 0.02) 100%) !important; color: var(--primary) !important; font-weight: bold; border-bottom: 2px solid var(--primary); }
+        
+        /* Premium BLUE Curved Background behind Wallet */
+        .wingo-bg-header { position: absolute; top: 0; left: 0; width: 100%; height: 260px; background: var(--primary-grad); border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; z-index: 0; }
         
         /* Premium BLUE Ticket Box */
         .ticket-box { background: var(--primary-grad); margin: 15px; border-radius: 12px; display: flex; color: white; position: relative; box-shadow: 0 4px 15px rgba(37, 117, 252, 0.35); overflow: hidden; }
@@ -39,19 +42,29 @@
         .htp-body { padding: 15px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.5; }
     </style>
 
-    <div class="fixed-header" style="display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: var(--primary-grad); color: white; border-bottom: none;">
+    <!-- Curved Background Element -->
+    <div class="wingo-bg-header"></div>
+
+    <div class="fixed-header" style="display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: transparent; color: white; border-bottom: none; box-shadow: none; position: relative; z-index: 10;">
         <h2><i class="fa-solid fa-chevron-left" onclick="closeGame()"></i> <span style="font-style: italic; font-weight: 900; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Metro Cash</span></h2>
         <i class="fa-solid fa-volume-high" id="soundToggleIcon" onclick="toggleWingoSound()" style="font-size: 20px; cursor: pointer;"></i>
     </div>
     
-    <div class="scroll-body">
-        <div style="background:white; margin:15px; border-radius:15px; padding:20px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+    <div class="scroll-body" style="position: relative; z-index: 2; padding-top: 60px;">
+        <div style="background:white; margin:0 15px 15px 15px; border-radius:15px; padding:20px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
             <h2 style="font-size:26px; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer;" onclick="pushNav('walletScreen')">₹ <span id="wingoBal">0.00</span> <i class="fa-solid fa-wallet" style="font-size:20px; color:var(--primary);"></i></h2>
             <p style="color:var(--text-muted); font-size:14px;">Wallet balance</p>
             <div style="display:flex; justify-content:space-around; margin-top:15px; padding-bottom: 5px;">
                 <button class="btn-3d-red" style="background:#fb4e4e; color:white; padding:10px 30px; border-radius:20px; border:none; font-weight:bold; cursor:pointer;" onclick="pushNav('withdrawScreen')">Withdraw</button>
                 <button class="btn-3d-green" style="background:#18b660; color:white; padding:10px 30px; border-radius:20px; border:none; font-weight:bold; cursor:pointer;" onclick="pushNav('depositScreen')">Deposit</button>
             </div>
+        </div>
+
+        <!-- NEW Marquee Announcement Bar -->
+        <div style="background: white; margin: 0 15px 15px 15px; border-radius: 20px; padding: 8px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <i class="fa-solid fa-volume-high" style="color: var(--primary);"></i>
+            <marquee style="flex: 1; font-size: 12px; color: var(--text-muted); font-weight: 500;" scrollamount="4">Welcome to Metro Cash! Play WinGo and earn big rewards daily. Fast deposits and instant withdrawals.</marquee>
+            <div style="background: var(--w-red); color: white; font-size: 11px; padding: 4px 12px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 3px;"><i class="fa-solid fa-fire"></i> Detail</div>
         </div>
 
         <div style="display:flex; margin:10px 15px; background:white; border-radius:10px; overflow:hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
@@ -116,9 +129,14 @@
                 <div class="chip" onclick="setOuterMultiplier(100)">X100</div>
             </div>
             
+            <!-- BIG / SMALL WITH 2X IN ONE ROW -->
             <div style="display:flex; justify-content:space-between; gap:10px; margin-top:15px; padding-bottom: 5px;">
-                <button class="btn-3d-orange" style="flex:1; padding:12px; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-yellow); cursor:pointer;" onclick="wingoBetPrompt('Big', 2)">Big</button>
-                <button class="btn-3d-blue" style="flex:1; padding:12px; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-blue); cursor:pointer;" onclick="wingoBetPrompt('Small', 2)">Small</button>
+                <button class="btn-3d-orange" style="flex:1; padding:12px 15px; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-yellow); cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="wingoBetPrompt('Big', 2)">
+                    <span style="font-size:16px;">Big</span><span style="font-size:14px; opacity:0.9;">2X</span>
+                </button>
+                <button class="btn-3d-blue" style="flex:1; padding:12px 15px; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-blue); cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="wingoBetPrompt('Small', 2)">
+                    <span style="font-size:16px;">Small</span><span style="font-size:14px; opacity:0.9;">2X</span>
+                </button>
             </div>
         </div>
 
