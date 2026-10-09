@@ -467,54 +467,45 @@
         <!-- SMART DYNAMIC GAME LOADER (HTML + JS) -->
         <script>
         function openGame(gameTitle, gameFileUrl, jsFileUrl) {
-            sessionStorage.setItem('savedGameTitle', gameTitle);
-            sessionStorage.setItem('savedGameUrl', gameFileUrl);
-            sessionStorage.setItem('savedGameJs', jsFileUrl || '');
+    sessionStorage.setItem('savedGameTitle', gameTitle);
+    sessionStorage.setItem('savedGameUrl', gameFileUrl);
+    sessionStorage.setItem('savedGameJs', jsFileUrl || '');
 
-            let loader = document.getElementById('globalLoader');
-            if(loader) loader.style.display = 'flex';
+    let loader = document.getElementById('globalLoader');
+    if(loader) loader.style.display = 'flex';
+    
+    fetch(gameFileUrl)
+        .then(response => {
+            if(!response.ok) throw new Error("404 Not Found");
+            return response.text();
+        })
+        .then(htmlData => {
+            document.getElementById('gameContainer').innerHTML = htmlData;
+            pushNav('gamePlayScreen');
             
-            fetch(gameFileUrl)
-                .then(response => response.text())
-                .then(htmlData => {
-                    document.getElementById('gameContainer').innerHTML = htmlData;
-                    pushNav('gamePlayScreen');
-                    
-                    let innerScreen = document.querySelector('#gameContainer .screen');
-                    if(innerScreen) innerScreen.classList.add('active');
+            let innerScreen = document.querySelector('#gameContainer .screen');
+            if(innerScreen) innerScreen.classList.add('active');
 
-                    // FIX: Script ko sirf ek baar inject karenge taaki crash aur double-timer na ho
-                    if (jsFileUrl) {
-                        let scriptId = 'script_' + gameTitle.replace(/\s/g, '');
-                        if (!document.getElementById(scriptId)) {
-                            let script = document.createElement('script');
-                            script.src = jsFileUrl;
-                            script.id = scriptId;
-                            document.body.appendChild(script);
-                        }
-                    }
-                    if(loader) loader.style.display = 'none';
-                })
-                .catch(err => console.error("Game load fail: ", err));
-        }
-
-        function closeGame() {
+            if (jsFileUrl) {
+                let scriptId = 'script_' + gameTitle.replace(/\s/g, '');
+                if (!document.getElementById(scriptId)) {
+                    let script = document.createElement('script');
+                    script.src = jsFileUrl;
+                    script.id = scriptId;
+                    document.body.appendChild(script);
+                }
+            }
+            if(loader) loader.style.display = 'none';
+        })
+        .catch(err => {
+            console.error("Game load fail: ", err);
+            if(loader) loader.style.display = 'none';
+            showToast("Game loading error. Redirecting to Home.");
             sessionStorage.removeItem('savedGameTitle');
-            sessionStorage.removeItem('savedGameUrl');
-            sessionStorage.removeItem('savedGameJs');
-            // FIX: Script tag ko remove nahi karenge, bas HTML clear karenge
-            document.getElementById('gameContainer').innerHTML = ""; 
-            history.back();
-        }
-        
-        // Mobile Hardware Back Button
-        window.addEventListener('popstate', function(e) {
-            sessionStorage.removeItem('savedGameTitle');
-            sessionStorage.removeItem('savedGameUrl');
-            sessionStorage.removeItem('savedGameJs');
-            let gc = document.getElementById('gameContainer');
-            if(gc) gc.innerHTML = "";
+            pushNav('appScreens', 'homeApp');
         });
+}
+
     </script>
 
 
