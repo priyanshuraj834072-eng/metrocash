@@ -51,49 +51,42 @@
         /* FIXES ADDED HERE: BLUR & POPUP CENTERING  */
         /* ========================================= */
         
-        /* Bet Menu Blur Fix (Screen Saaf Dikhega) */
+        /* Bet Menu Blur Fix */
         #betModalOverlay {
             backdrop-filter: none !important; 
             background: rgba(0, 0, 0, 0.6) !important; 
         }
 
-        /* Result Modal ko center karna - bina active class ke display nahi karega */
+        /* Result Modal ko center karna */
         #resultModalOverlay {
             flex-direction: column !important;
             justify-content: center !important;
             align-items: center !important;
-            gap: 12px !important; /* Card aur X button ke bich 12px ka gap (ekdum satake) */
+            padding: 20px !important;
         }
         
-        /* Jab result aayega tabhi display flex hoga */
         #resultModalOverlay.active {
             display: flex !important; 
         }
 
-        /* Result modal ka Cut(X) button card ke thik niche layega aur click kaam karega */
-        #resultModalOverlay .close-btn,
-        #resultModalOverlay > div[onclick*="closeResultModal"],
-        #resultModalOverlay > i[onclick*="closeResultModal"],
-        #resultModalOverlay > i.fa-xmark {
-            position: relative !important;
-            top: auto !important;
-            right: auto !important;
-            left: auto !important;
-            bottom: auto !important;
-            margin: 0 !important; /* Faltu ka margin hataya taaki satake rahe */
+        /* X button ko strongly target karna (Kahin bhi ho overlay ke andar) */
+        #resultModalOverlay [onclick*="closeResultModal"] {
+            position: static !important; /* Absolute hatane ke liye, ab ye card ke just niche aayega */
+            margin-top: 25px !important; /* Card aur button ke bich ka gap */
             background: transparent !important;
             border: 2px solid white !important;
             border-radius: 50% !important;
-            width: 35px !important;
-            height: 35px !important;
+            width: 40px !important;
+            height: 40px !important;
             color: white !important;
-            font-size: 18px !important;
+            font-size: 20px !important;
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
-            z-index: 999999 !important; /* Button ko sabse upar laane ke liye taki click ho */
+            transform: none !important;
+            z-index: 999999 !important;
             cursor: pointer !important;
-            pointer-events: auto !important; /* Click action properly register hone ke liye */
+            pointer-events: auto !important;
         }
         /* ========================================= */
 
