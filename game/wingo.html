@@ -1,7 +1,39 @@
 <!-- WINGO GAME SCREEN -->
 <div id="wingoScreen" class="screen active" style="padding-top: 60px;">
-    <div class="fixed-header">
-        <h2><i class="fa-solid fa-chevron-left" onclick="closeGame()"></i> Win Go</h2>
+    <style>
+        .w-tab { position: relative; transition: all 0.3s; }
+        .w-tab.active { background: linear-gradient(180deg, rgba(37, 117, 252, 0.4) 0%, rgba(37, 117, 252, 0.05) 100%) !important; color: var(--primary) !important; font-weight: bold; border-bottom: 2px solid var(--primary); }
+        
+        .ticket-box { background: var(--w-red); margin: 15px; border-radius: 12px; display: flex; color: white; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        .ticket-left { flex: 1.2; padding: 15px; position: relative; border-right: 2px dashed rgba(255,255,255,0.3); }
+        .ticket-right { flex: 1; padding: 15px; text-align: right; }
+        .ticket-box::before, .ticket-box::after { content: ''; position: absolute; width: 20px; height: 20px; background: #f4f5f8; border-radius: 50%; left: 54%; transform: translateX(-50%); z-index: 5; }
+        .ticket-box::before { top: -10px; } .ticket-box::after { bottom: -10px; }
+        
+        .how-to-btn { border: 1px solid white; border-radius: 20px; padding: 3px 10px; font-size: 11px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; margin-bottom: 15px; background: rgba(255,255,255,0.15); }
+        .last-5-balls { display: flex; gap: 5px; margin-top: 5px; }
+        .l5-ball { width: 22px; height: 22px; border-radius: 50%; color: white; display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
+        .w-num-grid-new { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 10px; margin: 20px 0; }
+        .num-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+        .num-btn-wrap span { font-size: 11px; color: gray; font-weight: bold; }
+        
+        .chip-row { display: flex; align-items: center; gap: 6px; margin-top: 15px; padding-bottom: 5px; overflow-x: auto; scrollbar-width: none; }
+        .chip-row::-webkit-scrollbar { display: none; }
+        .chip { padding: 6px 12px; background: #eee; color: #888; font-weight: bold; border-radius: 5px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+        .chip.active { background: var(--w-green); color: white; }
+        .btn-random { background: white; border: 1px solid var(--w-red); color: var(--w-red); font-weight: bold; padding: 6px 15px; border-radius: 5px; font-size: 12px; cursor: pointer; }
+        
+        .htp-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; display: none; justify-content: center; align-items: center; }
+        .htp-modal-overlay.active { display: flex; }
+        .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; overflow: hidden; animation: popScale 0.3s ease; }
+        .htp-header { background: var(--w-red); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 16px; position: relative; }
+        .htp-body { padding: 15px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.5; }
+    </style>
+
+    <div class="fixed-header" style="display: flex; justify-content: space-between; align-items: center; padding: 0 15px;">
+        <h2><i class="fa-solid fa-chevron-left" onclick="closeGame()"></i> <span style="font-style: italic; font-weight: 900; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Metro Cash</span></h2>
+        <i class="fa-solid fa-volume-high" id="soundToggleIcon" onclick="toggleWingoSound()" style="font-size: 20px; cursor: pointer;"></i>
     </div>
     <div class="scroll-body">
         <div style="background:white; margin:15px; border-radius:15px; padding:20px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
@@ -20,35 +52,87 @@
             <div class="w-tab" id="tab5min" onclick="switchWingoTab('5min')" style="border-right:none;"><i class="fa-regular fa-clock" style="font-size:20px; margin-bottom:5px; display:block;"></i>Win Go<br>5Min</div>
         </div>
 
-        <div style="background:white; margin:15px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; padding:15px; border-left:4px solid var(--primary); box-shadow:0 2px 5px rgba(0,0,0,0.02);">
-            <div><p style="font-size:12px; color:var(--text-muted);">Period</p><h3 id="wingoPeriod" style="font-size:18px;">Loading...</h3></div>
-            <div style="text-align:right;">
-                <p style="font-size:12px; color:var(--text-muted);">Time remaining</p>
-                <div style="display:flex; gap:5px;">
+        <!-- NEW TICKET BOX -->
+        <div class="ticket-box">
+            <div class="ticket-left">
+                <div class="how-to-btn" onclick="openHowToPlay()"><i class="fa-solid fa-book"></i> How to play</div>
+                <div style="font-size:12px; font-weight:bold; margin-bottom: 5px;">WinGo <span id="ticketTimeText">1 minute</span></div>
+                <div class="last-5-balls" id="last5BallsContainer">
+                    <!-- Balls Dynamically Load Hongi JS se -->
+                </div>
+            </div>
+            <div class="ticket-right">
+                <div style="font-size:12px; font-weight:bold; margin-bottom:5px;">Time remaining</div>
+                <div style="display:flex; justify-content:flex-end; gap:5px; margin-bottom: 5px;">
                     <div class="w-digit" id="t-min-1">0</div><div class="w-digit" id="t-min-2">0</div>
-                    <span style="font-weight:bold; font-size:20px; color:var(--primary);">:</span>
+                    <span style="font-weight:bold; font-size:20px;">:</span>
                     <div class="w-digit" id="t-sec-1">0</div><div class="w-digit" id="t-sec-2">0</div>
+                </div>
+                <div style="font-size:18px; font-weight:bold; letter-spacing:1px;" id="wingoPeriod">Loading...</div>
+            </div>
+        </div>
+
+        <!-- NEW BETTING AREA -->
+        <div class="bet-container-wrapper" style="margin: 0 15px; background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+            <div class="bet-lock-overlay" id="betLockOverlay" style="border-radius: 12px;"><div class="lock-digit">0</div><div class="lock-digit" id="lockDigitSec">5</div></div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; gap: 8px;">
+                <button class="btn-3d-green" style="flex:1; padding:8px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-green); cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px;" onclick="wingoBetPrompt('Green', 2)"><span>Green</span><span style="font-size:11px; opacity:0.9;">2X</span></button>
+                <button class="btn-3d-violet" style="flex:1; padding:8px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-violet); cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px;" onclick="wingoBetPrompt('Violet', 4.5)"><span>Violet</span><span style="font-size:11px; opacity:0.9;">4.5X</span></button>
+                <button class="btn-3d-red" style="flex:1; padding:8px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-red); cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px;" onclick="wingoBetPrompt('Red', 2)"><span>Red</span><span style="font-size:11px; opacity:0.9;">2X</span></button>
+            </div>
+
+            <div class="w-num-grid-new" id="numberGridArea">
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('0', 9)"><div class="w-ball b-split-0" id="ball-0">0</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('1', 9)"><div class="w-ball b-green" id="ball-1">1</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('2', 9)"><div class="w-ball b-red" id="ball-2">2</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('3', 9)"><div class="w-ball b-green" id="ball-3">3</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('4', 9)"><div class="w-ball b-red" id="ball-4">4</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('5', 9)"><div class="w-ball b-split-5" id="ball-5">5</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('6', 9)"><div class="w-ball b-red" id="ball-6">6</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('7', 9)"><div class="w-ball b-green" id="ball-7">7</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('8', 9)"><div class="w-ball b-red" id="ball-8">8</div><span>9X</span></div>
+                <div class="num-btn-wrap" onclick="wingoBetPrompt('9', 9)"><div class="w-ball b-green" id="ball-9">9</div><span>9X</span></div>
+            </div>
+
+            <div class="chip-row">
+                <button class="btn-random" onclick="startRandomBet()">Random</button>
+                <div class="chip active" onclick="setOuterMultiplier(1)">X1</div>
+                <div class="chip" onclick="setOuterMultiplier(5)">X5</div>
+                <div class="chip" onclick="setOuterMultiplier(10)">X10</div>
+                <div class="chip" onclick="setOuterMultiplier(20)">X20</div>
+                <div class="chip" onclick="setOuterMultiplier(50)">X50</div>
+                <div class="chip" onclick="setOuterMultiplier(100)">X100</div>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; gap:10px; margin-top:15px; padding-bottom: 5px;">
+                <button class="btn-3d-orange" style="flex:1; padding:12px; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-yellow); cursor:pointer;" onclick="wingoBetPrompt('Big', 2)">Big</button>
+                <button class="btn-3d-blue" style="flex:1; padding:12px; border-radius:8px; color:white; border:none; font-weight:bold; background:var(--w-blue); cursor:pointer;" onclick="wingoBetPrompt('Small', 2)">Small</button>
+            </div>
+        </div>
+
+        <!-- HOW TO PLAY MODAL -->
+        <div class="htp-modal-overlay" id="htpModalOverlay" onclick="closeHowToPlay()">
+            <div class="htp-modal" onclick="event.stopPropagation()">
+                <div class="htp-header">
+                    <i class="fa-solid fa-book-open"></i> How to play
+                </div>
+                <div class="htp-body">
+                    <p style="margin-bottom:10px;"><span id="htpTimeDesc">1 minute</span> 1 issue, 55 seconds to order, 5 seconds waiting for the draw. It opens all day. The total number of trade is 1440 issues.</p>
+                    <p style="margin-bottom:10px;">If you spend 100 to trade, after deducting service fee 2%, contract amount: 98.</p>
+                    <p><b>1. Select Green:</b><br>If the result shows 1,3,7,9 you will get (98*2)=196; if the result shows 5, you will get (98*1.5)=147</p>
+                    <p><b>2. Select Red:</b><br>If the result shows 2,4,6,8 you will get (98*2)=196; if the result shows 0, you will get (98*1.5)=147</p>
+                    <p><b>3. Select Violet:</b><br>If the result shows 0 or 5, you will get (98*4.5)=441</p>
+                    <p><b>4. Select Number:</b><br>If the result is the same as the number you selected, you will get (98*9)=882</p>
+                    <p><b>5. Select Big:</b><br>If the result shows 5,6,7,8,9 you will get (98*2)=196</p>
+                    <p><b>6. Select Small:</b><br>If the result shows 0,1,2,3,4 you will get (98*2)=196</p>
+                </div>
+                <div style="padding:15px; text-align:center;">
+                    <button style="background:var(--w-red); color:white; border:none; padding:10px 40px; border-radius:30px; font-weight:bold; font-size:16px; cursor:pointer;" onclick="closeHowToPlay()">Close</button>
                 </div>
             </div>
         </div>
 
-        <div class="bet-container-wrapper">
-            <div class="bet-lock-overlay" id="betLockOverlay"><div class="lock-digit">0</div><div class="lock-digit" id="lockDigitSec">5</div></div>
-            <div class="w-bet-area">
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding-bottom: 5px;">
-                    <button class="btn-3d-green" style="flex:1; margin:0 5px; padding:12px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:#18b660; cursor:pointer;" onclick="wingoBetPrompt('Green', 2)">Green</button>
-                    <button class="btn-3d-violet" style="flex:1; margin:0 5px; padding:12px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:#eb43dd; cursor:pointer;" onclick="wingoBetPrompt('Violet', 4.5)">Violet</button>
-                    <button class="btn-3d-red" style="flex:1; margin:0 5px; padding:12px 0; border-radius:8px; color:white; border:none; font-weight:bold; background:#fb4e4e; cursor:pointer;" onclick="wingoBetPrompt('Red', 2)">Red</button>
-                </div>
-                <div class="w-num-grid">
-                    <div class="w-ball b-split-0" onclick="wingoBetPrompt('0', 9)">0</div>
-                    <div class="w-ball b-green" onclick="wingoBetPrompt('1', 9)">1</div>
-                    <div class="w-ball b-red" onclick="wingoBetPrompt('2', 9)">2</div>
-                    <div class="w-ball b-green" onclick="wingoBetPrompt('3', 9)">3</div>
-                    <div class="w-ball b-red" onclick="wingoBetPrompt('4', 9)">4</div>
-                    <div class="w-ball b-split-5" onclick="wingoBetPrompt('5', 9)">5</div>
-                    <div class="w-ball b-red" onclick="wingoBetPrompt('6', 9)">6</div>
-                    <div class="w-ball b-green" onclick="wingoBetPrompt('7', 9)">7</div>
                     <div class="w-ball b-red" onclick="wingoBetPrompt('8', 9)">8</div>
                     <div class="w-ball b-green" onclick="wingoBetPrompt('9', 9)">9</div>
                 </div>
