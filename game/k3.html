@@ -1,0 +1,374 @@
+<!-- K3 GAME SCREEN (Scoped properly to prevent Navigation scroll bugs) -->
+<div id="k3Screen" class="screen active" style="padding-top: 0; background: #f4f5f8; min-height: 100vh; padding-bottom: 70px !important;">
+
+    <style>
+        /* 100% SCOPED CSS: Isse bahar ka Wingo ya Nav bar kabhi kharab nahi hoga */
+        #k3Screen * { box-sizing: border-box; }
+        
+        /* EXACT RED UI REPLICA */
+        #k3Screen .k3-header-bg { position: absolute; top: 0; left: 0; width: 100%; height: 200px; background: linear-gradient(180deg, #ff3f3f, #ff1a1a); border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; z-index: 1; }
+        
+        #k3Screen .k3-wallet-box { background: white; margin: 15px; border-radius: 15px; padding: 20px; text-align: center; position: relative; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #k3Screen .k3-wallet-box h2 { font-size: 22px; margin-bottom: 5px; display:flex; justify-content:center; align-items:center; gap:8px; color: #333; }
+        #k3Screen .k3-wallet-box h2 i { font-size: 14px; color: gray; cursor: pointer; }
+        #k3Screen .k3-wallet-box p { font-size: 13px; color: gray; margin-bottom: 15px; font-weight: 500; }
+        #k3Screen .k3-wallet-btns { display: flex; gap: 15px; justify-content: center; }
+        #k3Screen .k3-wallet-btns button { flex: 1; padding: 12px; border-radius: 30px; border: none; font-weight: bold; font-size: 15px; color: white; cursor: pointer; }
+        #k3Screen .btn-wth { background: #ff4757; } #k3Screen .btn-dep { background: #18b660; }
+
+        /* TIME TABS */
+        #k3Screen .k3-time-tabs { display: flex; margin: 10px 15px; background: white; border-radius: 12px; position: relative; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        #k3Screen .k3-tab { flex: 1; text-align: center; padding: 10px 5px; cursor: pointer; color: gray; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.3s; }
+        #k3Screen .k3-tab.active { background: linear-gradient(180deg, rgba(255, 71, 87, 0.1) 0%, transparent 100%); color: #ff4757; }
+        #k3Screen .k3-tab i { font-size: 22px; }
+
+        /* MAIN GAME BOX */
+        #k3Screen .k3-game-box { background: white; margin: 15px; border-radius: 15px; padding: 15px; position: relative; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        #k3Screen .k3-game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        #k3Screen .how-to-btn-k3 { border: 1px solid #ff4757; color: #ff4757; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+        #k3Screen .k3-digit-timer { background: #f4f5f8; color: #18b660; border-radius: 4px; width: 20px; height: 24px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; border: 1px solid #ddd; }
+
+        /* EXACT DARK GREEN DICE CONTAINER WITH ARROWS */
+        #k3Screen .dice-container { background: #008b5e; border-radius: 10px; padding: 15px; display: flex; justify-content: space-around; align-items: center; position: relative; margin-bottom: 15px; height: 110px; border: 2px solid #005c3d; }
+        #k3Screen .dice-arrow-left { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 15px solid #00b87c; }
+        #k3Screen .dice-arrow-right { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 15px solid #00b87c; }
+        
+        /* EXACT 2D RED DICE */
+        #k3Screen .dice-2d { width: 75px; height: 75px; background: #ff0000; border-radius: 12px; position: relative; box-shadow: inset -4px -4px 10px rgba(0,0,0,0.3), inset 2px 2px 5px rgba(255,255,255,0.4), 0 5px 10px rgba(0,0,0,0.5); }
+        #k3Screen .dice-2d.shaking { animation: diceShake 0.15s infinite; }
+        @keyframes diceShake { 0% { transform: translate(2px, 2px); } 25% { transform: translate(-2px, -2px); } 50% { transform: translate(2px, -2px); } 75% { transform: translate(-2px, 2px); } 100% { transform: translate(2px, 2px); } }
+        
+        #k3Screen .k3-dot { width: 14px; height: 14px; background: white; border-radius: 50%; position: absolute; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.4); }
+        #k3Screen .dot-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        #k3Screen .dot-tl { top: 12px; left: 12px; } #k3Screen .dot-tr { top: 12px; right: 12px; }
+        #k3Screen .dot-bl { bottom: 12px; left: 12px; } #k3Screen .dot-br { bottom: 12px; right: 12px; }
+        #k3Screen .dot-ml { top: 50%; left: 12px; transform: translateY(-50%); } #k3Screen .dot-mr { top: 50%; right: 12px; transform: translateY(-50%); }
+        #k3Screen .dot-big-yellow { width: 28px; height: 28px; background: #ffeb3b; }
+
+        /* WINGO EXACT LOCK UI */
+        #k3Screen .k3-betting-area { position: relative; }
+        #k3Screen .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); display: none; justify-content: center; align-items: center; z-index: 20; backdrop-filter: blur(4px); }
+        #k3Screen .bet-lock-overlay.active { display: flex; }
+        #k3Screen .lock-box { display: flex; gap: 15px; }
+        #k3Screen .lock-digit { background: #ff4757; color: white; width: 80px; height: 100px; display: flex; justify-content: center; align-items: center; border-radius: 12px; font-size: 65px; font-weight: 900; box-shadow: 0 10px 25px rgba(255, 71, 87, 0.4); font-family: monospace; animation: popLock 0.3s ease; }
+
+        /* TABS (TOTAL, 2 SAME, ETC.) */
+        #k3Screen .k3-sub-tabs { display: flex; background: #f4f5f8; border-radius: 5px; margin-bottom: 15px; }
+        #k3Screen .k3-sub-tab { flex: 1; text-align: center; padding: 12px 5px; font-size: 12px; color: gray; cursor: pointer; border-radius: 5px; transition: 0.2s; }
+        #k3Screen .k3-sub-tab.active { background: #ff4757; color: white; font-weight: bold; }
+
+        #k3Screen .k3-bet-panel { display: none; } #k3Screen .k3-bet-panel.active { display: block; }
+        
+        /* CIRCLE BALL BUTTONS */
+        #k3Screen .k3-bet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding-bottom: 15px; }
+        #k3Screen .k3-bet-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+        #k3Screen .k3-circle { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: 900; font-size: 20px; box-shadow: inset 0 -3px 5px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.1); border: 2px solid rgba(255,255,255,0.8); }
+        #k3Screen .k3-red-ball { background: #ff4757; } #k3Screen .k3-green-ball { background: #18b660; }
+        #k3Screen .k3-multi-text { font-size: 11px; color: gray; }
+
+        #k3Screen .k3-action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 5px; }
+        #k3Screen .k3-act-btn { border-radius: 5px; padding: 12px 5px; color: white; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: none; }
+        #k3Screen .k3-btn-yellow { background: #ffc107; color: black; } #k3Screen .k3-btn-blue { background: #4facfe; } #k3Screen .k3-btn-red { background: #ff4757; } #k3Screen .k3-btn-green { background: #18b660; }
+
+        /* PILL BUTTONS (2 SAME / 3 SAME) */
+        #k3Screen .k3-pill-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 10px; }
+        #k3Screen .k3-pill-btn { background: #e0b4ff; color: white; border-radius: 5px; padding: 10px 0; text-align: center; font-weight: bold; font-size: 13px; cursor: pointer; }
+        #k3Screen .k3-pill-btn.red { background: #ff7675; } #k3Screen .k3-pill-btn.green { background: #55efc4; }
+        #k3Screen .k3-wide-btn { background: #ff7675; color: white; width: 100%; border-radius: 5px; padding: 12px; text-align: center; font-weight: bold; font-size: 14px; margin-top: 10px; cursor: pointer; }
+        #k3Screen .k3-section-title { font-size: 12px; color: #333; margin-top: 15px; display: flex; align-items: center; gap: 5px; }
+        #k3Screen .k3-section-title i { color: #ff4757; }
+
+        /* HISTORY SECTION */
+        #k3Screen .hist-nav { margin: 15px; display: flex; background: #f4f5f8; border-radius: 8px; overflow: hidden; }
+        #k3Screen .hist-btn { flex: 1; padding: 12px 0; font-size: 13px; font-weight: bold; border: none; background: transparent; color: gray; cursor: pointer; }
+        #k3Screen .hist-btn.active { background: #ff4757 !important; color: white !important; }
+        
+        #k3Screen .table-header { display: flex; background: #ff4757; color: white; padding: 12px 10px; font-size: 12px; font-weight: bold; border-radius: 8px 8px 0 0; margin: 0 15px; }
+        #k3Screen .table-row { display: flex; background: white; padding: 12px 10px; font-size: 12px; align-items: center; border-bottom: 1px solid #eee; margin: 0 15px; color: #333; }
+        
+        /* NO DATA IMAGE */
+        #k3Screen .k3-no-data { text-align: center; padding: 40px 20px; }
+        #k3Screen .k3-no-data img { width: 120px; opacity: 0.8; }
+        #k3Screen .k3-no-data p { color: gray; font-size: 13px; margin-top: 10px; }
+
+        /* MINI HISTORY DICE */
+        #k3Screen .h-dice-wrap { display: flex; gap: 3px; justify-content: center; align-items: center; }
+        #k3Screen .h-dice { width: 18px; height: 18px; background: #ff4757; border-radius: 4px; position: relative; }
+        #k3Screen .hd-dot { width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; }
+        #k3Screen .hd-dot.yellow { background: #ffeb3b; }
+        #k3Screen .hd-c { top: 50%; left: 50%; transform: translate(-50%, -50%); } #k3Screen .hd-tl { top: 2px; left: 2px; } #k3Screen .hd-tr { top: 2px; right: 2px; } #k3Screen .hd-bl { bottom: 2px; left: 2px; } #k3Screen .hd-br { bottom: 2px; right: 2px; } #k3Screen .hd-ml { top: 50%; left: 2px; transform: translateY(-50%); } #k3Screen .hd-mr { top: 50%; right: 2px; transform: translateY(-50%); }
+
+        /* 100% WINGO STYLE MODALS (FIXED TO VIEWPORT) */
+        #k3Screen .k3-modal-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6) !important; z-index: 999999 !important; display: none; }
+        #k3Screen .k3-modal-overlay.active { display: flex !important; }
+        
+        /* How to Play Modal (Exact Replica) */
+        #k3Screen .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; margin: auto; overflow: hidden; animation: popIn 0.3s ease; }
+        #k3Screen .htp-header { background: linear-gradient(135deg, #ff4757, #ff1a1a); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; text-align: center; display: flex; justify-content: space-between; align-items: center; }
+        #k3Screen .htp-body { padding: 20px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: #333; line-height: 1.6; text-align: left; }
+        #k3Screen .htp-body b { color: #333; font-weight: 900; display: block; margin-top: 10px; }
+        #k3Screen .htp-footer { text-align: center; padding: 15px; border-top: 1px solid #eee; }
+        #k3Screen .htp-btn-close { background: #ff4757; color: white; border: none; padding: 10px 40px; border-radius: 30px; font-size: 15px; font-weight: bold; cursor: pointer; }
+
+        /* Bet Modal */
+        #k3Screen .bet-modal-wrap { align-items: flex-end; justify-content: center; }
+        #k3Screen .bet-modal { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 500px; animation: slideUp 0.3s ease; overflow: hidden; }
+        #k3Screen .bm-top-header { background: #18b660; color: white; padding: 20px; text-align: center; }
+        #k3Screen .bm-title-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        #k3Screen .bm-select-pill { background: white; color: black; padding: 8px 30px; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        #k3Screen .bm-body { padding: 20px; }
+        #k3Screen .bm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 13px; color: gray; }
+        #k3Screen .bm-opts { display: flex; gap: 5px; }
+        #k3Screen .bm-opt { background: #f4f5f8; color: #333; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        #k3Screen .bm-opt.active { background: #18b660; color: white; }
+        #k3Screen .qty-box { display: flex; align-items: center; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
+        #k3Screen .qty-box button { background: #18b660; color: white; border: none; width: 30px; height: 30px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        #k3Screen .qty-box input { width: 50px; text-align: center; border: none; font-weight: bold; outline: none; }
+        #k3Screen .bm-footer { display: flex; margin-top: 20px; }
+        #k3Screen .bm-btn-cancel { flex: 1; background: #333; color: white; border: none; padding: 15px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        #k3Screen .bm-btn-confirm { flex: 2; background: #18b660; color: white; border: none; padding: 15px; font-weight: bold; font-size: 15px; cursor: pointer; }
+    </style>
+
+    <div class="fixed-header" style="display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #ff4757; color: white; border-bottom: none; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> <span style="font-weight: 900; margin-left: 10px;">66Lottery</span></h2>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <i class="fa-solid fa-headset" style="font-size: 18px; cursor: pointer;" onclick="openSupportChat()"></i>
+            <i class="fa-solid fa-volume-high" id="k3SoundToggle" onclick="toggleK3Sound()" style="font-size: 18px; cursor: pointer;"></i>
+        </div>
+    </div>
+    
+    <div class="k3-header-bg"></div>
+    
+    <div style="position: relative; z-index: 5; padding-top: 60px;">
+        <!-- WALLET -->
+        <div class="k3-wallet-box">
+            <h2>₹<span id="k3Bal">0.00</span> <i class="fa-solid fa-rotate-right" onclick="forceK3BalanceRefresh()"></i></h2>
+            <p><i class="fa-solid fa-wallet" style="color:#ffc107;"></i> Wallet balance</p>
+            <div class="k3-wallet-btns">
+                <button class="btn-wth" onclick="pushNav('withdrawScreen')">Withdraw</button>
+                <button class="btn-dep" onclick="pushNav('depositScreen')">Deposit</button>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="k3-time-tabs">
+            <div class="k3-tab active" id="k3Tab1min" onclick="switchK3Tab('1min')"><i class="fa-regular fa-clock"></i>K3 Lotre<br>1Min</div>
+            <div class="k3-tab" id="k3Tab3min" onclick="switchK3Tab('3min')"><i class="fa-regular fa-clock"></i>K3 Lotre<br>3Min</div>
+            <div class="k3-tab" id="k3Tab5min" onclick="switchK3Tab('5min')"><i class="fa-regular fa-clock"></i>K3 Lotre<br>5Min</div>
+            <div class="k3-tab" id="k3Tab10min" onclick="switchK3Tab('10min')"><i class="fa-regular fa-clock"></i>K3 Lotre<br>10Min</div>
+        </div>
+
+        <!-- GAME BOX -->
+        <div class="k3-game-box">
+            <div class="k3-game-header">
+                <div>
+                    <div style="font-size:12px; color:gray; font-weight:bold; margin-bottom:5px;">Period</div>
+                    <div style="font-size:18px; font-weight:900; color:#333;" id="k3Period">Loading...</div>
+                </div>
+                <div class="how-to-btn-k3" onclick="openK3HowToPlay()"><i class="fa-solid fa-book"></i> How to play</div>
+                <div style="text-align:right;">
+                    <div style="font-size:12px; color:gray; font-weight:bold; margin-bottom:5px;">Time remaining</div>
+                    <div style="display:flex; justify-content:flex-end; gap:4px;">
+                        <div class="k3-digit-timer" id="k3-min-1">0</div><div class="k3-digit-timer" id="k3-min-2">0</div>
+                        <span style="font-weight:bold; font-size:16px; color:#18b660; line-height:26px;">:</span>
+                        <div class="k3-digit-timer" id="k3-sec-1">0</div><div class="k3-digit-timer" id="k3-sec-2">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DARK GREEN DICE CONTAINER (2D EXACT COPY) -->
+            <div class="dice-container">
+                <div class="dice-arrow-left"></div>
+                <div class="dice-2d" id="dice1"></div>
+                <div class="dice-2d" id="dice2"></div>
+                <div class="dice-2d" id="dice3"></div>
+                <div class="dice-arrow-right"></div>
+            </div>
+
+            <div class="k3-betting-area">
+                <!-- EXACT LOCK OVERLAY -->
+                <div class="bet-lock-overlay" id="k3LockOverlay">
+                    <div class="lock-box">
+                        <div class="lock-digit" id="k3LockDigitSec1">0</div>
+                        <div class="lock-digit" id="k3LockDigitSec2">5</div>
+                    </div>
+                </div>
+
+                <div class="k3-sub-tabs">
+                    <div class="k3-sub-tab active" id="st-total" onclick="switchK3SubTab('total')">Total</div>
+                    <div class="k3-sub-tab" id="st-2same" onclick="switchK3SubTab('2same')">2 same</div>
+                    <div class="k3-sub-tab" id="st-3same" onclick="switchK3SubTab('3same')">3 same</div>
+                    <div class="k3-sub-tab" id="st-diff" onclick="switchK3SubTab('diff')">Different</div>
+                </div>
+
+                <!-- TOTAL TAB -->
+                <div class="k3-bet-panel active" id="panel-total">
+                    <div class="k3-bet-grid">
+                        <div class="k3-bet-item" onclick="k3BetPrompt('3', 207.36, 'k3-red')"><div class="k3-circle k3-red-ball">3</div><span class="k3-multi-text">207.36X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('4', 69.12, 'k3-green')"><div class="k3-circle k3-green-ball">4</div><span class="k3-multi-text">69.12X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('5', 34.56, 'k3-red')"><div class="k3-circle k3-red-ball">5</div><span class="k3-multi-text">34.56X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('6', 20.74, 'k3-green')"><div class="k3-circle k3-green-ball">6</div><span class="k3-multi-text">20.74X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('7', 13.83, 'k3-red')"><div class="k3-circle k3-red-ball">7</div><span class="k3-multi-text">13.83X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('8', 9.88, 'k3-green')"><div class="k3-circle k3-green-ball">8</div><span class="k3-multi-text">9.88X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('9', 8.3, 'k3-red')"><div class="k3-circle k3-red-ball">9</div><span class="k3-multi-text">8.3X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('10', 7.68, 'k3-green')"><div class="k3-circle k3-green-ball">10</div><span class="k3-multi-text">7.68X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('11', 7.68, 'k3-red')"><div class="k3-circle k3-red-ball">11</div><span class="k3-multi-text">7.68X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('12', 8.3, 'k3-green')"><div class="k3-circle k3-green-ball">12</div><span class="k3-multi-text">8.3X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('13', 9.88, 'k3-red')"><div class="k3-circle k3-red-ball">13</div><span class="k3-multi-text">9.88X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('14', 13.83, 'k3-green')"><div class="k3-circle k3-green-ball">14</div><span class="k3-multi-text">13.83X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('15', 20.74, 'k3-red')"><div class="k3-circle k3-red-ball">15</div><span class="k3-multi-text">20.74X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('16', 34.56, 'k3-green')"><div class="k3-circle k3-green-ball">16</div><span class="k3-multi-text">34.56X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('17', 69.12, 'k3-red')"><div class="k3-circle k3-red-ball">17</div><span class="k3-multi-text">69.12X</span></div>
+                        <div class="k3-bet-item" onclick="k3BetPrompt('18', 207.36, 'k3-green')"><div class="k3-circle k3-green-ball">18</div><span class="k3-multi-text">207.36X</span></div>
+                    </div>
+                    <div class="k3-action-grid">
+                        <button class="k3-act-btn k3-btn-yellow" onclick="k3BetPrompt('Big', 1.92, 'k3-yellow')"><span class="k3-act-title">Big</span><span class="k3-act-sub">1.92X</span></button>
+                        <button class="k3-act-btn k3-btn-blue" onclick="k3BetPrompt('Small', 1.92, 'k3-blue')"><span class="k3-act-title">Small</span><span class="k3-act-sub">1.92X</span></button>
+                        <button class="k3-act-btn k3-btn-red" onclick="k3BetPrompt('Odd', 1.92, 'k3-red')"><span class="k3-act-title">Odd</span><span class="k3-act-sub">1.92X</span></button>
+                        <button class="k3-act-btn k3-btn-green" onclick="k3BetPrompt('Even', 1.92, 'k3-green')"><span class="k3-act-title">Even</span><span class="k3-act-sub">1.92X</span></button>
+                    </div>
+                </div>
+
+                <!-- 2 SAME TAB -->
+                <div class="k3-bet-panel" id="panel-2same">
+                    <div class="k3-section-title">2 matching numbers: odds(13.83X) <i class="fa-solid fa-circle-question"></i></div>
+                    <div class="k3-pill-grid">
+                        <div class="k3-pill-btn" onclick="k3BetPrompt('11', 13.83, 'k3-purple')">11</div><div class="k3-pill-btn" onclick="k3BetPrompt('22', 13.83, 'k3-purple')">22</div><div class="k3-pill-btn" onclick="k3BetPrompt('33', 13.83, 'k3-purple')">33</div><div class="k3-pill-btn" onclick="k3BetPrompt('44', 13.83, 'k3-purple')">44</div><div class="k3-pill-btn" onclick="k3BetPrompt('55', 13.83, 'k3-purple')">55</div><div class="k3-pill-btn" onclick="k3BetPrompt('66', 13.83, 'k3-purple')">66</div>
+                    </div>
+                    <div class="k3-section-title">A pair of unique numbers: odds(69.12X) <i class="fa-solid fa-circle-question"></i></div>
+                    <div class="k3-pill-grid">
+                        <div class="k3-pill-btn red" onclick="k3BetPrompt('11_pair', 69.12, 'k3-red')">11</div><div class="k3-pill-btn red" onclick="k3BetPrompt('22_pair', 69.12, 'k3-red')">22</div><div class="k3-pill-btn red" onclick="k3BetPrompt('33_pair', 69.12, 'k3-red')">33</div><div class="k3-pill-btn red" onclick="k3BetPrompt('44_pair', 69.12, 'k3-red')">44</div><div class="k3-pill-btn red" onclick="k3BetPrompt('55_pair', 69.12, 'k3-red')">55</div><div class="k3-pill-btn red" onclick="k3BetPrompt('66_pair', 69.12, 'k3-red')">66</div>
+                    </div>
+                    <div class="k3-pill-grid">
+                        <div class="k3-pill-btn green" onclick="k3BetPrompt('1_unique', 69.12, 'k3-green')">1</div><div class="k3-pill-btn green" onclick="k3BetPrompt('2_unique', 69.12, 'k3-green')">2</div><div class="k3-pill-btn green" onclick="k3BetPrompt('3_unique', 69.12, 'k3-green')">3</div><div class="k3-pill-btn green" onclick="k3BetPrompt('4_unique', 69.12, 'k3-green')">4</div><div class="k3-pill-btn green" onclick="k3BetPrompt('5_unique', 69.12, 'k3-green')">5</div><div class="k3-pill-btn green" onclick="k3BetPrompt('6_unique', 69.12, 'k3-green')">6</div>
+                    </div>
+                </div>
+
+                <!-- 3 SAME TAB -->
+                <div class="k3-bet-panel" id="panel-3same">
+                    <div class="k3-section-title">3 of the same number: odds(207.36X) <i class="fa-solid fa-circle-question"></i></div>
+                    <div class="k3-pill-grid">
+                        <div class="k3-pill-btn" onclick="k3BetPrompt('111', 207.36, 'k3-purple')">111</div><div class="k3-pill-btn" onclick="k3BetPrompt('222', 207.36, 'k3-purple')">222</div><div class="k3-pill-btn" onclick="k3BetPrompt('333', 207.36, 'k3-purple')">333</div><div class="k3-pill-btn" onclick="k3BetPrompt('444', 207.36, 'k3-purple')">444</div><div class="k3-pill-btn" onclick="k3BetPrompt('555', 207.36, 'k3-purple')">555</div><div class="k3-pill-btn" onclick="k3BetPrompt('666', 207.36, 'k3-purple')">666</div>
+                    </div>
+                    <div class="k3-section-title">Any 3 of the same number(34.56X) <i class="fa-solid fa-circle-question"></i></div>
+                    <div class="k3-wide-btn" onclick="k3BetPrompt('Any 3 of the same number', 34.56, 'k3-red')">Any 3 of the same number</div>
+                </div>
+
+                <!-- DIFFERENT TAB -->
+                <div class="k3-bet-panel" id="panel-diff">
+                    <div class="k3-section-title">3 different numbers: odds(34.56X) <i class="fa-solid fa-circle-question"></i></div>
+                    <div class="k3-pill-grid">
+                        <div class="k3-pill-btn" onclick="k3BetPrompt('3diff_1', 34.56, 'k3-purple')">1</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_2', 34.56, 'k3-purple')">2</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_3', 34.56, 'k3-purple')">3</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_4', 34.56, 'k3-purple')">4</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_5', 34.56, 'k3-purple')">5</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_6', 34.56, 'k3-purple')">6</div>
+                    </div>
+                    <div class="k3-section-title">3 continuous numbers: odds(8.64X) <i class="fa-solid fa-circle-question"></i></div>
+                    <div class="k3-wide-btn" onclick="k3BetPrompt('3 continuous numbers', 8.64, 'k3-red')">3 continuous numbers</div>
+                    <div class="k3-section-title">2 different numbers: odds(6.91X) <i class="fa-solid fa-circle-question"></i></div>
+                    <div class="k3-pill-grid">
+                        <div class="k3-pill-btn" onclick="k3BetPrompt('2diff_1', 6.91, 'k3-purple')">1</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_2', 6.91, 'k3-purple')">2</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_3', 6.91, 'k3-purple')">3</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_4', 6.91, 'k3-purple')">4</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_5', 6.91, 'k3-purple')">5</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_6', 6.91, 'k3-purple')">6</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY TABS -->
+        <div class="hist-nav">
+            <button class="hist-btn active" id="k3BtnGlobal" onclick="switchK3HistPanel('global')">Game history</button>
+            <button class="hist-btn" id="k3BtnChart" onclick="switchK3HistPanel('chart')">Chart</button>
+            <button class="hist-btn" id="k3BtnMine" onclick="switchK3HistPanel('mine')">My history</button>
+        </div>
+
+        <div class="hist-pane active" id="k3PaneGlobalHist">
+            <div class="table-header"><div style="flex:2;">Period</div><div style="flex:1; text-align:center;">Sum</div><div style="flex:1.5; text-align:right;">Results</div></div>
+            <div id="k3HistoryList"></div>
+            <div style="display:flex; justify-content:center; align-items:center; padding:15px; gap:15px;">
+                <button onclick="changeK3Page(-1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; cursor:pointer;" id="k3BtnPrevPage"><i class="fa-solid fa-chevron-left"></i></button>
+                <span id="k3PageIndicator" style="font-size:14px; font-weight:bold; color:gray;">1/1</span>
+                <button onclick="changeK3Page(1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; cursor:pointer;" id="k3BtnNextPage"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <div class="hist-pane" id="k3PaneChartHist">
+            <div class="table-header"><div style="flex:2;">Period</div><div style="flex:1.5; text-align:center;">Results</div><div style="flex:2.5; text-align:right;">Number</div></div>
+            <div id="k3ChartList"></div>
+            <div style="display:flex; justify-content:center; align-items:center; padding:15px; gap:15px;">
+                <button onclick="changeK3ChartPage(-1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; cursor:pointer;" id="k3ChartBtnPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                <span id="k3ChartPageIndicator" style="font-size:14px; font-weight:bold; color:gray;">1/1</span>
+                <button onclick="changeK3ChartPage(1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; cursor:pointer;" id="k3ChartBtnNext"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+        
+        <div class="hist-pane" id="k3PaneMineHist"><div id="k3MineList"></div></div>
+    </div>
+
+    <!-- EXACT "HOW TO PLAY" MODAL (Red List Style) -->
+    <div class="k3-modal-overlay" id="k3HtpModalOverlay" onclick="closeK3HowToPlay()">
+        <div class="htp-modal" onclick="event.stopPropagation()">
+            <div class="htp-header">
+                <i class="fa-solid fa-list"></i>
+                <span>How to play</span>
+                <i class="fa-solid fa-list"></i>
+            </div>
+            <div class="htp-body">
+                Fast 3 open with 3 numbers in each period as the opening number, he opening numbers are 111 to 666 Natural number, No zeros in the array And the opening numbers are in no particular order, Fast 3 is to guess all or part of the 3 winning numbers.
+                
+                <b>Sum Value</b>
+                Place a bet on the sum of three numbers
+                
+                <b>Choose 3 same number all</b>
+                For all the same three numbers (111、222、... 666) Make an all-inclusive bet
+                
+                <b>Choose 3 same number single</b>
+                From all the same three numbers (111、... 666) Choose a group of numbers in any of them to place bets
+                
+                <b>Choose 2 Same Multiple</b>
+                Place a bet on two designated same numbers and an arbitrary number among the three numbers
+                
+                <b>Choose 2 Same Single</b>
+                Place a bet on two designated same numbers and a designated different number among the three numbers (except for the three same numbers)
+                
+                <b>3 numbers different</b>
+                Place a bet on three different numbers
+                
+                <b>2 numbers different</b>
+                Place a bet on two designated different numbers and an arbitrary number among the three numbers
+                
+                <b>Choose 3 Consecutive number all</b>
+                For all three consecutive numbers (123、234、345、456) Place a bet
+            </div>
+            <div class="htp-footer">
+                <button class="htp-btn-close" onclick="closeK3HowToPlay()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINGO STYLE VIP BET MODAL -->
+    <div class="k3-modal-overlay bet-modal-wrap" id="k3BetModalOverlay" onclick="closeK3BetModal()">
+        <div class="bet-modal" onclick="event.stopPropagation()">
+            <div class="bm-top-header" id="k3BetModalTopBg">
+                <div class="bm-title-text" id="k3BetModalTitle">WinGo Bet</div>
+                <div class="bm-select-pill" id="k3BetModalChoice">Select Green</div>
+            </div>
+            <div class="bm-body">
+                <div class="bm-row"><span>Balance</span>
+                    <div class="bm-opts" id="k3BaseOptions">
+                        <div class="bm-opt active" onclick="setK3BetBase(1)">1</div><div class="bm-opt" onclick="setK3BetBase(10)">10</div><div class="bm-opt" onclick="setK3BetBase(100)">100</div><div class="bm-opt" onclick="setK3BetBase(1000)">1000</div>
+                    </div>
+                </div>
+                <div class="bm-row"><span>Quantity</span>
+                    <div class="qty-box"><button id="k3BtnMinus" onclick="changeK3BetQty(-1)">-</button><input type="number" id="k3BetQtyInput" value="1" readonly><button id="k3BtnPlus" onclick="changeK3BetQty(1)">+</button></div>
+                </div>
+                <div class="bm-row" style="justify-content: flex-end; margin-top: 20px;">
+                    <div class="bm-opts" id="k3MultiOptions">
+                        <div class="bm-opt active" onclick="setK3BetMulti(1)">X1</div><div class="bm-opt" onclick="setK3BetMulti(5)">X5</div><div class="bm-opt" onclick="setK3BetMulti(10)">X10</div><div class="bm-opt" onclick="setK3BetMulti(20)">X20</div><div class="bm-opt" onclick="setK3BetMulti(50)">X50</div><div class="bm-opt" onclick="setK3BetMulti(100)">X100</div>
+                    </div>
+                </div>
+                
+                <div class="bm-footer">
+                    <button class="bm-btn-cancel" onclick="closeK3BetModal()">Cancel</button>
+                    <button class="bm-btn-confirm" id="btnK3ConfirmBet" onclick="confirmK3Bet()">Total amount ₹1.00</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
