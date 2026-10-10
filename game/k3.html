@@ -18,21 +18,31 @@
         .how-to-btn-k3 { border: 1px solid var(--primary); color: var(--primary); border-radius: 20px; padding: 3px 12px; font-size: 11px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-weight: 600; }
         .k3-digit-timer { background: #f4f5f8; color: var(--primary); border-radius: 4px; width: 22px; height: 26px; display: flex; justify-content: center; align-items: center; font-weight: 900; font-size: 15px; border: 1px solid var(--border); }
         
-        /* Dice Container Green Background */
-        .dice-container { background: #00b86b; border-radius: 12px; padding: 10px; display: flex; justify-content: center; gap: 10px; position: relative; }
-        .dice-container::before, .dice-container::after { content: ''; position: absolute; top: 50%; transform: translateY(-50%); border-top: 10px solid transparent; border-bottom: 10px solid transparent; }
-        .dice-container::before { left: -5px; border-right: 10px solid #00b86b; }
-        .dice-container::after { right: -5px; border-left: 10px solid #00b86b; }
+        /* BIG DICE CSS (Fixed Size & Layout) */
+        .dice-container { background: #00b86b; border-radius: 12px; padding: 15px; display: flex; justify-content: center; gap: 12px; position: relative; }
+        .dice-container::before, .dice-container::after { content: ''; position: absolute; top: 50%; transform: translateY(-50%); border-top: 12px solid transparent; border-bottom: 12px solid transparent; z-index: 2; }
+        .dice-container::before { left: -2px; border-right: 12px solid #00b86b; }
+        .dice-container::after { right: -2px; border-left: 12px solid #00b86b; }
         
-        .dice-slot { width: 80px; height: 80px; background: #222; border-radius: 8px; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 4px 8px rgba(0,0,0,0.5); position: relative; }
+        .dice-slot { width: 95px; height: 95px; background: #1a1a1a; border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 6px 15px rgba(0,0,0,0.8); }
         
-        /* CSS Dice (Red with White dots) */
-        .k3-dice { width: 55px; height: 55px; background: #ff4757; border-radius: 10px; position: relative; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.3), 0 5px 10px rgba(0,0,0,0.4); }
-        .k3-dot { width: 10px; height: 10px; background: white; border-radius: 50%; position: absolute; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3); }
-        /* Dice 4 Dots */
-        .d4 .dot1 { top: 10px; left: 10px; } .d4 .dot2 { top: 10px; right: 10px; } .d4 .dot3 { bottom: 10px; left: 10px; } .d4 .dot4 { bottom: 10px; right: 10px; }
-        /* Dice 6 Dots */
-        .d6 .dot1 { top: 8px; left: 10px; } .d6 .dot2 { top: 8px; right: 10px; } .d6 .dot3 { top: 22.5px; left: 10px; } .d6 .dot4 { top: 22.5px; right: 10px; } .d6 .dot5 { bottom: 8px; left: 10px; } .d6 .dot6 { bottom: 8px; right: 10px; }
+        .k3-dice { width: 72px; height: 72px; background: linear-gradient(135deg, #ff4757, #ff3b5c); border-radius: 12px; position: relative; box-shadow: inset -2px -4px 6px rgba(0,0,0,0.3), 0 5px 12px rgba(0,0,0,0.5); }
+        .k3-dot { width: 15px; height: 15px; background: #fffdf2; border-radius: 50%; position: absolute; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.4); }
+        
+        /* Smart Dot Positions for JS */
+        .dot-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .dot-tl { top: 12px; left: 12px; }
+        .dot-tr { top: 12px; right: 12px; }
+        .dot-bl { bottom: 12px; left: 12px; }
+        .dot-br { bottom: 12px; right: 12px; }
+        .dot-ml { top: 50%; left: 12px; transform: translateY(-50%); }
+        .dot-mr { top: 50%; right: 12px; transform: translateY(-50%); }
+
+        /* Lock Overlay Animation */
+        .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); border-radius: 12px; display: none; justify-content: center; align-items: center; z-index: 20; }
+        .bet-lock-overlay.active { display: flex; }
+        .lock-digit { font-size: 70px; font-weight: 900; color: #ff4757; text-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: monospace; animation: pulseLock 1s infinite; margin: 0 5px; }
+        @keyframes pulseLock { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
         /* Bet Types Sub-Tabs */
         .k3-sub-tabs { display: flex; background: #f4f5f8; margin-top: 15px; border-radius: 8px; overflow: hidden; }
@@ -49,7 +59,7 @@
         .k3-green { background: linear-gradient(135deg, #2ecc71, #18b660); }
         .k3-multi-text { font-size: 11px; color: var(--text-muted); font-weight: bold; }
 
-        /* Bottom 4 Buttons (Big, Small, Odd, Even) */
+        /* Bottom 4 Buttons */
         .k3-action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
         .k3-act-btn { border-radius: 8px; padding: 12px 5px; color: white; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.15); border: none; transition: 0.2s; }
         .k3-act-btn:active { transform: scale(0.95); }
@@ -71,6 +81,16 @@
         /* History Table Specifics */
         .k3-hist-dice { width: 16px; height: 16px; background: #ff4757; border-radius: 3px; display: inline-flex; margin: 0 1px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .k3-hist-dice::after { content: ''; width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        /* MODALS CSS (HOW TO PLAY FIX) */
+        .htp-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .htp-modal-overlay.active { display: flex; }
+        .htp-modal { background: white; border-radius: 20px; width: 100%; max-width: 400px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .htp-header { background: var(--primary-grad); color: white; padding: 15px 20px; font-weight: bold; font-size: 18px; text-align: center; }
+        .htp-body { padding: 20px; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.5; }
+        .htp-body p { margin-bottom: 10px; }
+        
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
     </style>
 
@@ -101,13 +121,6 @@
                 </div>
             </div>
 
-            <!-- Marquee Announcement Bar -->
-            <div style="background: white; margin: 0 15px 15px 15px; border-radius: 20px; padding: 8px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                <i class="fa-solid fa-volume-high" style="color: #f39c12;"></i>
-                <marquee style="flex: 1; font-size: 12px; color: var(--text); font-weight: 600;" scrollamount="4">Deposit status — verified instantly, by you.</marquee>
-                <div style="background: #ff4757; color: white; font-size: 11px; padding: 4px 12px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 3px;"><i class="fa-solid fa-fire"></i> Detail</div>
-            </div>
-
             <!-- Time Tabs -->
             <div class="k3-time-tabs">
                 <div class="k3-tab active" id="k3Tab1min" onclick="switchK3Tab('1min')"><i class="fa-regular fa-clock"></i>K3 Lotre<br>1Min</div>
@@ -136,25 +149,19 @@
                     </div>
                 </div>
 
-                <!-- Dice Rolling Area -->
+                <!-- NEW BIG DICE ROLLING AREA -->
                 <div class="dice-container">
                     <!-- Lock Overlay -->
-                    <div class="bet-lock-overlay" id="k3LockOverlay" style="border-radius: 12px; z-index: 10;"><div class="lock-digit" style="font-size:50px; padding:10px;">0</div><div class="lock-digit" id="k3LockDigitSec" style="font-size:50px; padding:10px;">5</div></div>
+                    <div class="bet-lock-overlay" id="k3LockOverlay"><div class="lock-digit" style="font-size:70px;">0</div><div class="lock-digit" id="k3LockDigitSec">5</div></div>
                     
                     <div class="dice-slot">
-                        <div class="k3-dice d6" id="dice1">
-                            <div class="k3-dot dot1"></div><div class="k3-dot dot2"></div><div class="k3-dot dot3"></div><div class="k3-dot dot4"></div><div class="k3-dot dot5"></div><div class="k3-dot dot6"></div>
-                        </div>
+                        <div class="k3-dice d4" id="dice1"></div>
                     </div>
                     <div class="dice-slot">
-                        <div class="k3-dice d6" id="dice2">
-                            <div class="k3-dot dot1"></div><div class="k3-dot dot2"></div><div class="k3-dot dot3"></div><div class="k3-dot dot4"></div><div class="k3-dot dot5"></div><div class="k3-dot dot6"></div>
-                        </div>
+                        <div class="k3-dice d5" id="dice2"></div>
                     </div>
                     <div class="dice-slot">
-                        <div class="k3-dice d4" id="dice3">
-                            <div class="k3-dot dot1"></div><div class="k3-dot dot2"></div><div class="k3-dot dot3"></div><div class="k3-dot dot4"></div>
-                        </div>
+                        <div class="k3-dice d6" id="dice3"></div>
                     </div>
                 </div>
 
@@ -235,94 +242,77 @@
             <div class="hist-pane" id="k3PaneMineHist">
                 <div id="k3MineList"></div>
             </div>
-
-            <!-- K3 HOW TO PLAY MODAL -->
-            <div class="htp-modal-overlay" id="k3HtpModalOverlay" onclick="closeK3HowToPlay()">
-                <div class="htp-modal" onclick="event.stopPropagation()">
-                    <div class="htp-header"><i class="fa-solid fa-list-ul"></i> How to play</div>
-                    <div class="htp-body">
-                        <p style="margin-bottom:10px;">Fast 3 open with 3 numbers in each period as the opening number, the opening numbers are 111 to 666 Natural number, No zeros in the array And the opening numbers are in no particular order, Fast 3 is to guess all or part of the 3 winning numbers.</p>
-                        
-                        <p><b>Sum Value</b></p>
-                        <p style="margin-bottom:10px;">Place a bet on the sum of three numbers.</p>
-                        
-                        <p><b>Choose 3 same number all</b></p>
-                        <p style="margin-bottom:10px;">For all the same three numbers (111, 222, ... 666) Make an all-inclusive bet.</p>
-                        
-                        <p><b>Choose 3 same number single</b></p>
-                        <p style="margin-bottom:10px;">From all the same three numbers (111, ... 666) Choose a group of numbers in any of them to place bets.</p>
-                        
-                        <p><b>Choose 2 Same Multiple</b></p>
-                        <p style="margin-bottom:10px;">Place a bet on two designated same numbers and an arbitrary number among the three numbers.</p>
-                        
-                        <p><b>Choose 2 Same Single</b></p>
-                        <p style="margin-bottom:10px;">Place a bet on two designated same numbers and a designated different number among the three numbers (except for the three same numbers).</p>
-                        
-                        <p><b>3 numbers different</b></p>
-                        <p style="margin-bottom:10px;">Place a bet on three different numbers.</p>
-                        
-                        <p><b>2 numbers different</b></p>
-                        <p style="margin-bottom:10px;">Place a bet on two designated different numbers and an arbitrary number among the three numbers.</p>
-
-                        <p><b>Choose 3 Consecutive number all</b></p>
-                        <p style="margin-bottom:10px;">For all three consecutive numbers (123, 234, 345, 456) Place a bet.</p>
-                    </div>
-                    <div style="padding:15px; text-align:center;">
-                        <button style="background:var(--primary-grad); color:white; border:none; padding:10px 40px; border-radius:30px; font-weight:bold; font-size:16px; cursor:pointer; width:80%;" onclick="closeK3HowToPlay()">Close</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- K3 BET MODAL -->
-            <div class="bet-modal-overlay" id="k3BetModalOverlay">
-                <div class="bet-modal">
-                    <div class="bet-modal-header" id="k3BetModalHeader">
-                        <h3 id="k3BetModalTitle">K3 Lotre Bet</h3>
-                        <div class="choice-pill" id="k3BetModalChoice" style="background:white; color:black; display:inline-block; padding:8px 30px; border-radius:30px; margin-top:15px; font-weight:bold;">Select</div>
-                    </div>
-                    <div class="bet-modal-body">
-                        <div class="bet-row"><span style="color:var(--text-muted);">Balance</span>
-                            <div class="bet-options" id="k3BaseOptions">
-                                <div class="bet-opt active" onclick="setK3BetBase(1)">1</div><div class="bet-opt" onclick="setK3BetBase(10)">10</div><div class="bet-opt" onclick="setK3BetBase(100)">100</div><div class="bet-opt" onclick="setK3BetBase(1000)">1000</div>
-                            </div>
-                        </div>
-                        <div class="bet-row"><span style="color:var(--text-muted);">Quantity</span>
-                            <div class="qty-control"><button onclick="changeK3BetQty(-1)">-</button><input type="number" id="k3BetQtyInput" value="1" readonly><button onclick="changeK3BetQty(1)">+</button></div>
-                        </div>
-                        <div class="bet-row" style="margin-top: 20px;">
-                            <div class="bet-options" id="k3MultiOptions" style="flex-wrap:wrap; justify-content:flex-end; width:100%;">
-                                <div class="bet-opt active" onclick="setK3BetMulti(1)">X1</div><div class="bet-opt" onclick="setK3BetMulti(5)">X5</div><div class="bet-opt" onclick="setK3BetMulti(10)">X10</div><div class="bet-opt" onclick="setK3BetMulti(20)">X20</div><div class="bet-opt" onclick="setK3BetMulti(50)">X100</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bet-modal-footer">
-                        <button class="btn-cancel" onclick="closeK3BetModal()">Cancel</button>
-                        <button class="btn-confirm" id="btnK3ConfirmBet" onclick="confirmK3Bet()">Total amount ₹1.00</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- K3 RESULT MODAL -->
-            <div class="result-modal-overlay" id="k3ResultModalOverlay">
-                <div class="result-card" id="k3ResultCard">
-                    <div class="result-badge" id="k3ResultBadge"><i class="fa-solid fa-trophy"></i></div>
-                    <h2 id="k3ResultTitle" style="margin-top:15px;">Congratulations</h2>
-                    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:12px; margin:15px 0;">
-                        <p style="font-size:13px; margin-bottom:10px;">Lottery results</p>
-                        <div style="display:flex; justify-content:center; gap:8px;" id="k3ResDiceBox">
-                            <!-- Dice will be injected here -->
-                        </div>
-                    </div>
-                    <div style="background:white; color:#f95959; border-radius:10px; padding:15px; margin:15px 0;" id="k3ResBonusSlipBox">
-                        <p id="k3ResultBonusLabel">Bonus</p>
-                        <h3 id="k3ResultBonusAmt" style="font-size:26px; margin:5px 0;">₹0.00</h3>
-                        <p style="font-size:11px; color:#888;" id="k3ResultPeriodText">Period: K3...</p>
-                    </div>
-                    <p style="font-size:12px; opacity:0.8;">3 seconds auto close</p>
-                </div>
-                <div id="k3CustomResultCloseBtn" class="result-close-btn" onclick="closeK3ResultModal()"><i class="fa-solid fa-xmark"></i></div>
-            </div>
-
+            
         </div>
     </div>
+
+    <!-- K3 HOW TO PLAY MODAL (PROPERLY HIDDEN NOW) -->
+    <div class="htp-modal-overlay" id="k3HtpModalOverlay" onclick="closeK3HowToPlay()">
+        <div class="htp-modal" onclick="event.stopPropagation()">
+            <div class="htp-header"><i class="fa-solid fa-list-ul"></i> How to play</div>
+            <div class="htp-body">
+                <p style="margin-bottom:10px;">Fast 3 open with 3 numbers in each period as the opening number, the opening numbers are 111 to 666 Natural number, No zeros in the array And the opening numbers are in no particular order, Fast 3 is to guess all or part of the 3 winning numbers.</p>
+                <p><b>Sum Value</b></p><p style="margin-bottom:10px;">Place a bet on the sum of three numbers.</p>
+                <p><b>Choose 3 same number all</b></p><p style="margin-bottom:10px;">For all the same three numbers (111, 222, ... 666) Make an all-inclusive bet.</p>
+                <p><b>Choose 3 same number single</b></p><p style="margin-bottom:10px;">From all the same three numbers (111, ... 666) Choose a group of numbers in any of them to place bets.</p>
+                <p><b>Choose 2 Same Multiple</b></p><p style="margin-bottom:10px;">Place a bet on two designated same numbers and an arbitrary number among the three numbers.</p>
+                <p><b>Choose 2 Same Single</b></p><p style="margin-bottom:10px;">Place a bet on two designated same numbers and a designated different number among the three numbers (except for the three same numbers).</p>
+                <p><b>3 numbers different</b></p><p style="margin-bottom:10px;">Place a bet on three different numbers.</p>
+                <p><b>2 numbers different</b></p><p style="margin-bottom:10px;">Place a bet on two designated different numbers and an arbitrary number among the three numbers.</p>
+                <p><b>Choose 3 Consecutive number all</b></p><p style="margin-bottom:10px;">For all three consecutive numbers (123, 234, 345, 456) Place a bet.</p>
+            </div>
+            <div style="padding:15px; text-align:center; border-top: 1px solid var(--border);">
+                <button style="background:var(--primary-grad); color:white; border:none; padding:10px 40px; border-radius:30px; font-weight:bold; font-size:16px; cursor:pointer; width:80%;" onclick="closeK3HowToPlay()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- K3 BET MODAL -->
+    <div class="bet-modal-overlay" id="k3BetModalOverlay">
+        <div class="bet-modal">
+            <div class="bet-modal-header" id="k3BetModalHeader">
+                <h3 id="k3BetModalTitle">K3 Lotre Bet</h3>
+                <div class="choice-pill" id="k3BetModalChoice" style="background:white; color:black; display:inline-block; padding:8px 30px; border-radius:30px; margin-top:15px; font-weight:bold;">Select</div>
+            </div>
+            <div class="bet-modal-body">
+                <div class="bet-row"><span style="color:var(--text-muted);">Balance</span>
+                    <div class="bet-options" id="k3BaseOptions">
+                        <div class="bet-opt active" onclick="setK3BetBase(1)">1</div><div class="bet-opt" onclick="setK3BetBase(10)">10</div><div class="bet-opt" onclick="setK3BetBase(100)">100</div><div class="bet-opt" onclick="setK3BetBase(1000)">1000</div>
+                    </div>
+                </div>
+                <div class="bet-row"><span style="color:var(--text-muted);">Quantity</span>
+                    <div class="qty-control"><button onclick="changeK3BetQty(-1)">-</button><input type="number" id="k3BetQtyInput" value="1" readonly><button onclick="changeK3BetQty(1)">+</button></div>
+                </div>
+                <div class="bet-row" style="margin-top: 20px;">
+                    <div class="bet-options" id="k3MultiOptions" style="flex-wrap:wrap; justify-content:flex-end; width:100%;">
+                        <div class="bet-opt active" onclick="setK3BetMulti(1)">X1</div><div class="bet-opt" onclick="setK3BetMulti(5)">X5</div><div class="bet-opt" onclick="setK3BetMulti(10)">X10</div><div class="bet-opt" onclick="setK3BetMulti(20)">X20</div><div class="bet-opt" onclick="setK3BetMulti(50)">X100</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bet-modal-footer">
+                <button class="btn-cancel" onclick="closeK3BetModal()">Cancel</button>
+                <button class="btn-confirm" id="btnK3ConfirmBet" onclick="confirmK3Bet()">Total amount ₹1.00</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- K3 RESULT MODAL -->
+    <div class="result-modal-overlay" id="k3ResultModalOverlay">
+        <div class="result-card" id="k3ResultCard">
+            <div class="result-badge" id="k3ResultBadge"><i class="fa-solid fa-trophy"></i></div>
+            <h2 id="k3ResultTitle" style="margin-top:15px;">Congratulations</h2>
+            <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:12px; margin:15px 0;">
+                <p style="font-size:13px; margin-bottom:10px;">Lottery results</p>
+                <div style="display:flex; justify-content:center; gap:8px;" id="k3ResDiceBox"></div>
+            </div>
+            <div style="background:white; color:#f95959; border-radius:10px; padding:15px; margin:15px 0;" id="k3ResBonusSlipBox">
+                <p id="k3ResultBonusLabel">Bonus</p>
+                <h3 id="k3ResultBonusAmt" style="font-size:26px; margin:5px 0;">₹0.00</h3>
+                <p style="font-size:11px; color:#888;" id="k3ResultPeriodText">Period: K3...</p>
+            </div>
+            <p style="font-size:12px; opacity:0.8;">3 seconds auto close</p>
+        </div>
+        <div id="k3CustomResultCloseBtn" class="result-close-btn" onclick="closeK3ResultModal()"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+
 </div>
