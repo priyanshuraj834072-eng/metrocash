@@ -2,58 +2,39 @@
 <div id="k3Screen" class="screen active" style="padding-top: 0; background: var(--bg); min-height: 100vh; padding-bottom: 0px !important;">
 
     <style>
+        /* 🔵 K3 BASIC THEME (Metro Cash Blue) */
         .k3-bg-header { position: absolute; top: 0; left: 0; width: 100%; height: 180px; background: var(--primary-grad); border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; z-index: 1; }
         .k3-time-tabs { display: flex; background: white; margin: 10px 15px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .k3-tab { flex: 1; text-align: center; padding: 12px 5px; cursor: pointer; color: var(--text-muted); font-size: 11px; font-weight: bold; border-right: 1px solid var(--border); transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .k3-tab { flex: 1; text-align: center; padding: 12px 5px; cursor: pointer; color: var(--text-muted); font-size: 11px; font-weight: bold; border-right: 1px solid var(--border); transition: 0.3s; }
         .k3-tab:last-child { border-right: none; }
-        .k3-tab i { font-size: 20px; }
         .k3-tab.active { background: linear-gradient(180deg, rgba(37, 117, 252, 0.15) 0%, rgba(37, 117, 252, 0.02) 100%); color: var(--primary); border-bottom: 3px solid var(--primary); }
-
+        
         .k3-game-box { background: white; margin: 15px; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .k3-game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .how-to-btn-k3 { border: 1px solid var(--primary); color: var(--primary); border-radius: 20px; padding: 4px 15px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-weight: bold; background: rgba(37, 117, 252, 0.05); }
         .k3-digit-timer { background: #f4f5f8; color: var(--primary); border-radius: 4px; width: 22px; height: 26px; display: flex; justify-content: center; align-items: center; font-weight: 900; font-size: 15px; border: 1px solid var(--border); }
-        
-        /* 🔵 BLUE DICE CONTAINER (Metro Cash Theme) */
-        .dice-container { background: linear-gradient(135deg, #0984e3, #00cec9); border-radius: 12px; padding: 25px 15px; display: flex; justify-content: center; gap: 20px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.2); perspective: 800px; margin-bottom: 15px; border: 4px solid #74b9ff; }
-        
-        /* 🎲 REAL 3D CSS CUBE DICE */
-        .scene { width: 65px; height: 65px; perspective: 600px; margin: 0; }
-        .cube { width: 65px; height: 65px; position: relative; transform-style: preserve-3d; transform: rotateX(-15deg) rotateY(25deg); transition: transform 0.5s ease-out; }
-        .cube.spinning { animation: fastSpin 0.3s infinite linear; }
-        @keyframes fastSpin { 0% { transform: rotateX(-15deg) rotateY(25deg); } 100% { transform: rotateX(345deg) rotateY(385deg); } }
-        .cube-face { position: absolute; width: 65px; height: 65px; background: linear-gradient(135deg, #ff4757, #d63031); border-radius: 10px; border: 1px solid #b71c1c; box-shadow: inset 0 0 15px rgba(0,0,0,0.4); }
-        .cube-face-front  { transform: rotateY(  0deg) translateZ(32px); }
-        .cube-face-right  { transform: rotateY( 90deg) translateZ(32px); background: linear-gradient(135deg, #e84118, #c23616); }
-        .cube-face-top    { transform: rotateX( 90deg) translateZ(32px); background: linear-gradient(135deg, #ff6b81, #ff4757); }
-        
-        /* Dots Styling */
-        .k3-dot { width: 14px; height: 14px; background: #fffdf2; border-radius: 50%; position: absolute; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); }
-        .dot-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .dot-tl { top: 10px; left: 10px; } .dot-tr { top: 10px; right: 10px; }
-        .dot-bl { bottom: 10px; left: 10px; } .dot-br { bottom: 10px; right: 10px; }
-        .dot-ml { top: 50%; left: 10px; transform: translateY(-50%); } .dot-mr { top: 50%; right: 10px; transform: translateY(-50%); }
-        .dot-big-yellow { width: 28px; height: 28px; background: radial-gradient(circle, #ffeb3b, #fbc02d); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3); }
 
-        /* 🔒 LOCK OVERLAY (Only covers Betting Area) */
+        /* 🎲 PREMIUM 2D GLOSSY DICE CONTAINER */
+        .dice-container { background: linear-gradient(135deg, #0984e3, #00cec9); border-radius: 12px; padding: 25px 15px; display: flex; justify-content: center; gap: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.2); margin-bottom: 15px; border: 4px solid #74b9ff; }
+        .dice-2d { width: 70px; height: 70px; background: linear-gradient(135deg, #ff4757, #d63031); border-radius: 15px; position: relative; box-shadow: inset 2px 2px 10px rgba(255,255,255,0.3), inset -3px -3px 10px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.3); border: 1px solid #b71c1c; }
+        .dice-2d.shaking { animation: diceShake 0.15s infinite; }
+        @keyframes diceShake { 0% { transform: translate(1px, 1px) rotate(0deg); } 25% { transform: translate(-2px, -1px) rotate(-3deg); } 50% { transform: translate(1px, 2px) rotate(3deg); } 75% { transform: translate(-1px, -1px) rotate(-1deg); } 100% { transform: translate(1px, -2px) rotate(2deg); } }
+
+        /* 🔒 LOCK OVERLAY (Wingo Style - Covers only Betting Area) */
         .k3-betting-area { position: relative; border-radius: 12px; overflow: hidden; padding-top: 5px; }
-        .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); display: none; justify-content: center; align-items: center; z-index: 20; backdrop-filter: blur(3px); }
+        .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.6); display: none; justify-content: center; align-items: center; z-index: 20; backdrop-filter: blur(4px); }
         .bet-lock-overlay.active { display: flex; }
-        .lock-box { background: var(--primary-grad); color: white; padding: 15px 30px; border-radius: 15px; font-size: 55px; font-weight: 900; box-shadow: 0 10px 25px rgba(37, 117, 252, 0.4); display: flex; gap: 10px; animation: popLock 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .lock-digit { font-family: monospace; }
+        .lock-box { display: flex; gap: 10px; animation: popLock 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .lock-digit { background: linear-gradient(135deg, #0984e3, #6c5ce7); color: white; width: 60px; height: 80px; display: flex; justify-content: center; align-items: center; border-radius: 12px; font-size: 55px; font-weight: 900; box-shadow: 0 10px 25px rgba(37, 117, 252, 0.4); font-family: monospace; }
         @keyframes popLock { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* MULTI TABS UI */
+        /* 🔘 TABS & BUTTONS UI */
         .k3-sub-tabs { display: flex; background: #f4f5f8; border-radius: 8px; overflow: hidden; margin-bottom: 15px; }
         .k3-sub-tab { flex: 1; text-align: center; padding: 10px 5px; font-size: 11px; font-weight: bold; color: gray; cursor: pointer; transition: 0.2s; border-right: 1px solid #e0e0e0; }
-        .k3-sub-tab:last-child { border-right: none; }
         .k3-sub-tab.active { background: var(--primary-grad); color: white; border-right: none; }
-
-        .k3-bet-panel { display: none; }
-        .k3-bet-panel.active { display: block; animation: fadeIn 0.3s; }
+        .k3-bet-panel { display: none; } .k3-bet-panel.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* COIN BUTTONS */
         .k3-bet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px 10px; padding-bottom: 10px; }
         .k3-bet-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
         .k3-circle { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: 900; font-size: 20px; border: 2px solid white; box-shadow: inset 0 -3px 5px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.15); transition: 0.2s; }
@@ -64,31 +45,26 @@
         .k3-action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
         .k3-act-btn { border-radius: 8px; padding: 12px 5px; color: white; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.15); border: none; transition: 0.2s; }
         .k3-act-btn:active { transform: scale(0.95); }
-        .k3-act-title { font-weight: 900; font-size: 14px; margin-bottom: 2px; }
-        .k3-act-sub { font-size: 10px; opacity: 0.9; font-weight: bold; }
+        .k3-act-title { font-weight: 900; font-size: 14px; margin-bottom: 2px; } .k3-act-sub { font-size: 10px; opacity: 0.9; font-weight: bold; }
         .k3-btn-yellow { background: linear-gradient(135deg, #ffc107, #ff9800); } .k3-btn-blue { background: linear-gradient(135deg, #4facfe, #00f2fe); }
         .k3-btn-red { background: linear-gradient(135deg, #ff6b6b, #ff4757); } .k3-btn-green { background: linear-gradient(135deg, #2ecc71, #18b660); }
 
-        /* SPECIAL TAB BUTTONS */
         .k3-pill-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 10px; }
-        .k3-pill-btn { background: #d591ff; color: white; border-radius: 6px; padding: 10px 0; text-align: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; }
-        .k3-pill-btn:active { transform: scale(0.9); }
-        .k3-pill-btn.red { background: #ff7675; } .k3-pill-btn.green { background: #55efc4; }
-        .k3-wide-btn { background: #ff7675; color: white; width: 100%; border-radius: 8px; padding: 12px; text-align: center; font-weight: bold; font-size: 14px; margin-top: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; }
+        .k3-pill-btn { background: #d591ff; color: white; border-radius: 6px; padding: 10px 0; text-align: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; }
+        .k3-pill-btn:active { transform: scale(0.9); } .k3-pill-btn.red { background: #ff7675; } .k3-pill-btn.green { background: #55efc4; }
+        .k3-wide-btn { background: #ff7675; color: white; width: 100%; border-radius: 8px; padding: 12px; text-align: center; font-weight: bold; font-size: 14px; margin-top: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; }
         .k3-wide-btn:active { transform: scale(0.95); }
-        .k3-section-title { font-size: 11px; color: var(--text); font-weight: bold; margin-top: 15px; display: flex; align-items: center; gap: 5px; }
-        .k3-section-title i { color: var(--primary); }
+        .k3-section-title { font-size: 11px; color: var(--text); font-weight: bold; margin-top: 15px; display: flex; align-items: center; gap: 5px; } .k3-section-title i { color: var(--primary); }
 
-        /* BLUE THEME HISTORY NAVIGATION */
+        /* 📋 HISTORY TABS & TABLES (Blue Theme) */
         .hist-nav { margin: 15px; display: flex; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .hist-btn { flex: 1; padding: 12px 0; font-size: 12px; font-weight: bold; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
         .hist-btn.active { background: var(--primary-grad) !important; color: white !important; box-shadow: 0 2px 8px rgba(37, 117, 252, 0.4) !important; }
         
-        /* STRAIGHT TABLE LAYOUT */
         .table-header { display: flex; background: var(--primary-grad); color: white; padding: 12px 10px; font-size: 12px; font-weight: bold; border-radius: 8px 8px 0 0; margin: 0 15px; }
         .table-row { display: flex; background: white; padding: 12px 10px; font-size: 12px; align-items: center; border-bottom: 1px solid var(--border); margin: 0 15px; color: var(--text); font-weight: 500; }
         
-        /* MINI HISTORY DICE */
+        /* 🎲 MINI HISTORY DICE */
         .h-dice-wrap { display: flex; gap: 3px; justify-content: center; align-items: center; }
         .h-dice { width: 18px; height: 18px; background: #ff4757; border-radius: 4px; position: relative; box-shadow: inset -1px -1px 3px rgba(0,0,0,0.3); }
         .hd-dot { width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; }
@@ -99,33 +75,32 @@
         .hd-ml { top: 50%; left: 3px; transform: translateY(-50%); } .hd-mr { top: 50%; right: 3px; transform: translateY(-50%); }
 
         /* =======================================================
-           MODALS (100% FIXED TO VIEWPORT - NO SCROLL ISSUES)
+           MODALS (100% FIXED TO VIEWPORT - Premium Wingo Style)
            ======================================================= */
-        .htp-modal-overlay { 
-            position: fixed !important; top: 0; left: 0; right: 0; bottom: 0; 
-            width: 100vw; height: 100vh; background: rgba(0,0,0,0.6) !important; 
-            z-index: 9999999 !important; display: none; justify-content: center; align-items: center; 
+        #k3Screen .htp-modal-overlay, #k3Screen .bet-modal-overlay { 
+            position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; 
+            width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.6) !important; 
+            z-index: 9999999 !important; display: none; 
         }
-        .htp-modal-overlay.active { display: flex; }
+        #k3Screen .htp-modal-overlay.active { display: flex !important; justify-content: center; align-items: center; }
+        #k3Screen .bet-modal-overlay.active { display: flex !important; flex-direction: column; justify-content: flex-end; align-items: center; }
         
-        /* Premium Wingo Style HTP Modal */
-        .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; overflow: hidden; display: flex; flex-direction: column; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .htp-header { background: var(--primary-grad); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; text-align: center; }
-        .htp-body { padding: 20px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.6; }
-        .htp-body b { color: var(--primary); }
+        /* How to Play Modal */
+        #k3Screen .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; overflow: hidden; display: flex; flex-direction: column; animation: popIn 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #k3Screen .htp-header { background: var(--primary-grad); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; text-align: center; }
+        #k3Screen .htp-body { padding: 20px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.6; }
+        #k3Screen .htp-body b { color: var(--primary); }
 
-        .bet-modal-overlay { 
-            position: fixed !important; top: 0; left: 0; right: 0; bottom: 0; 
-            width: 100vw; height: 100vh; background: rgba(0,0,0,0.6) !important; 
-            z-index: 9999999 !important; display: none; flex-direction: column; 
-            justify-content: flex-end; align-items: center; 
-        }
-        .bet-modal-overlay.active { display: flex; }
-        
-        .bet-modal { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 500px; padding: 20px; padding-bottom: 30px; animation: slideUp 0.3s ease-out; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
+        /* VIP Bet Modal (Wingo Header Style) */
+        #k3Screen .bet-modal { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 500px; animation: slideUp 0.3s ease-out; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); overflow: hidden; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .bm-title { font-size: 16px; font-weight: bold; color: var(--text); margin-bottom: 15px; text-align: center; }
-        .bm-selected { background: #d591ff; color: white; padding: 5px 15px; border-radius: 5px; display: inline-block; font-weight: bold; margin-bottom: 15px; }
+        
+        /* EXACT WINGO STYLE MODAL HEADER */
+        .bm-top-header { background: #ff4757; color: white; padding: 20px; text-align: center; transition: background 0.3s; }
+        .bm-title-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .bm-select-pill { background: white; color: black; padding: 8px 30px; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        .bm-body { padding: 20px; padding-bottom: 30px; }
         .bm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 13px; color: gray; }
         .bm-opts { display: flex; gap: 5px; }
         .bm-opt { background: #f4f5f8; color: var(--text); padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -135,7 +110,7 @@
         .qty-box input { width: 50px; text-align: center; border: none; font-weight: bold; outline: none; }
         .bm-footer { display: flex; margin-top: 20px; border-radius: 30px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .bm-btn-cancel { flex: 1; background: #333; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer; }
-        .bm-btn-confirm { flex: 2; background: #ff4757; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer; }
+        .bm-btn-confirm { flex: 2; background: #ff4757; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
     </style>
 
     <!-- FIXED HEADER -->
@@ -151,7 +126,7 @@
         <div class="k3-bg-header"></div>
         <div style="position: relative; z-index: 5;">
             
-            <!-- WALLET AREA (Redirect Removed, Only Spin) -->
+            <!-- WALLET AREA (Redirect Removed) -->
             <div style="background:white; margin:15px; border-radius:15px; padding:20px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
                 <h2 style="font-size:24px; display:flex; justify-content:center; align-items:center; gap:8px;">₹ <span id="k3Bal">0.00</span> <i class="fa-solid fa-rotate-right" style="font-size:16px; color:gray; cursor:pointer;" onclick="forceK3BalanceRefresh()"></i></h2>
                 <p style="color:var(--text-muted); font-size:13px; margin-top: 5px; font-weight: 600;"><i class="fa-solid fa-wallet" style="color: #ffc107;"></i> Wallet balance</p>
@@ -161,6 +136,7 @@
                 </div>
             </div>
 
+            <!-- TIME TABS -->
             <div class="k3-time-tabs">
                 <div class="k3-tab active" id="k3Tab1min" onclick="switchK3Tab('1min')"><i class="fa-regular fa-clock"></i>K3 Lotre<br>1Min</div>
                 <div class="k3-tab" id="k3Tab3min" onclick="switchK3Tab('3min')"><i class="fa-regular fa-clock"></i>K3 Lotre<br>3Min</div>
@@ -185,14 +161,14 @@
                     </div>
                 </div>
 
-                <!-- 3D CUBE DICE CONTAINER (No Lock Overlay Here) -->
+                <!-- NEW 2D GLOSSY DICE CONTAINER -->
                 <div class="dice-container">
-                    <div class="scene"><div class="cube" id="dice1"><div class="cube-face cube-face-front"></div><div class="cube-face cube-face-top"></div><div class="cube-face cube-face-right"></div></div></div>
-                    <div class="scene"><div class="cube" id="dice2"><div class="cube-face cube-face-front"></div><div class="cube-face cube-face-top"></div><div class="cube-face cube-face-right"></div></div></div>
-                    <div class="scene"><div class="cube" id="dice3"><div class="cube-face cube-face-front"></div><div class="cube-face cube-face-top"></div><div class="cube-face cube-face-right"></div></div></div>
+                    <div class="dice-2d" id="dice1"></div>
+                    <div class="dice-2d" id="dice2"></div>
+                    <div class="dice-2d" id="dice3"></div>
                 </div>
 
-                <!-- BETTING AREA (Protected by Lock Overlay) -->
+                <!-- BETTING AREA -->
                 <div class="k3-betting-area">
                     <div class="bet-lock-overlay" id="k3LockOverlay">
                         <div class="lock-box"><div class="lock-digit">0</div><div class="lock-digit" id="k3LockDigitSec">5</div></div>
@@ -275,14 +251,13 @@
 
             </div>
 
-            <!-- HISTORY TABS (BLUE THEME) -->
+            <!-- HISTORY TABS -->
             <div class="hist-nav">
                 <button class="hist-btn active" id="k3BtnGlobal" onclick="switchK3HistPanel('global')">Game history</button>
                 <button class="hist-btn" id="k3BtnChart" onclick="switchK3HistPanel('chart')">Chart</button>
                 <button class="hist-btn" id="k3BtnMine" onclick="switchK3HistPanel('mine')">My history</button>
             </div>
 
-            <!-- GLOBAL HISTORY (STRAIGHT TABLE WITH REAL DICE) -->
             <div class="hist-pane active" id="k3PaneGlobalHist">
                 <div class="table-header"><div style="flex:2;">Period</div><div style="flex:1; text-align:center;">Sum</div><div style="flex:1.5; text-align:right;">Results</div></div>
                 <div id="k3HistoryList"></div>
@@ -293,7 +268,6 @@
                 </div>
             </div>
 
-            <!-- CHART TAB WITH PAGINATION & TEXT LOGIC -->
             <div class="hist-pane" id="k3PaneChartHist">
                 <div class="table-header"><div style="flex:2;">Period</div><div style="flex:1.5; text-align:center;">Results</div><div style="flex:2.5; text-align:right;">Number</div></div>
                 <div id="k3ChartList"></div>
@@ -304,12 +278,11 @@
                 </div>
             </div>
             
-            <!-- MY HISTORY -->
             <div class="hist-pane" id="k3PaneMineHist"><div id="k3MineList"></div></div>
         </div>
     </div>
 
-    <!-- WINGO STYLE HOW TO PLAY MODAL (100% FIXED) -->
+    <!-- HOW TO PLAY MODAL -->
     <div class="htp-modal-overlay" id="k3HtpModalOverlay" onclick="closeK3HowToPlay()">
         <div class="htp-modal" onclick="event.stopPropagation()">
             <div class="htp-header"><i class="fa-solid fa-book"></i> How to play</div>
@@ -330,29 +303,34 @@
         </div>
     </div>
 
-    <!-- NEW VIP BET MODAL (100% FIXED BOTTOM SHEET) -->
-    <div class="bet-modal-overlay" id="k3BetModalOverlay">
+    <!-- VIP BET MODAL (Wingo Style) -->
+    <div class="bet-modal-overlay" id="k3BetModalOverlay" onclick="closeK3BetModal()">
         <div class="bet-modal" onclick="event.stopPropagation()">
-            <div class="bm-title" id="k3BetModalTitle">Total</div>
-            <div style="text-align:center;"><div class="bm-selected" id="k3BetModalChoice">Select</div></div>
             
-            <div class="bm-row"><span>Balance</span>
-                <div class="bm-opts" id="k3BaseOptions">
-                    <div class="bm-opt active" onclick="setK3BetBase(1)">1</div><div class="bm-opt" onclick="setK3BetBase(10)">10</div><div class="bm-opt" onclick="setK3BetBase(100)">100</div><div class="bm-opt" onclick="setK3BetBase(1000)">1000</div>
-                </div>
-            </div>
-            <div class="bm-row"><span>Quantity</span>
-                <div class="qty-box"><button onclick="changeK3BetQty(-1)">-</button><input type="number" id="k3BetQtyInput" value="1" readonly><button onclick="changeK3BetQty(1)">+</button></div>
-            </div>
-            <div class="bm-row" style="justify-content: flex-end; margin-top: 20px;">
-                <div class="bm-opts" id="k3MultiOptions">
-                    <div class="bm-opt active" onclick="setK3BetMulti(1)">X1</div><div class="bm-opt" onclick="setK3BetMulti(5)">X5</div><div class="bm-opt" onclick="setK3BetMulti(10)">X10</div><div class="bm-opt" onclick="setK3BetMulti(20)">X20</div><div class="bm-opt" onclick="setK3BetMulti(50)">X50</div><div class="bm-opt" onclick="setK3BetMulti(100)">X100</div>
-                </div>
+            <div class="bm-top-header" id="k3BetModalTopBg">
+                <div class="bm-title-text" id="k3BetModalTitle">WinGo Bet</div>
+                <div class="bm-select-pill" id="k3BetModalChoice">Select Green</div>
             </div>
             
-            <div class="bm-footer">
-                <button class="bm-btn-cancel" onclick="closeK3BetModal()">Cancel</button>
-                <button class="bm-btn-confirm" id="btnK3ConfirmBet" onclick="confirmK3Bet()">Total amount ₹1.00</button>
+            <div class="bm-body">
+                <div class="bm-row"><span>Balance</span>
+                    <div class="bm-opts" id="k3BaseOptions">
+                        <div class="bm-opt active" onclick="setK3BetBase(1)">1</div><div class="bm-opt" onclick="setK3BetBase(10)">10</div><div class="bm-opt" onclick="setK3BetBase(100)">100</div><div class="bm-opt" onclick="setK3BetBase(1000)">1000</div>
+                    </div>
+                </div>
+                <div class="bm-row"><span>Quantity</span>
+                    <div class="qty-box"><button onclick="changeK3BetQty(-1)">-</button><input type="number" id="k3BetQtyInput" value="1" readonly><button onclick="changeK3BetQty(1)">+</button></div>
+                </div>
+                <div class="bm-row" style="justify-content: flex-end; margin-top: 20px;">
+                    <div class="bm-opts" id="k3MultiOptions">
+                        <div class="bm-opt active" onclick="setK3BetMulti(1)">X1</div><div class="bm-opt" onclick="setK3BetMulti(5)">X5</div><div class="bm-opt" onclick="setK3BetMulti(10)">X10</div><div class="bm-opt" onclick="setK3BetMulti(20)">X20</div><div class="bm-opt" onclick="setK3BetMulti(50)">X50</div><div class="bm-opt" onclick="setK3BetMulti(100)">X100</div>
+                    </div>
+                </div>
+                
+                <div class="bm-footer">
+                    <button class="bm-btn-cancel" onclick="closeK3BetModal()">Cancel</button>
+                    <button class="bm-btn-confirm" id="btnK3ConfirmBet" onclick="confirmK3Bet()">Total amount ₹1.00</button>
+                </div>
             </div>
         </div>
     </div>
