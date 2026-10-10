@@ -1,11 +1,11 @@
-<!-- K3 GAME SCREEN (100% Scoped & Bug Free) -->
+<!-- K3 GAME SCREEN (100% Bug Free & Wingo Premium UI Replica) -->
 <div id="k3Screen" class="screen active" style="padding-top: 0; background: #f4f5f8; min-height: 100vh; padding-bottom: 70px !important;">
 
     <style>
-        /* CSS SCOPING: No leaks to main navigation */
+        /* CSS SCOPING: Prevents Main Navigation scroll bugs */
         #k3Screen * { box-sizing: border-box; }
         
-        /* EXACT RED THEME */
+        /* EXACT RED PREMIUM THEME */
         #k3Screen .k3-header-bg { position: absolute; top: 0; left: 0; width: 100%; height: 200px; background: linear-gradient(180deg, #ff3f3f, #ff1a1a); border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; z-index: 1; }
         
         #k3Screen .k3-wallet-box { background: white; margin: 15px; border-radius: 15px; padding: 20px; text-align: center; position: relative; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -28,23 +28,17 @@
         #k3Screen .how-to-btn-k3 { border: 1px solid #ff4757; color: #ff4757; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
         #k3Screen .k3-digit-timer { background: #f4f5f8; color: #18b660; border-radius: 4px; width: 20px; height: 24px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; border: 1px solid #ddd; }
 
-        /* GREEN DICE CONTAINER */
+        /* DARK GREEN DICE CONTAINER (With Pointers) */
         #k3Screen .dice-container { background: #008b5e; border-radius: 10px; padding: 15px; display: flex; justify-content: space-around; align-items: center; position: relative; margin-bottom: 15px; height: 110px; border: 2px solid #005c3d; }
         #k3Screen .dice-arrow-left { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 15px solid #00b87c; }
         #k3Screen .dice-arrow-right { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 15px solid #00b87c; }
         
-        /* REAL ROLLING DICE (2D) */
-        #k3Screen .dice-2d { width: 70px; height: 70px; background: #ff0000; border-radius: 12px; position: relative; box-shadow: inset -4px -4px 10px rgba(0,0,0,0.3), inset 2px 2px 5px rgba(255,255,255,0.4), 0 5px 10px rgba(0,0,0,0.5); }
+        /* EXACT 2D RED DICE (NO CHEAP 3D) */
+        #k3Screen .dice-2d { width: 70px; height: 70px; background: #ff0000; border-radius: 12px; position: relative; box-shadow: inset -4px -4px 10px rgba(0,0,0,0.3), inset 2px 2px 5px rgba(255,255,255,0.4), 0 5px 10px rgba(0,0,0,0.5); transition: 0.1s; }
         
-        /* FAST DICE ROLL ANIMATION */
-        #k3Screen .dice-2d.shaking { animation: diceRoll 0.25s linear infinite; }
-        @keyframes diceRoll {
-            0% { transform: scale(1) rotate(0deg); }
-            25% { transform: scale(0.8) rotate(90deg); background: #d63031; }
-            50% { transform: scale(1.1) rotate(180deg); }
-            75% { transform: scale(0.8) rotate(270deg); background: #d63031; }
-            100% { transform: scale(1) rotate(360deg); }
-        }
+        /* PREMIUM RAPID SHUFFLE ANIMATION (Not flat rotation) */
+        #k3Screen .dice-2d.shaking { animation: fastBlur 0.1s linear infinite; }
+        @keyframes fastBlur { 0% { transform: translateY(0); filter: blur(0px); } 50% { transform: translateY(-3px); filter: blur(2px); } 100% { transform: translateY(0); filter: blur(0px); } }
         
         #k3Screen .k3-dot { width: 14px; height: 14px; background: white; border-radius: 50%; position: absolute; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.4); }
         #k3Screen .dot-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
@@ -53,14 +47,15 @@
         #k3Screen .dot-ml { top: 50%; left: 10px; transform: translateY(-50%); } #k3Screen .dot-mr { top: 50%; right: 10px; transform: translateY(-50%); }
         #k3Screen .dot-big-yellow { width: 28px; height: 28px; background: #ffeb3b; }
 
-        /* WINGO LOCK UI */
+        /* WINGO EXACT LOCK UI */
         #k3Screen .k3-betting-area { position: relative; }
         #k3Screen .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); display: none; justify-content: center; align-items: center; z-index: 20; backdrop-filter: blur(4px); }
         #k3Screen .bet-lock-overlay.active { display: flex; }
         #k3Screen .lock-box { display: flex; gap: 15px; }
         #k3Screen .lock-digit { background: #ff4757; color: white; width: 70px; height: 90px; display: flex; justify-content: center; align-items: center; border-radius: 12px; font-size: 60px; font-weight: 900; box-shadow: 0 10px 25px rgba(255, 71, 87, 0.4); font-family: monospace; animation: popLock 0.3s ease; }
+        @keyframes popLock { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* SUB TABS & BUTTONS */
+        /* BET TABS & PILL BUTTONS */
         #k3Screen .k3-sub-tabs { display: flex; background: #f4f5f8; border-radius: 5px; margin-bottom: 15px; }
         #k3Screen .k3-sub-tab { flex: 1; text-align: center; padding: 12px 5px; font-size: 12px; color: gray; cursor: pointer; border-radius: 5px; transition: 0.2s; }
         #k3Screen .k3-sub-tab.active { background: #ff4757; color: white; font-weight: bold; }
@@ -92,8 +87,8 @@
         #k3Screen .table-header { display: flex; background: #ff4757; color: white; padding: 12px 10px; font-size: 12px; font-weight: bold; border-radius: 8px 8px 0 0; margin: 0 15px; }
         #k3Screen .table-row { display: flex; background: white; padding: 12px 10px; font-size: 12px; align-items: center; border-bottom: 1px solid #eee; margin: 0 15px; color: #333; }
         
-        /* SIMPLE NO DATA BOX */
-        #k3Screen .k3-no-data-box { background: white; margin: 15px; border-radius: 10px; padding: 30px; text-align: center; color: gray; font-size: 15px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        /* FIXED NO DATA TEXT BOX (No broken image) */
+        #k3Screen .k3-no-data-box { background: white; margin: 15px; border-radius: 10px; padding: 40px 20px; text-align: center; color: gray; font-size: 15px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 
         #k3Screen .h-dice-wrap { display: flex; gap: 3px; justify-content: center; align-items: center; }
         #k3Screen .h-dice { width: 18px; height: 18px; background: #ff4757; border-radius: 4px; position: relative; }
@@ -102,7 +97,7 @@
         #k3Screen .hd-c { top: 50%; left: 50%; transform: translate(-50%, -50%); } #k3Screen .hd-tl { top: 2px; left: 2px; } #k3Screen .hd-tr { top: 2px; right: 2px; } #k3Screen .hd-bl { bottom: 2px; left: 2px; } #k3Screen .hd-br { bottom: 2px; right: 2px; } #k3Screen .hd-ml { top: 50%; left: 2px; transform: translateY(-50%); } #k3Screen .hd-mr { top: 50%; right: 2px; transform: translateY(-50%); }
 
         /* =======================================================
-           MODALS (VIEWPORT FIXED + CUT-OFF FIX)
+           FIXED MODALS (NO CUT-OFF & VIEWPORT SAFE)
            ======================================================= */
         #k3Screen .k3-modal-overlay { 
             position: fixed !important; top: 0; left: 0; right: 0; bottom: 0; 
@@ -114,19 +109,19 @@
         
         /* RED "HOW TO PLAY" MODAL */
         #k3Screen .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; overflow: hidden; animation: popIn 0.3s ease; display: flex; flex-direction: column; max-height: 85vh; }
-        #k3Screen .htp-header { background: linear-gradient(135deg, #ff4757, #ff1a1a); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; text-align: center; display: flex; justify-content: space-between; align-items: center; }
-        #k3Screen .htp-body { padding: 20px; overflow-y: auto; font-size: 13px; color: #333; line-height: 1.6; text-align: left; }
+        #k3Screen .htp-header { background: linear-gradient(135deg, #ff4757, #ff1a1a); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; text-align: center; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        #k3Screen .htp-body { padding: 20px; overflow-y: auto; font-size: 13px; color: #333; line-height: 1.6; text-align: left; flex-grow: 1; }
         #k3Screen .htp-body b { color: #333; font-weight: 900; display: block; margin-top: 10px; }
-        #k3Screen .htp-footer { text-align: center; padding: 15px; border-top: 1px solid #eee; }
+        #k3Screen .htp-footer { text-align: center; padding: 15px; border-top: 1px solid #eee; flex-shrink: 0; }
         #k3Screen .htp-btn-close { background: #ff4757; color: white; border: none; padding: 10px 40px; border-radius: 30px; font-size: 15px; font-weight: bold; cursor: pointer; }
 
-        /* WINGO BET MODAL (With Scroll Fix) */
-        #k3Screen .bet-modal { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 500px; animation: slideUp 0.3s ease; display: flex; flex-direction: column; max-height: 85vh; }
+        /* WINGO BET MODAL (FLEXBOX SCROLL FIX) */
+        #k3Screen .bet-modal { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 500px; animation: slideUp 0.3s ease; display: flex; flex-direction: column; max-height: 85vh; overflow: hidden; }
         #k3Screen .bm-top-header { background: #18b660; color: white; padding: 20px; text-align: center; flex-shrink: 0; }
         #k3Screen .bm-title-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
         #k3Screen .bm-select-pill { background: white; color: black; padding: 8px 30px; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         
-        #k3Screen .bm-body { padding: 20px; overflow-y: auto; }
+        #k3Screen .bm-body { padding: 20px; overflow-y: auto; flex-grow: 1; }
         #k3Screen .bm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 13px; color: gray; }
         #k3Screen .bm-opts { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
         #k3Screen .bm-opt { background: #f4f5f8; color: #333; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
@@ -134,16 +129,17 @@
         #k3Screen .qty-box { display: flex; align-items: center; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
         #k3Screen .qty-box button { background: #18b660; color: white; border: none; width: 30px; height: 30px; font-size: 16px; font-weight: bold; cursor: pointer; }
         #k3Screen .qty-box input { width: 50px; text-align: center; border: none; font-weight: bold; outline: none; }
-        #k3Screen .bm-footer { display: flex; margin-top: 20px; flex-shrink: 0; }
-        #k3Screen .bm-btn-cancel { flex: 1; background: #333; color: white; border: none; padding: 15px; font-weight: bold; font-size: 15px; cursor: pointer; }
-        #k3Screen .bm-btn-confirm { flex: 2; background: #18b660; color: white; border: none; padding: 15px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        
+        #k3Screen .bm-footer { display: flex; flex-shrink: 0; padding: 10px 20px 20px 20px; background: white; border-top: 1px solid #f4f5f8; }
+        #k3Screen .bm-btn-cancel { flex: 1; background: #333; color: white; border: none; padding: 15px; font-weight: bold; font-size: 15px; cursor: pointer; border-radius: 5px 0 0 5px; }
+        #k3Screen .bm-btn-confirm { flex: 2; background: #18b660; color: white; border: none; padding: 15px; font-weight: bold; font-size: 15px; cursor: pointer; border-radius: 0 5px 5px 0; }
     </style>
 
-    <!-- FIXED HEADER WITH METRO CASH STYLISH LOGO -->
+    <!-- STYLISH METRO CASH LOGO -->
     <div class="fixed-header" style="display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #ff4757; color: white; border-bottom: none; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <h2>
             <i class="fa-solid fa-chevron-left" onclick="history.back()"></i> 
-            <span style="font-style: italic; font-weight: 900; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); font-size: 20px; margin-left: 10px;">Metro Cash</span>
+            <span style="font-family: 'Georgia', serif; font-style: italic; font-weight: 900; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); font-size: 20px; margin-left: 10px;">Metro Cash</span>
         </h2>
         <div style="display: flex; gap: 15px; align-items: center;">
             <i class="fa-solid fa-headset" style="font-size: 18px; cursor: pointer;" onclick="openSupportChat()"></i>
@@ -154,7 +150,6 @@
     <div class="k3-header-bg"></div>
     
     <div style="position: relative; z-index: 5; padding-top: 60px;">
-        <!-- WALLET -->
         <div class="k3-wallet-box">
             <h2>₹<span id="k3Bal">0.00</span> <i class="fa-solid fa-rotate-right" onclick="forceK3BalanceRefresh()"></i></h2>
             <p><i class="fa-solid fa-wallet" style="color:#ffc107;"></i> Wallet balance</p>
@@ -188,7 +183,7 @@
                 </div>
             </div>
 
-            <!-- GREEN DICE BOX WITH REAL 2D DICE -->
+            <!-- GREEN DICE BOX -->
             <div class="dice-container">
                 <div class="dice-arrow-left"></div>
                 <div class="dice-2d" id="dice1"></div>
@@ -310,7 +305,7 @@
         <div class="hist-pane" id="k3PaneMineHist"><div id="k3MineList"></div></div>
     </div>
 
-    <!-- HOW TO PLAY MODAL (Red, Exact Text) -->
+    <!-- HOW TO PLAY MODAL -->
     <div class="k3-modal-overlay" id="k3HtpModalOverlay" onclick="closeK3HowToPlay()">
         <div class="htp-modal" onclick="event.stopPropagation()">
             <div class="htp-header">
@@ -351,7 +346,7 @@
         </div>
     </div>
 
-    <!-- BET MODAL (Fixed Scroll) -->
+    <!-- BET MODAL (SCROLL FIX & CUT-OFF SAFE) -->
     <div class="k3-modal-overlay bet-modal-wrap" id="k3BetModalOverlay" onclick="closeK3BetModal()">
         <div class="bet-modal" onclick="event.stopPropagation()">
             <div class="bm-top-header" id="k3BetModalTopBg">
