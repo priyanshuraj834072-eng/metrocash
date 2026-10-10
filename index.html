@@ -173,11 +173,12 @@
     <div class="glass-btn-outline">GO <i class="fa-solid fa-arrow-right"></i></div>
 </div>
 
-                    <div class="glass-card-premium" onclick="showToast('Coming soon!')">
-                        <h3>K3</h3>
-                        <img src="https://i.postimg.cc/1XVz7WDL/file-000000009d9c8210937969513d8a0751.png" alt="K3">
-                        <div class="glass-btn-outline">GO <i class="fa-solid fa-arrow-right"></i></div>
-                    </div>
+<div class="glass-card-premium" onclick="openGame('K3', '/game/k3.html', '/gamejs/k3.js')">
+    <h3>K3</h3>
+    <img src="https://i.postimg.cc/1XVz7WDL/file-000000009d9c8210937969513d8a0751.png" alt="K3">
+    <div class="glass-btn-outline">GO <i class="fa-solid fa-arrow-right"></i></div>
+</div>
+
                     <div class="glass-card-premium" onclick="showToast('Coming soon!')">
                         <h3>Racing</h3>
                         <img src="https://i.postimg.cc/Lhd8czT6/file-00000000f04c820a82cc09ca6499fae5.png" alt="Racing">
@@ -347,7 +348,8 @@
     <div id="allGamesScreen" class="screen" style="padding-top: 60px;"><div class="fixed-header" style="background:white; color:var(--text); border-bottom:1px solid var(--border);"><h2><i class="fa-solid fa-chevron-left" onclick="history.back()"></i> All</h2></div><div class="sliding-tabs-wrapper"><div class="sliding-tabs"><div class="s-tab" id="tabPopular" onclick="switchAllGamesTab('tabPopular')"><i class="fa-solid fa-fire" style="color:#ff4d4d;"></i> Popular</div><div class="s-tab" id="tabLottery" onclick="switchAllGamesTab('tabLottery')"><i class="fa-solid fa-bowling-ball" style="color:#2575fc;"></i> Lottery</div><div class="s-tab" id="tabOriginal" onclick="switchAllGamesTab('tabOriginal')"><i class="fa-solid fa-dice" style="color:#18b660;"></i> Original</div></div></div><div class="scroll-body" style="padding-top: 15px;"><div style="padding: 0 15px 15px 15px; font-weight:bold; font-size:16px; border-left: 4px solid var(--primary); margin-left: 15px; margin-bottom:10px;" id="allGamesSectionTitle">| Popular</div><div class="game-grid-3" id="allGamesGrid"></div><div class="all-lottery-list" id="allLotteryGrid" style="display:none;"><div class="lottery-long-card" onclick="openGame('Win Go', '/game/wingo.html', '/gamejs/wingo.js')">
     <div class="lottery-long-card-text"><h3>Win Go</h3><p>Guess Number</p><small>Green/Red/Violet</small></div><img src="https://i.postimg.cc/PxRx4Gv9/win-go-transparent.png" alt="Win Go">
 </div>
-<div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>K3</h3><p>Guess Number</p><small>Big/Small/Odd</small></div><img src="https://i.postimg.cc/1XVz7WDL/file-000000009d9c8210937969513d8a0751.png" alt="K3"></div><div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>Racing</h3><p>Guess Number</p><small>Big/Small/Even</small></div><img src="https://i.postimg.cc/Lhd8czT6/file-00000000f04c820a82cc09ca6499fae5.png" alt="Racing"></div><div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>5D</h3><p>Guess Number</p><small>Big/Small/Odd</small></div><img src="https://i.postimg.cc/xCrpb8t5/file-00000000ff48820a95c5fdc63559c45e.png" alt="5D"></div></div></div></div>
+<div class="lottery-long-card" onclick="openGame('K3', '/game/k3.html', '/gamejs/k3.js')"><div class="lottery-long-card-text"><h3>K3</h3><p>Guess Number</p><small>Big/Small/Odd</small></div><img src="https://i.postimg.cc/1XVz7WDL/file-000000009d9c8210937969513d8a0751.png" alt="K3"></div>
+<div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>Racing</h3><p>Guess Number</p><small>Big/Small/Even</small></div><img src="https://i.postimg.cc/Lhd8czT6/file-00000000f04c820a82cc09ca6499fae5.png" alt="Racing"></div><div class="lottery-long-card" onclick="showToast('Coming soon!')"><div class="lottery-long-card-text"><h3>5D</h3><p>Guess Number</p><small>Big/Small/Odd</small></div><img src="https://i.postimg.cc/xCrpb8t5/file-00000000ff48820a95c5fdc63559c45e.png" alt="5D"></div></div></div></div>
 
     <!-- MISC SCREENS & MODALS -->
     <div id="giftScreen" class="screen">
