@@ -15,20 +15,17 @@
         .k3-digit-timer { background: #f4f5f8; color: var(--primary); border-radius: 4px; width: 22px; height: 26px; display: flex; justify-content: center; align-items: center; font-weight: 900; font-size: 15px; border: 1px solid var(--border); }
         
         /* 🔵 BLUE DICE CONTAINER (Metro Cash Theme) */
-        .dice-container { background: linear-gradient(135deg, #4facfe, #00f2fe); border-radius: 12px; padding: 25px 15px; display: flex; justify-content: center; gap: 20px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.1); perspective: 800px; }
+        .dice-container { background: linear-gradient(135deg, #0984e3, #00cec9); border-radius: 12px; padding: 25px 15px; display: flex; justify-content: center; gap: 20px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.2); perspective: 800px; margin-bottom: 15px; border: 4px solid #74b9ff; }
         
         /* 🎲 REAL 3D CSS CUBE DICE */
         .scene { width: 65px; height: 65px; perspective: 600px; margin: 0; }
         .cube { width: 65px; height: 65px; position: relative; transform-style: preserve-3d; transform: rotateX(-15deg) rotateY(25deg); transition: transform 0.5s ease-out; }
-        
-        /* Fast Spin Animation for 0 Seconds */
         .cube.spinning { animation: fastSpin 0.3s infinite linear; }
         @keyframes fastSpin { 0% { transform: rotateX(-15deg) rotateY(25deg); } 100% { transform: rotateX(345deg) rotateY(385deg); } }
-
-        .cube-face { position: absolute; width: 65px; height: 65px; background: linear-gradient(135deg, #ff4757, #ff2a2a); border-radius: 10px; border: 1px solid #d31b1b; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); }
+        .cube-face { position: absolute; width: 65px; height: 65px; background: linear-gradient(135deg, #ff4757, #d63031); border-radius: 10px; border: 1px solid #b71c1c; box-shadow: inset 0 0 15px rgba(0,0,0,0.4); }
         .cube-face-front  { transform: rotateY(  0deg) translateZ(32px); }
-        .cube-face-right  { transform: rotateY( 90deg) translateZ(32px); background: linear-gradient(135deg, #e01b1b, #c01111); }
-        .cube-face-top    { transform: rotateX( 90deg) translateZ(32px); background: linear-gradient(135deg, #ff6b6b, #ff4757); }
+        .cube-face-right  { transform: rotateY( 90deg) translateZ(32px); background: linear-gradient(135deg, #e84118, #c23616); }
+        .cube-face-top    { transform: rotateX( 90deg) translateZ(32px); background: linear-gradient(135deg, #ff6b81, #ff4757); }
         
         /* Dots Styling */
         .k3-dot { width: 14px; height: 14px; background: #fffdf2; border-radius: 50%; position: absolute; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); }
@@ -36,49 +33,96 @@
         .dot-tl { top: 10px; left: 10px; } .dot-tr { top: 10px; right: 10px; }
         .dot-bl { bottom: 10px; left: 10px; } .dot-br { bottom: 10px; right: 10px; }
         .dot-ml { top: 50%; left: 10px; transform: translateY(-50%); } .dot-mr { top: 50%; right: 10px; transform: translateY(-50%); }
-        
-        /* Big Yellow Dot for Number 1 */
         .dot-big-yellow { width: 28px; height: 28px; background: radial-gradient(circle, #ffeb3b, #fbc02d); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3); }
 
-        /* EXACT WINGO STYLE LOCK OVERLAY */
-        .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); border-radius: 12px; display: none; justify-content: center; align-items: center; z-index: 20; }
+        /* 🔒 LOCK OVERLAY (Only covers Betting Area now) */
+        .k3-betting-area { position: relative; }
+        .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); border-radius: 12px; display: none; justify-content: center; align-items: center; z-index: 20; backdrop-filter: blur(2px); }
         .bet-lock-overlay.active { display: flex; }
-        .lock-box { background: #ff4757; color: white; padding: 10px 20px; border-radius: 10px; font-size: 50px; font-weight: 900; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4); display: flex; gap: 10px; animation: popLock 0.5s ease-in-out; }
+        .lock-box { background: var(--primary-grad); color: white; padding: 10px 20px; border-radius: 10px; font-size: 50px; font-weight: 900; box-shadow: 0 4px 15px rgba(37, 117, 252, 0.4); display: flex; gap: 10px; animation: popLock 0.5s ease-in-out; }
         .lock-digit { font-family: monospace; }
         @keyframes popLock { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        .k3-sub-tabs { display: flex; background: #f4f5f8; margin-top: 15px; border-radius: 8px; overflow: hidden; }
+        /* MULTI TABS UI */
+        .k3-sub-tabs { display: flex; background: #f4f5f8; border-radius: 8px; overflow: hidden; margin-bottom: 15px; }
         .k3-sub-tab { flex: 1; text-align: center; padding: 10px 5px; font-size: 11px; font-weight: bold; color: gray; cursor: pointer; transition: 0.2s; border-right: 1px solid #e0e0e0; }
         .k3-sub-tab:last-child { border-right: none; }
         .k3-sub-tab.active { background: var(--primary-grad); color: white; }
 
-        .k3-bet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px 10px; margin-top: 20px; padding-bottom: 10px; }
+        .k3-bet-panel { display: none; }
+        .k3-bet-panel.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* COIN BUTTONS */
+        .k3-bet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px 10px; padding-bottom: 10px; }
         .k3-bet-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
-        .k3-circle { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: 900; font-size: 22px; border: 2px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.2s; }
+        .k3-circle { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: 900; font-size: 20px; border: 2px solid white; box-shadow: inset 0 -3px 5px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.15); transition: 0.2s; }
         .k3-circle:active { transform: scale(0.9); }
-        .k3-red { background: linear-gradient(135deg, #ff6b6b, #ff4757); } .k3-green { background: linear-gradient(135deg, #2ecc71, #18b660); }
-        .k3-multi-text { font-size: 11px; color: var(--text-muted); font-weight: bold; }
+        .k3-red { background: linear-gradient(135deg, #ff6b6b, #ff4757); } .k3-green { background: linear-gradient(135deg, #2ecc71, #18b660); } .k3-purple { background: linear-gradient(135deg, #e056fd, #be2edd); }
+        .k3-multi-text { font-size: 10px; color: var(--text-muted); font-weight: bold; }
 
         .k3-action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
         .k3-act-btn { border-radius: 8px; padding: 12px 5px; color: white; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.15); border: none; transition: 0.2s; }
         .k3-act-btn:active { transform: scale(0.95); }
-        .k3-act-title { font-weight: 900; font-size: 15px; margin-bottom: 2px; }
-        .k3-act-sub { font-size: 11px; opacity: 0.9; font-weight: bold; }
+        .k3-act-title { font-weight: 900; font-size: 14px; margin-bottom: 2px; }
+        .k3-act-sub { font-size: 10px; opacity: 0.9; font-weight: bold; }
         .k3-btn-yellow { background: linear-gradient(135deg, #ffc107, #ff9800); } .k3-btn-blue { background: linear-gradient(135deg, #4facfe, #00f2fe); }
         .k3-btn-red { background: linear-gradient(135deg, #ff6b6b, #ff4757); } .k3-btn-green { background: linear-gradient(135deg, #2ecc71, #18b660); }
 
-        .k3-hist-dice { width: 16px; height: 16px; background: #ff4757; border-radius: 3px; display: inline-flex; justify-content: center; align-items: center; margin: 0 1px; color: white; font-size: 10px; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        /* SPECIAL TAB BUTTONS */
+        .k3-pill-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 10px; }
+        .k3-pill-btn { background: #d591ff; color: white; border-radius: 6px; padding: 10px 0; text-align: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; }
+        .k3-pill-btn:active { transform: scale(0.9); }
+        .k3-pill-btn.red { background: #ff7675; } .k3-pill-btn.green { background: #55efc4; }
+        .k3-wide-btn { background: #ff7675; color: white; width: 100%; border-radius: 8px; padding: 12px; text-align: center; font-weight: bold; font-size: 14px; margin-top: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; }
+        .k3-wide-btn:active { transform: scale(0.95); }
+        .k3-section-title { font-size: 11px; color: var(--text); font-weight: bold; margin-top: 15px; display: flex; align-items: center; gap: 5px; }
+        .k3-section-title i { color: var(--primary); }
 
-        .htp-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6) !important; z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;}
-        .htp-modal-overlay.active { display: flex; }
-        .htp-modal { background: white; border-radius: 20px; width: 100%; max-width: 400px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .htp-header { background: var(--primary-grad); color: white; padding: 15px 20px; font-weight: bold; font-size: 18px; text-align: center; }
-        .htp-body { padding: 20px; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.5; }
-        .htp-body p { margin-bottom: 10px; }
-        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        /* BLUE THEME HISTORY NAVIGATION */
+        .hist-nav { margin: 15px; display: flex; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .hist-btn { flex: 1; padding: 12px 0; font-size: 12px; font-weight: bold; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
+        .hist-btn.active { background: var(--primary-grad) !important; color: white !important; box-shadow: 0 2px 8px rgba(37, 117, 252, 0.4) !important; }
         
-        .bet-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6) !important; z-index: 999999; display: none; justify-content: flex-end; align-items: center; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;} 
+        /* STRAIGHT TABLE LAYOUT */
+        .table-header { display: flex; background: var(--primary-grad); color: white; padding: 12px 10px; font-size: 12px; font-weight: bold; border-radius: 8px 8px 0 0; margin: 0 15px; }
+        .table-row { display: flex; background: white; padding: 12px 10px; font-size: 12px; align-items: center; border-bottom: 1px solid var(--border); margin: 0 15px; color: var(--text); font-weight: 500; }
+        
+        /* MINI HISTORY DICE */
+        .h-dice-wrap { display: flex; gap: 3px; justify-content: center; align-items: center; }
+        .h-dice { width: 18px; height: 18px; background: #ff4757; border-radius: 4px; position: relative; box-shadow: inset -1px -1px 3px rgba(0,0,0,0.3); }
+        .hd-dot { width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; }
+        .hd-dot.yellow { background: #ffeb3b; }
+        /* Dot positions for mini dice */
+        .hd-c { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .hd-tl { top: 3px; left: 3px; } .hd-tr { top: 3px; right: 3px; }
+        .hd-bl { bottom: 3px; left: 3px; } .hd-br { bottom: 3px; right: 3px; }
+        .hd-ml { top: 50%; left: 3px; transform: translateY(-50%); } .hd-mr { top: 50%; right: 3px; transform: translateY(-50%); }
+
+        /* MODALS (BLUE THEME) */
+        .htp-modal-overlay, .bet-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6) !important; z-index: 10000; display: none; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;}
+        .htp-modal-overlay.active { display: flex; justify-content: center; align-items: center; padding: 20px; }
         .bet-modal-overlay.active { display: flex; flex-direction: column; justify-content: flex-end; }
+        
+        .htp-modal { background: white; border-radius: 15px; width: 100%; max-width: 350px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .htp-header { background: var(--primary-grad); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; text-align: center; }
+        .htp-body { padding: 20px; overflow-y: auto; font-size: 12px; color: var(--text); line-height: 1.6; }
+        
+        /* VIP BET MODAL LAYOUT */
+        .bet-modal { background: white; border-radius: 20px 20px 0 0; width: 100%; padding: 20px; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .bm-title { font-size: 16px; font-weight: bold; color: var(--text); margin-bottom: 15px; text-align: center; }
+        .bm-selected { background: #d591ff; color: white; padding: 5px 15px; border-radius: 5px; display: inline-block; font-weight: bold; margin-bottom: 15px; }
+        .bm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 13px; color: gray; }
+        .bm-opts { display: flex; gap: 5px; }
+        .bm-opt { background: #f4f5f8; color: var(--text); padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .bm-opt.active { background: #ff4757; color: white; box-shadow: 0 2px 5px rgba(255,71,87,0.3); }
+        .qty-box { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+        .qty-box button { background: #ff4757; color: white; border: none; width: 30px; height: 30px; font-size: 16px; cursor: pointer; }
+        .qty-box input { width: 50px; text-align: center; border: none; font-weight: bold; outline: none; }
+        .bm-footer { display: flex; margin-top: 20px; border-radius: 30px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .bm-btn-cancel { flex: 1; background: #333; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer; }
+        .bm-btn-confirm { flex: 2; background: #ff4757; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer; }
     </style>
 
     <!-- FIXED HEADER -->
@@ -94,8 +138,9 @@
         <div class="k3-bg-header"></div>
         <div style="position: relative; z-index: 5;">
             
+            <!-- WALLET AREA (Redirect Removed, Only Spin) -->
             <div style="background:white; margin:15px; border-radius:15px; padding:20px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
-                <h2 style="font-size:24px; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer;" onclick="pushNav('walletScreen')">₹ <span id="k3Bal">0.00</span> <i class="fa-solid fa-rotate-right" style="font-size:16px; color:gray; cursor:pointer;" onclick="forceBalanceRefresh()"></i></h2>
+                <h2 style="font-size:24px; display:flex; justify-content:center; align-items:center; gap:8px;">₹ <span id="k3Bal">0.00</span> <i class="fa-solid fa-rotate-right" style="font-size:16px; color:gray; cursor:pointer;" onclick="forceK3BalanceRefresh()"></i></h2>
                 <p style="color:var(--text-muted); font-size:13px; margin-top: 5px; font-weight: 600;"><i class="fa-solid fa-wallet" style="color: #ffc107;"></i> Wallet balance</p>
                 <div style="display:flex; justify-content:space-around; margin-top:15px; gap: 15px;">
                     <button style="flex: 1; background: #ff4757; color: white; padding: 12px 0; border-radius: 30px; border: none; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);" onclick="pushNav('withdrawScreen')">Withdraw</button>
@@ -127,102 +172,139 @@
                     </div>
                 </div>
 
-                <!-- 3D CUBE DICE CONTAINER -->
+                <!-- 3D CUBE DICE CONTAINER (No Lock Overlay Here) -->
                 <div class="dice-container">
-                    <!-- EXACT WINGO STYLE LOCK BOX -->
+                    <div class="scene"><div class="cube" id="dice1"><div class="cube-face cube-face-front"></div><div class="cube-face cube-face-top"></div><div class="cube-face cube-face-right"></div></div></div>
+                    <div class="scene"><div class="cube" id="dice2"><div class="cube-face cube-face-front"></div><div class="cube-face cube-face-top"></div><div class="cube-face cube-face-right"></div></div></div>
+                    <div class="scene"><div class="cube" id="dice3"><div class="cube-face cube-face-front"></div><div class="cube-face cube-face-top"></div><div class="cube-face cube-face-right"></div></div></div>
+                </div>
+
+                <!-- BETTING AREA (Protected by Lock Overlay) -->
+                <div class="k3-betting-area">
                     <div class="bet-lock-overlay" id="k3LockOverlay">
-                        <div class="lock-box">
-                            <div class="lock-digit">0</div><div class="lock-digit" id="k3LockDigitSec">5</div>
-                        </div>
+                        <div class="lock-box"><div class="lock-digit">0</div><div class="lock-digit" id="k3LockDigitSec">5</div></div>
                     </div>
-                    
-                    <div class="scene">
-                        <div class="cube" id="dice1">
-                            <div class="cube-face cube-face-front"></div>
-                            <div class="cube-face cube-face-top"><div class="k3-dot dot-tl"></div><div class="k3-dot dot-br"></div></div>
-                            <div class="cube-face cube-face-right"><div class="k3-dot dot-tl"></div><div class="k3-dot dot-center"></div><div class="k3-dot dot-br"></div></div>
-                        </div>
-                    </div>
-                    <div class="scene">
-                        <div class="cube" id="dice2">
-                            <div class="cube-face cube-face-front"></div>
-                            <div class="cube-face cube-face-top"><div class="k3-dot dot-tl"></div><div class="k3-dot dot-br"></div></div>
-                            <div class="cube-face cube-face-right"><div class="k3-dot dot-tl"></div><div class="k3-dot dot-center"></div><div class="k3-dot dot-br"></div></div>
-                        </div>
-                    </div>
-                    <div class="scene">
-                        <div class="cube" id="dice3">
-                            <div class="cube-face cube-face-front"></div>
-                            <div class="cube-face cube-face-top"><div class="k3-dot dot-tl"></div><div class="k3-dot dot-br"></div></div>
-                            <div class="cube-face cube-face-right"><div class="k3-dot dot-tl"></div><div class="k3-dot dot-center"></div><div class="k3-dot dot-br"></div></div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="k3-sub-tabs">
-                    <div class="k3-sub-tab active">Total</div>
-                    <div class="k3-sub-tab" onclick="showToast('Coming soon')">2 same</div>
-                    <div class="k3-sub-tab" onclick="showToast('Coming soon')">3 same</div>
-                    <div class="k3-sub-tab" onclick="showToast('Coming soon')">Different</div>
-                </div>
+                    <div class="k3-sub-tabs">
+                        <div class="k3-sub-tab active" id="st-total" onclick="switchK3SubTab('total')">Total</div>
+                        <div class="k3-sub-tab" id="st-2same" onclick="switchK3SubTab('2same')">2 same</div>
+                        <div class="k3-sub-tab" id="st-3same" onclick="switchK3SubTab('3same')">3 same</div>
+                        <div class="k3-sub-tab" id="st-diff" onclick="switchK3SubTab('diff')">Different</div>
+                    </div>
 
-                <div class="k3-bet-grid">
-                    <div class="k3-bet-item" onclick="k3BetPrompt('3', 207.36)"><div class="k3-circle k3-red">3</div><span class="k3-multi-text">207.36X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('4', 69.12)"><div class="k3-circle k3-green">4</div><span class="k3-multi-text">69.12X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('5', 34.56)"><div class="k3-circle k3-red">5</div><span class="k3-multi-text">34.56X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('6', 20.74)"><div class="k3-circle k3-green">6</div><span class="k3-multi-text">20.74X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('7', 13.83)"><div class="k3-circle k3-red">7</div><span class="k3-multi-text">13.83X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('8', 9.88)"><div class="k3-circle k3-green">8</div><span class="k3-multi-text">9.88X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('9', 8.3)"><div class="k3-circle k3-red">9</div><span class="k3-multi-text">8.3X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('10', 7.68)"><div class="k3-circle k3-green">10</div><span class="k3-multi-text">7.68X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('11', 7.68)"><div class="k3-circle k3-red">11</div><span class="k3-multi-text">7.68X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('12', 8.3)"><div class="k3-circle k3-green">12</div><span class="k3-multi-text">8.3X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('13', 9.88)"><div class="k3-circle k3-red">13</div><span class="k3-multi-text">9.88X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('14', 13.83)"><div class="k3-circle k3-green">14</div><span class="k3-multi-text">13.83X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('15', 20.74)"><div class="k3-circle k3-red">15</div><span class="k3-multi-text">20.74X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('16', 34.56)"><div class="k3-circle k3-green">16</div><span class="k3-multi-text">34.56X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('17', 69.12)"><div class="k3-circle k3-red">17</div><span class="k3-multi-text">69.12X</span></div>
-                    <div class="k3-bet-item" onclick="k3BetPrompt('18', 207.36)"><div class="k3-circle k3-green">18</div><span class="k3-multi-text">207.36X</span></div>
-                </div>
+                    <!-- TAB 1: TOTAL -->
+                    <div class="k3-bet-panel active" id="panel-total">
+                        <div class="k3-bet-grid">
+                            <div class="k3-bet-item" onclick="k3BetPrompt('3', 207.36, 'k3-red')"><div class="k3-circle k3-red">3</div><span class="k3-multi-text">207.36X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('4', 69.12, 'k3-green')"><div class="k3-circle k3-green">4</div><span class="k3-multi-text">69.12X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('5', 34.56, 'k3-red')"><div class="k3-circle k3-red">5</div><span class="k3-multi-text">34.56X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('6', 20.74, 'k3-green')"><div class="k3-circle k3-green">6</div><span class="k3-multi-text">20.74X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('7', 13.83, 'k3-red')"><div class="k3-circle k3-red">7</div><span class="k3-multi-text">13.83X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('8', 9.88, 'k3-green')"><div class="k3-circle k3-green">8</div><span class="k3-multi-text">9.88X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('9', 8.3, 'k3-red')"><div class="k3-circle k3-red">9</div><span class="k3-multi-text">8.3X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('10', 7.68, 'k3-green')"><div class="k3-circle k3-green">10</div><span class="k3-multi-text">7.68X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('11', 7.68, 'k3-red')"><div class="k3-circle k3-red">11</div><span class="k3-multi-text">7.68X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('12', 8.3, 'k3-green')"><div class="k3-circle k3-green">12</div><span class="k3-multi-text">8.3X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('13', 9.88, 'k3-red')"><div class="k3-circle k3-red">13</div><span class="k3-multi-text">9.88X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('14', 13.83, 'k3-green')"><div class="k3-circle k3-green">14</div><span class="k3-multi-text">13.83X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('15', 20.74, 'k3-red')"><div class="k3-circle k3-red">15</div><span class="k3-multi-text">20.74X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('16', 34.56, 'k3-green')"><div class="k3-circle k3-green">16</div><span class="k3-multi-text">34.56X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('17', 69.12, 'k3-red')"><div class="k3-circle k3-red">17</div><span class="k3-multi-text">69.12X</span></div>
+                            <div class="k3-bet-item" onclick="k3BetPrompt('18', 207.36, 'k3-green')"><div class="k3-circle k3-green">18</div><span class="k3-multi-text">207.36X</span></div>
+                        </div>
+                        <div class="k3-action-grid">
+                            <button class="k3-act-btn k3-btn-yellow" onclick="k3BetPrompt('Big', 1.92, 'k3-yellow')"><span class="k3-act-title">Big</span><span class="k3-act-sub">1.92X</span></button>
+                            <button class="k3-act-btn k3-btn-blue" onclick="k3BetPrompt('Small', 1.92, 'k3-blue')"><span class="k3-act-title">Small</span><span class="k3-act-sub">1.92X</span></button>
+                            <button class="k3-act-btn k3-btn-red" onclick="k3BetPrompt('Odd', 1.92, 'k3-red')"><span class="k3-act-title">Odd</span><span class="k3-act-sub">1.92X</span></button>
+                            <button class="k3-act-btn k3-btn-green" onclick="k3BetPrompt('Even', 1.92, 'k3-green')"><span class="k3-act-title">Even</span><span class="k3-act-sub">1.92X</span></button>
+                        </div>
+                    </div>
 
-                <div class="k3-action-grid">
-                    <button class="k3-act-btn k3-btn-yellow" onclick="k3BetPrompt('Big', 1.92)"><span class="k3-act-title">Big</span><span class="k3-act-sub">1.92X</span></button>
-                    <button class="k3-act-btn k3-btn-blue" onclick="k3BetPrompt('Small', 1.92)"><span class="k3-act-title">Small</span><span class="k3-act-sub">1.92X</span></button>
-                    <button class="k3-act-btn k3-btn-red" onclick="k3BetPrompt('Odd', 1.92)"><span class="k3-act-title">Odd</span><span class="k3-act-sub">1.92X</span></button>
-                    <button class="k3-act-btn k3-btn-green" onclick="k3BetPrompt('Even', 1.92)"><span class="k3-act-title">Even</span><span class="k3-act-sub">1.92X</span></button>
-                </div>
-                <!-- 🚫 MULTIPLIER CHIPS (X1, X5) REMOVED COMPLETELY -->
+                    <!-- TAB 2: 2 SAME -->
+                    <div class="k3-bet-panel" id="panel-2same">
+                        <div class="k3-section-title">2 matching numbers: odds(13.83X) <i class="fa-solid fa-circle-question"></i></div>
+                        <div class="k3-pill-grid">
+                            <div class="k3-pill-btn" onclick="k3BetPrompt('11', 13.83, 'k3-purple')">11</div><div class="k3-pill-btn" onclick="k3BetPrompt('22', 13.83, 'k3-purple')">22</div><div class="k3-pill-btn" onclick="k3BetPrompt('33', 13.83, 'k3-purple')">33</div><div class="k3-pill-btn" onclick="k3BetPrompt('44', 13.83, 'k3-purple')">44</div><div class="k3-pill-btn" onclick="k3BetPrompt('55', 13.83, 'k3-purple')">55</div><div class="k3-pill-btn" onclick="k3BetPrompt('66', 13.83, 'k3-purple')">66</div>
+                        </div>
+                        <div class="k3-section-title">A pair of unique numbers: odds(69.12X) <i class="fa-solid fa-circle-question"></i></div>
+                        <div class="k3-pill-grid">
+                            <div class="k3-pill-btn red" onclick="k3BetPrompt('11_pair', 69.12, 'k3-red')">11</div><div class="k3-pill-btn red" onclick="k3BetPrompt('22_pair', 69.12, 'k3-red')">22</div><div class="k3-pill-btn red" onclick="k3BetPrompt('33_pair', 69.12, 'k3-red')">33</div><div class="k3-pill-btn red" onclick="k3BetPrompt('44_pair', 69.12, 'k3-red')">44</div><div class="k3-pill-btn red" onclick="k3BetPrompt('55_pair', 69.12, 'k3-red')">55</div><div class="k3-pill-btn red" onclick="k3BetPrompt('66_pair', 69.12, 'k3-red')">66</div>
+                        </div>
+                        <div class="k3-pill-grid">
+                            <div class="k3-pill-btn green" onclick="k3BetPrompt('1_unique', 69.12, 'k3-green')">1</div><div class="k3-pill-btn green" onclick="k3BetPrompt('2_unique', 69.12, 'k3-green')">2</div><div class="k3-pill-btn green" onclick="k3BetPrompt('3_unique', 69.12, 'k3-green')">3</div><div class="k3-pill-btn green" onclick="k3BetPrompt('4_unique', 69.12, 'k3-green')">4</div><div class="k3-pill-btn green" onclick="k3BetPrompt('5_unique', 69.12, 'k3-green')">5</div><div class="k3-pill-btn green" onclick="k3BetPrompt('6_unique', 69.12, 'k3-green')">6</div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: 3 SAME -->
+                    <div class="k3-bet-panel" id="panel-3same">
+                        <div class="k3-section-title">3 of the same number: odds(207.36X) <i class="fa-solid fa-circle-question"></i></div>
+                        <div class="k3-pill-grid">
+                            <div class="k3-pill-btn" onclick="k3BetPrompt('111', 207.36, 'k3-purple')">111</div><div class="k3-pill-btn" onclick="k3BetPrompt('222', 207.36, 'k3-purple')">222</div><div class="k3-pill-btn" onclick="k3BetPrompt('333', 207.36, 'k3-purple')">333</div><div class="k3-pill-btn" onclick="k3BetPrompt('444', 207.36, 'k3-purple')">444</div><div class="k3-pill-btn" onclick="k3BetPrompt('555', 207.36, 'k3-purple')">555</div><div class="k3-pill-btn" onclick="k3BetPrompt('666', 207.36, 'k3-purple')">666</div>
+                        </div>
+                        <div class="k3-section-title">Any 3 of the same number(34.56X) <i class="fa-solid fa-circle-question"></i></div>
+                        <div class="k3-wide-btn" onclick="k3BetPrompt('Any 3 of the same number', 34.56, 'k3-red')">Any 3 of the same number</div>
+                    </div>
+
+                    <!-- TAB 4: DIFFERENT -->
+                    <div class="k3-bet-panel" id="panel-diff">
+                        <div class="k3-section-title">3 different numbers: odds(34.56X) <i class="fa-solid fa-circle-question"></i></div>
+                        <div class="k3-pill-grid">
+                            <div class="k3-pill-btn" onclick="k3BetPrompt('3diff_1', 34.56, 'k3-purple')">1</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_2', 34.56, 'k3-purple')">2</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_3', 34.56, 'k3-purple')">3</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_4', 34.56, 'k3-purple')">4</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_5', 34.56, 'k3-purple')">5</div><div class="k3-pill-btn" onclick="k3BetPrompt('3diff_6', 34.56, 'k3-purple')">6</div>
+                        </div>
+                        <div class="k3-section-title">3 continuous numbers: odds(8.64X) <i class="fa-solid fa-circle-question"></i></div>
+                        <div class="k3-wide-btn" onclick="k3BetPrompt('3 continuous numbers', 8.64, 'k3-red')">3 continuous numbers</div>
+                        <div class="k3-section-title">2 different numbers: odds(6.91X) <i class="fa-solid fa-circle-question"></i></div>
+                        <div class="k3-pill-grid">
+                            <div class="k3-pill-btn" onclick="k3BetPrompt('2diff_1', 6.91, 'k3-purple')">1</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_2', 6.91, 'k3-purple')">2</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_3', 6.91, 'k3-purple')">3</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_4', 6.91, 'k3-purple')">4</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_5', 6.91, 'k3-purple')">5</div><div class="k3-pill-btn" onclick="k3BetPrompt('2diff_6', 6.91, 'k3-purple')">6</div>
+                        </div>
+                    </div>
+                </div> <!-- End Betting Area -->
+
             </div>
 
+            <!-- HISTORY TABS (BLUE THEME) -->
             <div class="hist-nav">
                 <button class="hist-btn active" id="k3BtnGlobal" onclick="switchK3HistPanel('global')">Game history</button>
                 <button class="hist-btn" id="k3BtnChart" onclick="switchK3HistPanel('chart')">Chart</button>
                 <button class="hist-btn" id="k3BtnMine" onclick="switchK3HistPanel('mine')">My history</button>
             </div>
 
+            <!-- GLOBAL HISTORY (STRAIGHT TABLE WITH REAL DICE) -->
             <div class="hist-pane active" id="k3PaneGlobalHist">
-                <div style="display:flex; background:var(--primary-grad); color:white; padding:12px 10px; font-size:13px; font-weight:bold; text-align:center;"><div style="flex:2; text-align:left;">Period</div><div style="flex:1;">Sum</div><div style="flex:1.5;">Results</div></div>
+                <div class="table-header"><div style="flex:2;">Period</div><div style="flex:1; text-align:center;">Sum</div><div style="flex:1.5; text-align:right;">Results</div></div>
                 <div id="k3HistoryList"></div>
-                <div style="display:flex; justify-content:center; align-items:center; padding:15px; gap:15px; border-top:1px solid var(--border);">
-                    <button onclick="changeK3Page(-1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; font-size:16px; cursor:pointer;" id="k3BtnPrevPage"><i class="fa-solid fa-chevron-left"></i></button>
+                <div style="display:flex; justify-content:center; align-items:center; padding:15px; gap:15px;">
+                    <button onclick="changeK3Page(-1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; cursor:pointer;" id="k3BtnPrevPage"><i class="fa-solid fa-chevron-left"></i></button>
                     <span id="k3PageIndicator" style="font-size:14px; font-weight:bold; color:var(--text-muted);">1/1</span>
-                    <button onclick="changeK3Page(1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; font-size:16px; cursor:pointer;" id="k3BtnNextPage"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button onclick="changeK3Page(1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; cursor:pointer;" id="k3BtnNextPage"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
 
-            <div class="hist-pane" id="k3PaneChartHist"><div style="padding: 20px; text-align: center; color: gray; font-weight: bold;">Chart data coming soon...</div></div>
+            <!-- CHART TAB -->
+            <div class="hist-pane" id="k3PaneChartHist">
+                <div class="table-header"><div style="flex:2;">Period</div><div style="flex:1.5; text-align:center;">Results</div><div style="flex:2.5; text-align:right;">Number</div></div>
+                <div id="k3ChartList"></div>
+            </div>
+            
+            <!-- MY HISTORY -->
             <div class="hist-pane" id="k3PaneMineHist"><div id="k3MineList"></div></div>
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- HOW TO PLAY MODAL (BLUE THEME + NEW RULES) -->
     <div class="htp-modal-overlay" id="k3HtpModalOverlay" onclick="closeK3HowToPlay()">
         <div class="htp-modal" onclick="event.stopPropagation()">
             <div class="htp-header"><i class="fa-solid fa-list-ul"></i> How to play</div>
             <div class="htp-body">
-                <p style="margin-bottom:10px;">Fast 3 open with 3 numbers in each period as the opening number, the opening numbers are 111 to 666 Natural number, No zeros in the array And the opening numbers are in no particular order, Fast 3 is to guess all or part of the 3 winning numbers.</p>
-                <p><b>Sum Value</b></p><p style="margin-bottom:10px;">Place a bet on the sum of three numbers.</p>
-                <p><b>Choose 3 same number all</b></p><p style="margin-bottom:10px;">For all the same three numbers (111, 222, ... 666) Make an all-inclusive bet.</p>
+                <p>Fast 3 open with 3 numbers in each period as the opening number, the opening numbers are 111 to 666 Natural number, No zeros in the array And the opening numbers are in no particular order, Fast 3 is to guess all or part of the 3 winning numbers.</p>
+                <p><b>Sum Value</b><br>Place a bet on the sum of three numbers.</p>
+                <p><b>Choose 3 same number all</b><br>For all the same three numbers (111, 222, ... 666) Make an all-inclusive bet.</p>
+                <p><b>Choose 3 same number single</b><br>From all the same three numbers Choose a group of numbers to place bets.</p>
+                <p><b>Choose 2 Same Multiple</b><br>Place a bet on two designated same numbers and an arbitrary number among the three numbers.</p>
+                <p><b>Choose 2 Same Single</b><br>Place a bet on two designated same numbers and a designated different number.</p>
+                <p><b>3 numbers different</b><br>Place a bet on three different numbers.</p>
+                <p><b>2 numbers different</b><br>Place a bet on two designated different numbers.</p>
+                <p><b>Choose 3 Consecutive number all</b><br>For all three consecutive numbers (123, 234, 345, 456) Place a bet.</p>
             </div>
             <div style="padding:15px; text-align:center; border-top: 1px solid var(--border);">
                 <button style="background:var(--primary-grad); color:white; border:none; padding:10px 40px; border-radius:30px; font-weight:bold; font-size:16px; cursor:pointer; width:80%;" onclick="closeK3HowToPlay()">Close</button>
@@ -230,25 +312,29 @@
         </div>
     </div>
 
+    <!-- NEW VIP BET MODAL (BOTTOM SHEET) -->
     <div class="bet-modal-overlay" id="k3BetModalOverlay">
         <div class="bet-modal">
-            <div class="bet-modal-header" id="k3BetModalHeader">
-                <h3 id="k3BetModalTitle">K3 Lotre Bet</h3>
-                <div class="choice-pill" id="k3BetModalChoice" style="background:white; color:black; display:inline-block; padding:8px 30px; border-radius:30px; margin-top:15px; font-weight:bold;">Select</div>
-            </div>
-            <div class="bet-modal-body">
-                <div class="bet-row"><span style="color:var(--text-muted);">Balance</span>
-                    <div class="bet-options" id="k3BaseOptions">
-                        <div class="bet-opt active" onclick="setK3BetBase(1)">1</div><div class="bet-opt" onclick="setK3BetBase(10)">10</div><div class="bet-opt" onclick="setK3BetBase(100)">100</div><div class="bet-opt" onclick="setK3BetBase(1000)">1000</div>
-                    </div>
-                </div>
-                <div class="bet-row"><span style="color:var(--text-muted);">Quantity</span>
-                    <div class="qty-control"><button onclick="changeK3BetQty(-1)">-</button><input type="number" id="k3BetQtyInput" value="1" readonly><button onclick="changeK3BetQty(1)">+</button></div>
+            <div class="bm-title" id="k3BetModalTitle">Total</div>
+            <div style="text-align:center;"><div class="bm-selected" id="k3BetModalChoice">Select</div></div>
+            
+            <div class="bm-row"><span>Balance</span>
+                <div class="bm-opts" id="k3BaseOptions">
+                    <div class="bm-opt active" onclick="setK3BetBase(1)">1</div><div class="bm-opt" onclick="setK3BetBase(10)">10</div><div class="bm-opt" onclick="setK3BetBase(100)">100</div><div class="bm-opt" onclick="setK3BetBase(1000)">1000</div>
                 </div>
             </div>
-            <div class="bet-modal-footer">
-                <button class="btn-cancel" onclick="closeK3BetModal()">Cancel</button>
-                <button class="btn-confirm" id="btnK3ConfirmBet" onclick="confirmK3Bet()">Total amount ₹1.00</button>
+            <div class="bm-row"><span>Quantity</span>
+                <div class="qty-box"><button onclick="changeK3BetQty(-1)">-</button><input type="number" id="k3BetQtyInput" value="1" readonly><button onclick="changeK3BetQty(1)">+</button></div>
+            </div>
+            <div class="bm-row" style="justify-content: flex-end; margin-top: 20px;">
+                <div class="bm-opts" id="k3MultiOptions">
+                    <div class="bm-opt active" onclick="setK3BetMulti(1)">X1</div><div class="bm-opt" onclick="setK3BetMulti(5)">X5</div><div class="bm-opt" onclick="setK3BetMulti(10)">X10</div><div class="bm-opt" onclick="setK3BetMulti(20)">X20</div><div class="bm-opt" onclick="setK3BetMulti(50)">X50</div><div class="bm-opt" onclick="setK3BetMulti(100)">X100</div>
+                </div>
+            </div>
+            
+            <div class="bm-footer">
+                <button class="bm-btn-cancel" onclick="closeK3BetModal()">Cancel</button>
+                <button class="bm-btn-confirm" id="btnK3ConfirmBet" onclick="confirmK3Bet()">Total amount ₹1.00</button>
             </div>
         </div>
     </div>
