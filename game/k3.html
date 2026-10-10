@@ -11,7 +11,7 @@
 
         .k3-game-box { background: white; margin: 15px; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .k3-game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .how-to-btn-k3 { border: 1px solid var(--primary); color: var(--primary); border-radius: 20px; padding: 3px 12px; font-size: 11px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-weight: 600; }
+        .how-to-btn-k3 { border: 1px solid var(--primary); color: var(--primary); border-radius: 20px; padding: 4px 15px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-weight: bold; background: rgba(37, 117, 252, 0.05); }
         .k3-digit-timer { background: #f4f5f8; color: var(--primary); border-radius: 4px; width: 22px; height: 26px; display: flex; justify-content: center; align-items: center; font-weight: 900; font-size: 15px; border: 1px solid var(--border); }
         
         /* 🔵 BLUE DICE CONTAINER (Metro Cash Theme) */
@@ -35,11 +35,11 @@
         .dot-ml { top: 50%; left: 10px; transform: translateY(-50%); } .dot-mr { top: 50%; right: 10px; transform: translateY(-50%); }
         .dot-big-yellow { width: 28px; height: 28px; background: radial-gradient(circle, #ffeb3b, #fbc02d); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3); }
 
-        /* 🔒 LOCK OVERLAY (Only covers Betting Area now) */
-        .k3-betting-area { position: relative; }
-        .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); border-radius: 12px; display: none; justify-content: center; align-items: center; z-index: 20; backdrop-filter: blur(2px); }
+        /* 🔒 LOCK OVERLAY (Only covers Betting Area) */
+        .k3-betting-area { position: relative; border-radius: 12px; overflow: hidden; padding-top: 5px; }
+        .bet-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); display: none; justify-content: center; align-items: center; z-index: 20; backdrop-filter: blur(3px); }
         .bet-lock-overlay.active { display: flex; }
-        .lock-box { background: var(--primary-grad); color: white; padding: 10px 20px; border-radius: 10px; font-size: 50px; font-weight: 900; box-shadow: 0 4px 15px rgba(37, 117, 252, 0.4); display: flex; gap: 10px; animation: popLock 0.5s ease-in-out; }
+        .lock-box { background: var(--primary-grad); color: white; padding: 15px 30px; border-radius: 15px; font-size: 55px; font-weight: 900; box-shadow: 0 10px 25px rgba(37, 117, 252, 0.4); display: flex; gap: 10px; animation: popLock 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .lock-digit { font-family: monospace; }
         @keyframes popLock { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
@@ -47,7 +47,7 @@
         .k3-sub-tabs { display: flex; background: #f4f5f8; border-radius: 8px; overflow: hidden; margin-bottom: 15px; }
         .k3-sub-tab { flex: 1; text-align: center; padding: 10px 5px; font-size: 11px; font-weight: bold; color: gray; cursor: pointer; transition: 0.2s; border-right: 1px solid #e0e0e0; }
         .k3-sub-tab:last-child { border-right: none; }
-        .k3-sub-tab.active { background: var(--primary-grad); color: white; }
+        .k3-sub-tab.active { background: var(--primary-grad); color: white; border-right: none; }
 
         .k3-bet-panel { display: none; }
         .k3-bet-panel.active { display: block; animation: fadeIn 0.3s; }
@@ -93,23 +93,36 @@
         .h-dice { width: 18px; height: 18px; background: #ff4757; border-radius: 4px; position: relative; box-shadow: inset -1px -1px 3px rgba(0,0,0,0.3); }
         .hd-dot { width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; }
         .hd-dot.yellow { background: #ffeb3b; }
-        /* Dot positions for mini dice */
         .hd-c { top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .hd-tl { top: 3px; left: 3px; } .hd-tr { top: 3px; right: 3px; }
         .hd-bl { bottom: 3px; left: 3px; } .hd-br { bottom: 3px; right: 3px; }
         .hd-ml { top: 50%; left: 3px; transform: translateY(-50%); } .hd-mr { top: 50%; right: 3px; transform: translateY(-50%); }
 
-        /* MODALS (BLUE THEME) */
-        .htp-modal-overlay, .bet-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6) !important; z-index: 10000; display: none; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;}
-        .htp-modal-overlay.active { display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .bet-modal-overlay.active { display: flex; flex-direction: column; justify-content: flex-end; }
+        /* =======================================================
+           MODALS (100% FIXED TO VIEWPORT - NO SCROLL ISSUES)
+           ======================================================= */
+        .htp-modal-overlay { 
+            position: fixed !important; top: 0; left: 0; right: 0; bottom: 0; 
+            width: 100vw; height: 100vh; background: rgba(0,0,0,0.6) !important; 
+            z-index: 9999999 !important; display: none; justify-content: center; align-items: center; 
+        }
+        .htp-modal-overlay.active { display: flex; }
         
-        .htp-modal { background: white; border-radius: 15px; width: 100%; max-width: 350px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* Premium Wingo Style HTP Modal */
+        .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; overflow: hidden; display: flex; flex-direction: column; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .htp-header { background: var(--primary-grad); color: white; padding: 15px 20px; font-weight: bold; font-size: 16px; text-align: center; }
-        .htp-body { padding: 20px; overflow-y: auto; font-size: 12px; color: var(--text); line-height: 1.6; }
+        .htp-body { padding: 20px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.6; }
+        .htp-body b { color: var(--primary); }
+
+        .bet-modal-overlay { 
+            position: fixed !important; top: 0; left: 0; right: 0; bottom: 0; 
+            width: 100vw; height: 100vh; background: rgba(0,0,0,0.6) !important; 
+            z-index: 9999999 !important; display: none; flex-direction: column; 
+            justify-content: flex-end; align-items: center; 
+        }
+        .bet-modal-overlay.active { display: flex; }
         
-        /* VIP BET MODAL LAYOUT */
-        .bet-modal { background: white; border-radius: 20px 20px 0 0; width: 100%; padding: 20px; animation: slideUp 0.3s ease-out; }
+        .bet-modal { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 500px; padding: 20px; padding-bottom: 30px; animation: slideUp 0.3s ease-out; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .bm-title { font-size: 16px; font-weight: bold; color: var(--text); margin-bottom: 15px; text-align: center; }
         .bm-selected { background: #d591ff; color: white; padding: 5px 15px; border-radius: 5px; display: inline-block; font-weight: bold; margin-bottom: 15px; }
@@ -280,10 +293,15 @@
                 </div>
             </div>
 
-            <!-- CHART TAB -->
+            <!-- CHART TAB WITH PAGINATION & TEXT LOGIC -->
             <div class="hist-pane" id="k3PaneChartHist">
                 <div class="table-header"><div style="flex:2;">Period</div><div style="flex:1.5; text-align:center;">Results</div><div style="flex:2.5; text-align:right;">Number</div></div>
                 <div id="k3ChartList"></div>
+                <div style="display:flex; justify-content:center; align-items:center; padding:15px; gap:15px;">
+                    <button onclick="changeK3ChartPage(-1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; cursor:pointer;" id="k3ChartBtnPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="k3ChartPageIndicator" style="font-size:14px; font-weight:bold; color:var(--text-muted);">1/1</span>
+                    <button onclick="changeK3ChartPage(1)" style="padding:8px 15px; border:none; background:#e0e0e0; color:#888; border-radius:5px; font-weight:bold; cursor:pointer;" id="k3ChartBtnNext"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
             </div>
             
             <!-- MY HISTORY -->
@@ -291,10 +309,10 @@
         </div>
     </div>
 
-    <!-- HOW TO PLAY MODAL (BLUE THEME + NEW RULES) -->
+    <!-- WINGO STYLE HOW TO PLAY MODAL (100% FIXED) -->
     <div class="htp-modal-overlay" id="k3HtpModalOverlay" onclick="closeK3HowToPlay()">
         <div class="htp-modal" onclick="event.stopPropagation()">
-            <div class="htp-header"><i class="fa-solid fa-list-ul"></i> How to play</div>
+            <div class="htp-header"><i class="fa-solid fa-book"></i> How to play</div>
             <div class="htp-body">
                 <p>Fast 3 open with 3 numbers in each period as the opening number, the opening numbers are 111 to 666 Natural number, No zeros in the array And the opening numbers are in no particular order, Fast 3 is to guess all or part of the 3 winning numbers.</p>
                 <p><b>Sum Value</b><br>Place a bet on the sum of three numbers.</p>
@@ -312,9 +330,9 @@
         </div>
     </div>
 
-    <!-- NEW VIP BET MODAL (BOTTOM SHEET) -->
+    <!-- NEW VIP BET MODAL (100% FIXED BOTTOM SHEET) -->
     <div class="bet-modal-overlay" id="k3BetModalOverlay">
-        <div class="bet-modal">
+        <div class="bet-modal" onclick="event.stopPropagation()">
             <div class="bm-title" id="k3BetModalTitle">Total</div>
             <div style="text-align:center;"><div class="bm-selected" id="k3BetModalChoice">Select</div></div>
             
