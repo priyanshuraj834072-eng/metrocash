@@ -40,27 +40,39 @@
         .hist-btn.active { background: var(--primary-grad) !important; color: white !important; box-shadow: 0 2px 8px rgba(37, 117, 252, 0.4) !important; border: none !important; }
         .lock-digit { background: var(--primary-grad) !important; box-shadow: 0 10px 25px rgba(37, 117, 252, 0.4) !important; }
         
-        /* Modal UI - BLUR REMOVED, BLACK BG 60% OPACITY */
-        .htp-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; display: none; justify-content: center; align-items: center; } 
+        /* ======================================================== */
+        /* MODAL UI - 100% BLUR REMOVED (FORCED NO BLUR OVERRIDE)   */
+        /* ======================================================== */
+        
+        .htp-modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6) !important; z-index: 999999; display: none; justify-content: center; align-items: center; 
+            backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+        } 
         .htp-modal-overlay.active { display: flex; }
         .htp-modal { background: white; border-radius: 15px; width: 90%; max-width: 350px; overflow: hidden; animation: popScale 0.3s ease; }
         .htp-header { background: var(--primary-grad); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 16px; position: relative; }
         .htp-body { padding: 15px; max-height: 60vh; overflow-y: auto; font-size: 13px; color: var(--text); line-height: 1.5; }
 
-        /* Bet Modal UI - Blur removed */
-        .bet-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; display: none; justify-content: flex-end; align-items: center; } 
+        /* Bet Modal UI - Blur completely disabled */
+        .bet-modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6) !important; z-index: 999999; display: none; justify-content: flex-end; align-items: center; 
+            backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+        } 
         .bet-modal-overlay.active { display: flex; flex-direction: column; justify-content: flex-end; }
         
-        /* RESULT MODAL FIX (CENTERED, CUT BUTTON AT BOTTOM) */
-        .result-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        /* RESULT MODAL (CENTERED) - Blur completely disabled */
+        .result-modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6) !important; z-index: 999999; display: none; justify-content: center; align-items: center; flex-direction: column; 
+            backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+        }
         .result-modal-overlay.active { display: flex; }
         .result-card { margin: 0; animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; z-index: 10; width: 90%; max-width: 350px; }
         
-        /* Naya Close Button (X) popup ke neeche rahega */
         .result-close-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; color: white; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; transition: 0.3s; margin-top: 15px; z-index: 10; animation: popUp 0.4s ease forwards; animation-delay: 0.1s; opacity: 0; }
         .result-close-btn:active { background: rgba(255,255,255,0.2); }
-
-        /* Hide the old top-right close button if present in main CSS */
         .result-modal-overlay [onclick*="closeResultModal"]:not(.result-close-btn) { display: none !important; }
         
     </style>
@@ -220,9 +232,9 @@
 </div>
 
 <script>
-// ==========================================
-// WINGO FRONTEND LOGIC & UX FIXES
-// ==========================================
+// =======================================================
+// WINGO FRONTEND LOGIC & 100% BULLETPROOF UX FIXES
+// =======================================================
 
 var activeWingoTab = sessionStorage.getItem('wTab') || '1min'; 
 var activeHistTab = sessionStorage.getItem('hTab') || 'global'; 
@@ -235,6 +247,14 @@ var currentBet = { choice: '', multi: 0, base: 1, qty: 1, x: 1 };
 var resultModalTimeout;
 var outerMultiplier = 1; 
 var isWingoSoundEnabled = true;
+var wingoHashBeforeModal = ""; // Back button intercept ke liye global variable
+
+// --- HEADER BACK BUTTON ---
+function closeGame() {
+    let wScreen = document.getElementById('wingoScreen');
+    if (wScreen) { wScreen.classList.remove('active'); }
+    if(window.history.length > 1) { window.history.back(); }
+}
 
 // --- AUDIO UTILS ---
 const AudioContext = window.AudioContext || window.webkitAudioContext; 
@@ -306,13 +326,17 @@ function switchWingoTab(tab) {
     let ticketEl = document.getElementById('ticketTimeText');
     if(ticketEl) ticketEl.innerText = timeText;
 
-    // Dynamic HTP Text Logic Fixed
+    // --- HOW TO PLAY TEXT ---
     let htpDesc = "";
-    if (tab === '30sec') htpDesc = "30 seconds 1 issue, 25 seconds to order, 5 seconds waiting for the draw. It opens all day.";
-    else if (tab === '1min') htpDesc = "1 minute 1 issue, 55 seconds to order, 5 seconds waiting for the draw. It opens all day.";
-    else if (tab === '3min') htpDesc = "3 minutes 1 issue, 2 minutes 55 seconds to order, 5 seconds waiting for the draw. It opens all day.";
-    else if (tab === '5min') htpDesc = "5 minutes 1 issue, 4 minutes 55 seconds to order, 5 seconds waiting for the draw. It opens all day.";
-    
+    if (tab === '30sec') {
+        htpDesc = "30 seconds 1 issue, 25 seconds to order, 5 seconds waiting for the draw. It opens all day.";
+    } else if (tab === '1min') {
+        htpDesc = "1 minute 1 issue, 55 seconds to order, 5 seconds waiting for the draw. It opens all day.";
+    } else if (tab === '3min') {
+        htpDesc = "3 minutes 1 issue, 2 minutes 55 seconds to order, 5 seconds waiting for the draw. It opens all day.";
+    } else if (tab === '5min') {
+        htpDesc = "5 minutes 1 issue, 4 minutes 55 seconds to order, 5 seconds waiting for the draw. It opens all day.";
+    }
     let htpEl = document.getElementById('htpTimeDesc');
     if(htpEl) htpEl.innerText = htpDesc;
 
@@ -368,10 +392,10 @@ function wingoBetPrompt(choice, multi) {
     
     document.getElementById('betModalTitle').innerText = "WinGo Bet"; document.getElementById('betModalChoice').innerText = "Select " + choice;
     updateBetModalUI(); 
-    document.getElementById('betModalOverlay').classList.add('active');
     
-    // BACK BUTTON FIX: Push state
-    history.pushState({ modal: 'betMenu' }, '', '');
+    // Hash interceptor ready karo
+    wingoHashBeforeModal = window.location.hash;
+    document.getElementById('betModalOverlay').classList.add('active');
 }
 
 function setOuterMultiplier(val) { outerMultiplier = val; document.querySelectorAll('.chip-row .chip').forEach(el => el.classList.remove('active')); event.target.classList.add('active'); }
@@ -393,20 +417,16 @@ function startRandomBet() {
     }, speed);
 }
 
-function openHowToPlay() { document.getElementById('htpModalOverlay').classList.add('active'); history.pushState({ modal: 'htpModal' }, '', ''); }
-
-// WHITE SCREEN FIX: Function safely pops state or closes modal manually
-function closeHowToPlay() { 
-    if (history.state && history.state.modal === 'htpModal') { history.back(); } else { document.getElementById('htpModalOverlay').classList.remove('active'); }
+function openHowToPlay() { 
+    wingoHashBeforeModal = window.location.hash;
+    document.getElementById('htpModalOverlay').classList.add('active'); 
 }
+function closeHowToPlay() { document.getElementById('htpModalOverlay').classList.remove('active'); }
 
 function setBetBase(val) { currentBet.base = val; updateBetModalUI(); } function setBetMulti(val) { currentBet.x = val; updateBetModalUI(); } function changeBetQty(val) { let newQty = currentBet.qty + val; if(newQty >= 1) currentBet.qty = newQty; updateBetModalUI(); }
 function updateBetModalUI() { document.querySelectorAll('#baseOptions .bet-opt').forEach(el => el.classList.toggle('active', parseInt(el.innerText) === currentBet.base)); document.querySelectorAll('#multiOptions .bet-opt').forEach(el => el.classList.toggle('active', parseInt(el.innerText.replace('X','')) === currentBet.x)); document.getElementById('betQtyInput').value = currentBet.qty; let total = currentBet.base * currentBet.qty * currentBet.x; document.getElementById('btnConfirmBet').innerText = `Total amount ₹${total.toFixed(2)}`; }
 
-// WHITE SCREEN FIX
-function closeBetModal() { 
-    if (history.state && history.state.modal === 'betMenu') { history.back(); } else { document.getElementById('betModalOverlay').classList.remove('active'); }
-}
+function closeBetModal() { document.getElementById('betModalOverlay').classList.remove('active'); }
 
 function confirmBet() {
     let totalAmt = currentBet.base * currentBet.qty * currentBet.x;
@@ -469,14 +489,12 @@ function showResultModal(status, num, color, size, amt, type, period) {
     if(!document.getElementById('customResultCloseBtn')) {
         let closeBtn = document.createElement('div'); closeBtn.id = 'customResultCloseBtn'; closeBtn.className = 'result-close-btn'; closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>'; closeBtn.onclick = closeResultModal; card.parentNode.appendChild(closeBtn);
     }
-    overlay.classList.add('active'); history.pushState({ modal: 'resultModal' }, '', '');
+    wingoHashBeforeModal = window.location.hash;
+    overlay.classList.add('active'); 
     resultModalTimeout = setTimeout(() => { closeResultModal(); }, 3000);
 }
 
-// WHITE SCREEN FIX
-function closeResultModal() { 
-    if (history.state && history.state.modal === 'resultModal') { history.back(); } else { let ol = document.getElementById('resultModalOverlay'); if(ol) ol.classList.remove('active'); }
-}
+function closeResultModal() { let ol = document.getElementById('resultModalOverlay'); if(ol) ol.classList.remove('active'); }
 
 function renderWingoHistory() { 
     let list = document.getElementById('wingoHistoryList'); if(!list) return; let rawHistData = globalWingoHistory[activeWingoTab] || []; let currentState = getWingoState(activeWingoTab); let histData = rawHistData.filter(r => parseInt(r.period) < parseInt(currentState.period)); list.innerHTML = ""; 
@@ -507,20 +525,29 @@ function renderMyHistory() {
     });
 }
 
-// ==========================================
-// CLEAN HISTORY POPSTATE (BACK BUTTON) FIX
-// ==========================================
-window.addEventListener('popstate', function(event) {
+// =======================================================
+// HASH INTERCEPTOR (100% SAFE BACK BUTTON FIX)
+// =======================================================
+window.addEventListener('hashchange', function(e) {
     let betModal = document.getElementById('betModalOverlay');
-    if (betModal && betModal.classList.contains('active')) { betModal.classList.remove('active'); }
-    
-    let resultModal = document.getElementById('resultModalOverlay');
-    if (resultModal && resultModal.classList.contains('active')) { resultModal.classList.remove('active'); }
-    
     let htpModal = document.getElementById('htpModalOverlay');
-    if (htpModal && htpModal.classList.contains('active')) { htpModal.classList.remove('active'); }
+    let resModal = document.getElementById('resultModalOverlay');
+    
+    let modalWasOpen = false;
+
+    // Check karo agar koi modal open tha
+    if (betModal && betModal.classList.contains('active')) { betModal.classList.remove('active'); modalWasOpen = true; }
+    if (htpModal && htpModal.classList.contains('active')) { htpModal.classList.remove('active'); modalWasOpen = true; }
+    if (resModal && resModal.classList.contains('active')) { resModal.classList.remove('active'); modalWasOpen = true; }
+
+    // Agar modal open tha aur URL badal gaya (Back Button dabane se), toh wapas Game screen par le jao
+    if (modalWasOpen && wingoHashBeforeModal !== "") {
+        window.location.hash = wingoHashBeforeModal;
+        wingoHashBeforeModal = ""; // Clear state
+    }
 });
 
+// BAHAR CLICK KARNE PAR MODAL CLOSE KARNE KA NORMAL LOGIC
 document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', function(e) {
         let betModal = document.getElementById('betModalOverlay');
