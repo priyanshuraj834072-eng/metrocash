@@ -13,7 +13,7 @@ if (!admin.apps.length) {
 }
 const db = admin.database();
 
-// K3 Result banane ka logic (Updated with New Rules)
+// K3 Result banane ka logic
 function generateK3RandomResult(period) {
     // 3 Random Dice (1 to 6)
     const d1 = Math.floor(Math.random() * 6) + 1;
@@ -28,7 +28,6 @@ function generateK3RandomResult(period) {
     // Odd/Even Logic
     const oddEven = (sum % 2 === 0) ? 'Even' : 'Odd';
     
-    // --- NAYA LOGIC: Frontend validation ko easy banane ke liye ---
     // Dice ko chhote se bade sequence mein arrange karenge
     const arr = [d1, d2, d3].sort((a, b) => a - b);
     
@@ -38,8 +37,7 @@ function generateK3RandomResult(period) {
     // Consecutive tabhi hoga jab 3 alag ho aur unke beech 1 ka difference ho (e.g. 1,2,3 or 3,4,5)
     const isConsecutive = (is3Different && (arr[1] - arr[0] === 1) && (arr[2] - arr[1] === 1));
 
-    // Frontend history ke liye Real Dice Icons (Tumhare naye UI ke hisaab se)
-    // Isko baad me JS frontend render function me aur customize kar sakte hain
+    // Frontend history ke liye Real Dice Icons
     const diceHtml = `
         <span class="k3-hist-dice k3-hd-${d1}"></span>
         <span class="k3-hist-dice k3-hd-${d2}"></span>
@@ -52,20 +50,29 @@ function generateK3RandomResult(period) {
     };
 }
 
-// Period ID nikalne ka logic (IST Timezone Fix)
+// Period ID nikalne ka logic (IST Timezone Fix - PERFECTLY SYNCED WITH FRONTEND)
 function getPeriod(durationSec, offsetMs = 0) {
     const ms = Date.now() + offsetMs;
     const durationMs = durationSec * 1000;
 
-    const istOffset = 5.5 * 60 * 60 * 1000;
-    const msIST = ms + istOffset;
+    // 1. IST Offset (5.5 hours in milliseconds)
+    const istOffsetMs = 5.5 * 60 * 60 * 1000;
+    
+    // 2. Current time ko IST timezone frame me shift karo
+    const msIST = ms + istOffsetMs;
+    
+    // 3. Aaj ke din (midnight) ka exact starting time nikalo (86400000 ms = 1 day)
+    const startOfDayIST_in_msIST = msIST - (msIST % 86400000); 
+    
+    // 4. Usko wapas real epoch time me convert karo
+    const startOfDay = startOfDayIST_in_msIST - istOffsetMs;
 
-    const dateIST = new Date(msIST);
-    dateIST.setUTCHours(0, 0, 0, 0);
-    const startOfDay = dateIST.getTime() - istOffset;
+    // 5. Ab sequence ekdum perfectly 1 se start hoga aur 1440 tak hi jayega
+    const elapsedMs = ms - startOfDay;
+    const seq = Math.floor(elapsedMs / durationMs) + 1;
 
-    const seq = Math.floor((msIST - startOfDay) / durationMs) + 1;
-    const dateStr = new Date(ms).toISOString().slice(0,10).replace(/-/g,'');
+    // 6. Date string nikalne ka tareeqa (Frontend UTC date use karta hai)
+    const dateStr = new Date(ms).toISOString().slice(0, 10).replace(/-/g, '');
 
     return dateStr + String(seq).padStart(4, '0');
 }
@@ -106,7 +113,7 @@ export default async function handler(req, res) {
         // Ek sath saare result superfast save
         await Promise.all(tasks);
 
-        res.status(200).json({ success: true, message: "K3 Superfast Results Generated with Advanced Rule Flags!" });
+        res.status(200).json({ success: true, message: "K3 Superfast Results Generated with Correct Period Sync!" });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
